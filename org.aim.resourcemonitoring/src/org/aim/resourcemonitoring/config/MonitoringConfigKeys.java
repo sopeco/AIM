@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.lpe.common.resourcemonitoring.config;
+package org.aim.resourcemonitoring.config;
 
 /**
  * Encapsulates keys for configuration properties.

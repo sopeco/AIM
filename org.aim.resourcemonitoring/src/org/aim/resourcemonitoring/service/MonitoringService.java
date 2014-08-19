@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.lpe.common.resourcemonitoring.service;
+package org.aim.resourcemonitoring.service;
 
 import java.io.OutputStream;
 import java.util.Set;
@@ -30,7 +30,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.aim.api.exceptions.MeasurementException;
 import org.aim.description.InstrumentationDescription;
 import org.aim.description.sampling.SamplingDescription;
-import org.lpe.common.resourcemonitoring.SystemMonitor;
+import org.aim.resourcemonitoring.SystemMonitor;
 
 import com.sun.jersey.spi.resource.Singleton;
 
