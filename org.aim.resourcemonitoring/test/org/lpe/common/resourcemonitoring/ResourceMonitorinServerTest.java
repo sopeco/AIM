@@ -23,6 +23,8 @@ import org.aim.api.measurement.MeasurementData;
 import org.aim.artifacts.records.CPUUtilizationRecord;
 import org.aim.artifacts.sampler.CPUSampler;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
+import org.aim.resourcemonitoring.ResourceMonitoringClient;
+import org.aim.resourcemonitoring.ServerLauncher;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
