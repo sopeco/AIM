@@ -1,0 +1,5 @@
+org.aim.mainagent.probes.builder.DummyProbe
+org.aim.mainagent.probes.builder.DummyProbe2
+org.aim.mainagent.probes.builder.InvalidDummyProbe
+org.aim.mainagent.probes.builder.AnotherDummyProbe
+org.aim.mainagent.TestAPIScopeExtension

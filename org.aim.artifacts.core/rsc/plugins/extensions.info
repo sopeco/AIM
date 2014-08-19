@@ -1,0 +1,16 @@
+org.aim.artifacts.sampler.CPUSamplerExtension
+org.aim.artifacts.sampler.DiskIOSamplerExtension
+org.aim.artifacts.sampler.GarbageCollectionSamplerExtension
+org.aim.artifacts.sampler.MemoryUsageSamplerExtension
+org.aim.artifacts.sampler.NetworkIOSamplerExtension
+org.aim.artifacts.probes.JmsCommunicationProbeExtension
+org.aim.artifacts.probes.JmsMessageSizeProbeExtension
+org.aim.artifacts.probes.MemoryFootprintProbeExtension
+org.aim.artifacts.probes.NanoResponsetimeProbeExtension
+org.aim.artifacts.probes.ResponsetimeProbeExtension
+org.aim.artifacts.probes.SQLQueryProbeExtension
+org.aim.artifacts.probes.ThreadTracingProbeExtension
+org.aim.artifacts.scopes.EntryPointScopeExtension
+org.aim.artifacts.scopes.JDBCScopeExtension
+org.aim.artifacts.scopes.JmsScopeExtension
+org.aim.artifacts.scopes.SpringRequestMappingAnnotationScopeExtension
