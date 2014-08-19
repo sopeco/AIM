@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
+import org.aim.resourcemonitoring.service.MonitoringService;
 import org.lpe.common.util.system.LpeSystemUtils;
 import org.lpe.common.util.web.WebServer;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public final class ServerLauncher {
 			LpeSystemUtils.loadNativeLibraries();
 
 			List<String> servicePackages = new ArrayList<>();
-			servicePackages.add("org.lpe.common.resourcemonitoring.service");
+			servicePackages.add(MonitoringService.class.getPackage().getName());
 			initDataCollector();
 			WebServer.getInstance().start(Integer.parseInt(port), PREFIX, servicePackages);
 		} else if (args[0].equalsIgnoreCase("shutdown")) {
