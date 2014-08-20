@@ -128,19 +128,35 @@ aside#sidebar p.repo-owner a {
   margin-bottom: 40px;
 }
 
+p.big {
+font-size: 16px;
+font-weight: bold;
+}
+
+div.sponsor { 
+margin-top: 100px;
+margin-bottom: 100px;
+}
+
+img.sponsor {
+display: block;
+margin-left: auto; 
+margin-right: auto;
+}
+
 a.button {
   width: 134px;
-  height: 58px;
+  height: 64px;
   line-height: 1.2;
-  font-size: 23px;
+  font-size: 14px;
   color: #fff;
   padding-left: 68px;
-  padding-top: 22px;
+  padding-top: 15px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
 }
 a.button small {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
 }
 header a.button {
   position: absolute;
@@ -202,7 +218,7 @@ hr {
 
 table {
   width: 100%;
-  border: 1px solid #ebebeb;
+/*  border: 1px solid #ebebeb;*/
 }
 
 th {
@@ -210,7 +226,7 @@ th {
 }
 
 td {
-  border: 1px solid #ebebeb;
+  /* border: 1px solid #ebebeb; */
   text-align: center; 
   font-weight: 300;
 }
