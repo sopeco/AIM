@@ -31,7 +31,6 @@ public class SupportedExtensions {
 	private List<String> samplerExtensions;
 	private List<String> apiScopeExtensions;
 	private List<String> enclosingProbeExtensions;
-	private List<String> singlePointProbeExtensions;
 	private List<String> customScopeExtensions;
 
 	/**
@@ -86,24 +85,6 @@ public class SupportedExtensions {
 	 */
 	public void setEnclosingProbeExtensions(List<String> enclosingProbeExtensions) {
 		this.enclosingProbeExtensions = enclosingProbeExtensions;
-	}
-
-	/**
-	 * @return the singlePointProbeExtensions
-	 */
-	public List<String> getSinglePointProbeExtensions() {
-		if (singlePointProbeExtensions == null) {
-			singlePointProbeExtensions = new ArrayList<>();
-		}
-		return singlePointProbeExtensions;
-	}
-
-	/**
-	 * @param singlePointProbeExtensions
-	 *            the singlePointProbeExtensions to set
-	 */
-	public void setSinglePointProbeExtensions(List<String> singlePointProbeExtensions) {
-		this.singlePointProbeExtensions = singlePointProbeExtensions;
 	}
 
 	/**

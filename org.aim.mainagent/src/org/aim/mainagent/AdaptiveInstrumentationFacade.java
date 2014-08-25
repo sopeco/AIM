@@ -15,22 +15,21 @@
  */
 package org.aim.mainagent;
 
-import java.lang.reflect.Modifier;
-
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.instrumentation.AbstractInstAPIScope;
-import org.aim.api.instrumentation.IScopeAnalyzer;
+import org.aim.api.instrumentation.AbstractCustomScopeExtension;
+import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
 import org.aim.api.instrumentation.InstrumentationUtilsController;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
 import org.aim.api.instrumentation.description.internal.InstrumentationConstants;
 import org.aim.api.instrumentation.entities.FlatInstrumentationState;
 import org.aim.api.instrumentation.entities.SupportedExtensions;
-import org.aim.api.measurement.sampling.ISampler;
+import org.aim.api.measurement.sampling.AbstractSamplerExtension;
 import org.aim.description.InstrumentationDescription;
-import org.aim.mainagent.instrumentor.JInstrumentation;
 import org.aim.mainagent.sampling.Sampling;
+import org.lpe.common.extension.ExtensionRegistry;
+import org.lpe.common.extension.IExtension;
 
 /**
  * Coordinates the instrumentation process.
@@ -77,14 +76,19 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             if instrumentation fails
 	 */
-	public synchronized void instrument(InstrumentationDescription instrumentationDescription)
+	public synchronized void instrument(
+			InstrumentationDescription instrumentationDescription)
 			throws InstrumentationException {
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.AIM_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVA_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVASSIST_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVAX_PACKAGE);
-		instrumentationDescription.getGlobalRestriction()
-				.addPackageExclude(InstrumentationConstants.LPE_COMMON_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(
+				InstrumentationConstants.AIM_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(
+				InstrumentationConstants.JAVA_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(
+				InstrumentationConstants.JAVASSIST_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(
+				InstrumentationConstants.JAVAX_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(
+				InstrumentationConstants.LPE_COMMON_PACKAGE);
 
 		methodInstrumentor.instrument(instrumentationDescription);
 		traceInstrumentor.instrument(instrumentationDescription);
@@ -94,7 +98,8 @@ public final class AdaptiveInstrumentationFacade {
 
 		if (!instrumentationDescription.getSamplingDescriptions().isEmpty()) {
 			try {
-				Sampling.getInstance().addMonitoringJob(instrumentationDescription.getSamplingDescriptions());
+				Sampling.getInstance().addMonitoringJob(
+						instrumentationDescription.getSamplingDescriptions());
 			} catch (MeasurementException e) {
 				throw new InstrumentationException(e);
 			}
@@ -107,7 +112,8 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             if instrumentation fails
 	 */
-	public synchronized void undoInstrumentation() throws InstrumentationException {
+	public synchronized void undoInstrumentation()
+			throws InstrumentationException {
 		methodInstrumentor.undoInstrumentation();
 		traceInstrumentor.undoInstrumentation();
 		eventInstrumentor.undoInstrumentation();
@@ -123,8 +129,10 @@ public final class AdaptiveInstrumentationFacade {
 	 */
 	public synchronized FlatInstrumentationState getInstrumentationState() {
 		FlatInstrumentationState fmInstrumentation = new FlatInstrumentationState();
-		for (FlatInstrumentationEntity fie : methodInstrumentor.getCurrentInstrumentationState()) {
-			fmInstrumentation.addEntity(fie.getMethodSignature(), fie.getProbeType().getName());
+		for (FlatInstrumentationEntity fie : methodInstrumentor
+				.getCurrentInstrumentationState()) {
+			fmInstrumentation.addEntity(fie.getMethodSignature(), fie
+					.getProbeType().getName());
 		}
 		return fmInstrumentation;
 	}
@@ -136,23 +144,22 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             thrown if extensions cannot be retrieved
 	 */
-	public synchronized SupportedExtensions getSupportedExtensions() throws InstrumentationException {
+	public synchronized SupportedExtensions getSupportedExtensions()
+			throws InstrumentationException {
 		if (extensions == null) {
 			extensions = new SupportedExtensions();
-			for (Class<?> clazz : JInstrumentation.getInstance().getjInstrumentation().getAllLoadedClasses()) {
-				if (!Modifier.isAbstract(clazz.getModifiers()) && !Modifier.isInterface(clazz.getModifiers())) {
-					if (ISampler.class.isAssignableFrom(clazz)) {
-						extensions.getSamplerExtensions().add(clazz.getName());
-					} else if (AbstractInstAPIScope.class.isAssignableFrom(clazz)) {
-						extensions.getApiScopeExtensions().add(clazz.getName());
-					} else if (AbstractEnclosingProbe.class.isAssignableFrom(clazz)) {
-						extensions.getEnclosingProbeExtensions().add(clazz.getName());
-					} else if (IScopeAnalyzer.class.isAssignableFrom(clazz)) {
-						extensions.getCustomScopeExtensions().add(clazz.getName());
-					}
-					// TODO: add singlePointProbe case
-				}
 
+			for (IExtension<?> extension : ExtensionRegistry.getSingleton()
+					.getExtensions()) {
+				if (extension instanceof AbstractCustomScopeExtension) {
+					extensions.getCustomScopeExtensions().add(extension.getName());
+				} else if (extension instanceof AbstractEnclosingProbeExtension) {
+					extensions.getEnclosingProbeExtensions().add(extension.getName());
+				} else if (extension instanceof AbstractInstApiScopeExtension) {
+					extensions.getApiScopeExtensions().add(extension.getName());
+				} else if (extension instanceof AbstractSamplerExtension) {
+					extensions.getSamplerExtensions().add(extension.getName());
+				}
 			}
 		}
 
