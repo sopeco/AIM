@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Marius Oehler
  *
  */
@@ -21,7 +21,16 @@ public class Main {
 
 	private static Executor THREAD_POOL = Executors.newCachedThreadPool();
 
-	private Main() {
+	/**
+	 * Shutdown logic of the application
+	 */
+	public static void exit() {
+		LOGGER.debug("Exit..");
+		System.exit(0);
+	}
+
+	public static Executor getThreadPool() {
+		return THREAD_POOL;
 	}
 
 	public static void main(String[] args) {
@@ -43,16 +52,7 @@ public class Main {
 		MainView.SINGLETON().setLocationRelativeTo(null);
 	}
 
-	/**
-	 * Shutdown logic of the application
-	 */
-	public static void exit() {
-		LOGGER.debug("Exit..");
-		System.exit(0);
-	}
-
-	public static Executor getThreadPool() {
-		return THREAD_POOL;
+	private Main() {
 	}
 
 }

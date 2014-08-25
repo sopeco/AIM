@@ -16,6 +16,17 @@ import javax.swing.JTextField;
 import org.aim.ui.manager.RestrictionManager;
 
 public class RestrictionAddingView extends JDialog implements ActionListener {
+	/** */
+	private static final long serialVersionUID = 1L;
+
+	private JComboBox<String> cbGroup;
+
+	private JComboBox<String> cbType;
+
+	private JComboBox<String> cbValue;
+
+	private JTextField tfValue;
+
 	public RestrictionAddingView(Component comp) {
 		setSize(275, 165);
 		setLocationRelativeTo(comp);
@@ -30,6 +41,7 @@ public class RestrictionAddingView extends JDialog implements ActionListener {
 		cbGroup.setBounds(66, 11, 190, 20);
 		getContentPane().add(cbGroup);
 		cbGroup.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				updateValueField();
 			}
@@ -63,6 +75,7 @@ public class RestrictionAddingView extends JDialog implements ActionListener {
 
 		JButton btnNewButton_1 = new JButton("Cancel");
 		btnNewButton_1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				dispose();
@@ -77,6 +90,29 @@ public class RestrictionAddingView extends JDialog implements ActionListener {
 		getContentPane().add(cbValue);
 
 		setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		RestrictionManager.SINGLETON().addRestriction(this);
+		setVisible(false);
+		dispose();
+	}
+
+	public JComboBox<String> getCbGroup() {
+		return cbGroup;
+	}
+
+	public JComboBox<String> getCbType() {
+		return cbType;
+	}
+
+	public JComboBox<String> getCbValue() {
+		return cbValue;
+	}
+
+	public JTextField getTfValue() {
+		return tfValue;
 	}
 
 	/**
@@ -97,35 +133,5 @@ public class RestrictionAddingView extends JDialog implements ActionListener {
 
 		repaint();
 	}
-
-	public JTextField getTfValue() {
-		return tfValue;
-	}
-
-	public JComboBox<String> getCbGroup() {
-		return cbGroup;
-	}
-
-	public JComboBox<String> getCbValue() {
-		return cbValue;
-	}
-
-	public JComboBox<String> getCbType() {
-		return cbType;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		RestrictionManager.SINGLETON().addRestriction(this);
-		setVisible(false);
-		dispose();
-	}
-
-	/** */
-	private static final long serialVersionUID = 1L;
-	private JTextField tfValue;
-	private JComboBox<String> cbGroup;
-	private JComboBox<String> cbValue;
-	private JComboBox<String> cbType;
 
 }

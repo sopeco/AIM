@@ -11,24 +11,22 @@ import javax.swing.JPanel;
 
 public class RestrictionItem extends JPanel {
 
-	private Type type;
-	private Group group;
-
 	public enum Group {
-		PACKAGE, MODIFIER
+		MODIFIER, PACKAGE
 	}
 
 	public enum Type {
-		INCLUDE, EXCLUDE
+		EXCLUDE, INCLUDE
 	}
 
-	public RestrictionItem(Type type, Group group, String restriction) {
-		this();
-		this.type = type;
-		this.group = group;
+	/** */
+	private static final long serialVersionUID = 1L;
 
-		lblRestriction.setText(restriction);
-	}
+	private Group group;
+
+	private JLabel lblRestriction;
+
+	private Type type;
 
 	public RestrictionItem() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -64,8 +62,12 @@ public class RestrictionItem extends JPanel {
 		setPreferredSize(new Dimension(200, 22));
 	}
 
-	/** */
-	private static final long serialVersionUID = 1L;
-	private JLabel lblRestriction;
+	public RestrictionItem(Type type, Group group, String restriction) {
+		this();
+		this.type = type;
+		this.group = group;
+
+		lblRestriction.setText(restriction);
+	}
 
 }

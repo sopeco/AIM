@@ -11,10 +11,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.aim.ui.components.TextBoxListPanel;
+import org.aim.ui.components.ItemListPanel;
 import org.aim.ui.manager.ClientManager;
 
 public class ScopePanel extends JPanel implements ActionListener {
+
+	private static final String ALLOCATION_SCOPE = "Allocation Scope";
+
+	private static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
+
+	private static final String METHOD_SCOPE = "Method Scope";
+
+	/** */
+	private static final long serialVersionUID = 1L;
+
+	private JComboBox<String> comboBox;
+	private JLabel lblSettings;
+	private ItemListPanel panel;
 
 	public ScopePanel() {
 		setBorder(new TitledBorder(null, "Scope", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -50,7 +63,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		gbc_lblSettings.gridy = 1;
 		add(lblSettings, gbc_lblSettings);
 
-		panel = new TextBoxListPanel();
+		panel = new ItemListPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 1;
@@ -59,26 +72,17 @@ public class ScopePanel extends JPanel implements ActionListener {
 
 		// /
 		panel.setValidationPattern("([a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*\\.)*[a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*");
-		
+
 		comboBox.addItem("Trace Scope");
 		comboBox.addItem(METHOD_SCOPE);
 		comboBox.addItem(CONSTRUCTOR_SCOPE);
 		comboBox.addItem(ALLOCATION_SCOPE);
 
 		if (ClientManager.SINGLETON().isConnected()) {
-			for (String i : ClientManager.SINGLETON().getScopes())
+			for (String i : ClientManager.SINGLETON().getScopes()) {
 				comboBox.addItem(i);
+			}
 		}
-	}
-
-	private void hideSettings() {
-		lblSettings.setVisible(false);
-		panel.setVisible(false);
-	}
-
-	private void showSettings() {
-		lblSettings.setVisible(true);
-		panel.setVisible(true);
 	}
 
 	@Override
@@ -102,14 +106,14 @@ public class ScopePanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private static final String METHOD_SCOPE = "Method Scope";
-	private static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
-	private static final String ALLOCATION_SCOPE = "Allocation Scope";
+	private void hideSettings() {
+		lblSettings.setVisible(false);
+		panel.setVisible(false);
+	}
 
-	/** */
-	private static final long serialVersionUID = 1L;
-	private JComboBox<String> comboBox;
-	private JLabel lblSettings;
-	private TextBoxListPanel panel;
+	private void showSettings() {
+		lblSettings.setVisible(true);
+		panel.setVisible(true);
+	}
 
 }

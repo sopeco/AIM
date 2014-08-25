@@ -1,9 +1,11 @@
 package org.aim.ui.manager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.aim.artifacts.instrumentation.InstrumentationClient;
+import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;
 import org.aim.ui.view.MainView.ClientSettingsState;
 import org.slf4j.Logger;
@@ -23,16 +25,12 @@ public class ClientManager {
 	}
 
 	private InstrumentationClient client;
-	
-	
+	private Collection<ConnectionStateListener> csListener;
+
 	private ClientManager() {
-
+		csListener = new ArrayList<ConnectionStateListener>();
 	}
 
-	public boolean isConnected() {
-		return client != null;
-	}
-	
 	/**
 	 * Will be invoked when the UI's connect/disconnect button is pressed.
 	 */
@@ -44,16 +42,8 @@ public class ClientManager {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private void disconnect() {
-		LOGGER.debug("Disconnecting..");
-		MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
-		MainView.SINGLETON().addLogMessage("Connection reversed");
-		if (client != null) {
-			client = null;
-		}
+	public void addConnectionStateListener(ConnectionStateListener listener) {
+		csListener.add(listener);
 	}
 
 	public void connect() {
@@ -88,7 +78,34 @@ public class ClientManager {
 				client = new InstrumentationClient(host, port);
 
 				MainView.SINGLETON().setClientSettingsState(ClientSettingsState.CONNECTED);
+
+				connected();
 			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void disconnect() {
+		LOGGER.debug("Disconnecting..");
+		MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
+		MainView.SINGLETON().addLogMessage("Connection reversed");
+		if (client != null) {
+			client = null;
+		}
+		disconnected();
+	}
+
+	private void disconnected() {
+		for (ConnectionStateListener l : csListener) {
+			l.onDisconnection();
+		}
+	}
+
+	private void connected() {
+		for (ConnectionStateListener l : csListener) {
+			l.onConnection();
 		}
 	}
 
@@ -102,5 +119,13 @@ public class ClientManager {
 		scopeExtensions.addAll(client.getSupportedExtensions().getApiScopeExtensions());
 		scopeExtensions.addAll(client.getSupportedExtensions().getCustomScopeExtensions());
 		return scopeExtensions;
+	}
+
+	public boolean isConnected() {
+		return client != null;
+	}
+
+	public void removeConnectionStateListener(ConnectionStateListener listener) {
+		csListener.remove(listener);
 	}
 }

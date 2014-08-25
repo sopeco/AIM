@@ -6,10 +6,15 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.aim.ui.components.TextBoxListPanel;
+import org.aim.ui.components.ItemListPanel;
 import org.aim.ui.manager.ClientManager;
 
 public class ProbePanel extends JPanel {
+	/**  */
+	private static final long serialVersionUID = 1L;
+
+	private ItemListPanel panel;
+
 	public ProbePanel() {
 		setBorder(new TitledBorder(null, "Probes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -19,7 +24,7 @@ public class ProbePanel extends JPanel {
 		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		panel = new TextBoxListPanel();
+		panel = new ItemListPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
@@ -30,9 +35,4 @@ public class ProbePanel extends JPanel {
 			panel.setPredefinedValues(ClientManager.SINGLETON().getProbes());
 		}
 	}
-
-	/**  */
-	private static final long serialVersionUID = 1L;
-	private TextBoxListPanel panel;
-
 }

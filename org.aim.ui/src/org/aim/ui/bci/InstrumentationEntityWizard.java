@@ -10,6 +10,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 public class InstrumentationEntityWizard extends JDialog {
+	/**  */
+	private static final long serialVersionUID = 1L;
+
 	public InstrumentationEntityWizard() {
 		setTitle("Add Instrumentation Entity");
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -28,7 +31,7 @@ public class InstrumentationEntityWizard extends JDialog {
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 0;
 		getContentPane().add(panel, gbc_panel);
-		
+
 		ProbePanel panel_1 = new ProbePanel();
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
 		gbc_panel_1.gridwidth = 2;
@@ -37,7 +40,7 @@ public class InstrumentationEntityWizard extends JDialog {
 		gbc_panel_1.gridx = 0;
 		gbc_panel_1.gridy = 1;
 		getContentPane().add(panel_1, gbc_panel_1);
-		
+
 		RestrictionPanel panel_2 = new RestrictionPanel();
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
 		gbc_panel_2.gridwidth = 2;
@@ -46,7 +49,7 @@ public class InstrumentationEntityWizard extends JDialog {
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 2;
 		getContentPane().add(panel_2, gbc_panel_2);
-		
+
 		JButton btnNewButton = new JButton("Save");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.anchor = GridBagConstraints.SOUTHEAST;
@@ -54,9 +57,10 @@ public class InstrumentationEntityWizard extends JDialog {
 		gbc_btnNewButton.gridx = 0;
 		gbc_btnNewButton.gridy = 3;
 		getContentPane().add(btnNewButton, gbc_btnNewButton);
-		
+
 		JButton btnNewButton_1 = new JButton("Cancel");
 		btnNewButton_1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
@@ -69,8 +73,5 @@ public class InstrumentationEntityWizard extends JDialog {
 		gbc_btnNewButton_1.gridy = 3;
 		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
 	}
-
-	/**  */
-	private static final long serialVersionUID = 1L;
 
 }

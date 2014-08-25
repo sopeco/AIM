@@ -27,13 +27,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.aim.ui.Main;
 import org.aim.ui.bci.InstrumentationEntityWizard;
+import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.manager.ClientManager;
 
-public class MainView extends JFrame {
+public class MainView extends JFrame implements ConnectionStateListener {
+
+	public enum ClientSettingsState {
+		CONNECTED, CONNECTING, DEFAULT
+	}
 
 	/**  */
 	private static final long serialVersionUID = 1L;
@@ -47,18 +53,10 @@ public class MainView extends JFrame {
 		return SINGLETON;
 	}
 
-	public enum ClientSettingsState {
-		DEFAULT, CONNECTING, CONNECTED
-	}
-
-	private JTextField inputPort;
+	private JButton btnConnect;
 	private JComboBox<String> inputHost;
 
-	private JTextPane textLog;
-
-	private JButton btnConnect;
-
-	private JScrollPane scrollPaneLog;
+	private JTextField inputPort;
 
 	private JPanel panelRestModifiers;
 
@@ -66,7 +64,25 @@ public class MainView extends JFrame {
 
 	private JPanel paneRestrictions;
 
+	private JScrollPane scrollPaneLog;
+
+	private JTextPane textLog;
+
+	private JButton btnAddIE;
+
+	@Override
+	public void onConnection() {
+		btnAddIE.setEnabled(true);
+	}
+
+	@Override
+	public void onDisconnection() {
+		btnAddIE.setEnabled(false);
+	}
+
 	private MainView() {
+		ClientManager.SINGLETON().addConnectionStateListener(this);
+
 		setTitle("AIM Control");
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -83,6 +99,7 @@ public class MainView extends JFrame {
 
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Main.exit();
 			}
@@ -114,6 +131,7 @@ public class MainView extends JFrame {
 
 		btnConnect = new JButton("Connect");
 		btnConnect.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Main.getThreadPool().execute(new Runnable() {
 					@Override
@@ -125,54 +143,56 @@ public class MainView extends JFrame {
 		});
 		panel.add(btnConnect);
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		
+
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Instrumentation Entities", null, panel_1, null);
 		panel_1.setLayout(new BorderLayout(0, 0));
-		
+
 		JScrollPane bciScrollPane = new JScrollPane();
 		panel_1.add(bciScrollPane);
-		
+
 		JPanel panel_3 = new JPanel();
 		bciScrollPane.setViewportView(panel_3);
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[]{577, 0};
-		gbl_panel_3.rowHeights = new int[]{241, 0};
-		gbl_panel_3.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel_3.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_panel_3.columnWidths = new int[] { 577, 0 };
+		gbl_panel_3.rowHeights = new int[] { 241, 0 };
+		gbl_panel_3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panel_3.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		panel_3.setLayout(gbl_panel_3);
-		
+
 		JPanel bciPanel = new JPanel();
 		GridBagConstraints gbc_bciPanel = new GridBagConstraints();
+		gbc_bciPanel.insets = new Insets(5, 5, 5, 5);
 		gbc_bciPanel.anchor = GridBagConstraints.NORTH;
 		gbc_bciPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_bciPanel.gridx = 0;
 		gbc_bciPanel.gridy = 0;
 		panel_3.add(bciPanel, gbc_bciPanel);
-		bciPanel.setLayout(new GridLayout(2, 1, 0, 0));
-		
+		bciPanel.setLayout(new GridLayout(2, 1, 5, 5));
+
 		bciPanel.add(new BCIComponent());
 		bciPanel.add(new BCIComponent());
-		
+
 		JPanel panel_2 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_2.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);
 		panel_1.add(panel_2, BorderLayout.SOUTH);
-		
-		JButton btnNewButton = new JButton("Add Instrumentation Entity");
-		btnNewButton.addActionListener(new ActionListener() {
+
+		btnAddIE = new JButton("Add Instrumentation Entity");
+		btnAddIE.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
-				dialog.setSize(400,500);
+				dialog.setSize(400, 500);
 				dialog.setModal(true);
 				dialog.setLocationRelativeTo(MainView.this);
 				dialog.setVisible(true);
 			}
 		});
-		panel_2.add(btnNewButton);
-		
+		panel_2.add(btnAddIE);
+
 		JPanel panel_6 = new JPanel();
 		tabbedPane.addTab("Sampler", null, panel_6, null);
 
@@ -187,6 +207,7 @@ public class MainView extends JFrame {
 
 		JButton btnAddRestriction = new JButton("Add Restriction");
 		btnAddRestriction.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				RestrictionAddingView view = new RestrictionAddingView(MainView.this);
 			}
@@ -225,7 +246,7 @@ public class MainView extends JFrame {
 		gbc_panelRestPackages.gridy = 1;
 		paneRestrictions.add(panelRestPackages, gbc_panelRestPackages);
 		panelRestPackages.setLayout(new GridLayout(1, 0, 0, 0));
-		
+
 		JLabel lblNoRestrictionsSpecified = new JLabel("   No restrictions specified.");
 		panelRestPackages.add(lblNoRestrictionsSpecified);
 
@@ -245,7 +266,7 @@ public class MainView extends JFrame {
 		gbc_panelRestModifiers.gridy = 3;
 		paneRestrictions.add(panelRestModifiers, gbc_panelRestModifiers);
 		panelRestModifiers.setLayout(new GridLayout(1, 0, 0, 0));
-		
+
 		JLabel lblNoRestrictionsSpecified_1 = new JLabel("   No restrictions specified.");
 		panelRestModifiers.add(lblNoRestrictionsSpecified_1);
 
@@ -260,10 +281,8 @@ public class MainView extends JFrame {
 		setSize(600, 480);
 
 		loadHosts();
-	}
-
-	public void loadHosts() {
-		inputHost.addItem("localhost");
+		
+		onDisconnection();
 	}
 
 	public void addLogMessage(String message) {
@@ -272,16 +291,12 @@ public class MainView extends JFrame {
 		scrollPaneLog.getVerticalScrollBar().setValue(scrollPaneLog.getVerticalScrollBar().getMaximum());
 	}
 
-	public JTextField getInputPort() {
-		return inputPort;
-	}
-
-	public JPanel getPaneRestrictions() {
-		return paneRestrictions;
-	}
-
 	public JComboBox<String> getInputHost() {
 		return inputHost;
+	}
+
+	public JTextField getInputPort() {
+		return inputPort;
 	}
 
 	public JPanel getPanelRestrictionModifiers() {
@@ -290,6 +305,14 @@ public class MainView extends JFrame {
 
 	public JPanel getPanelRestrictionPackages() {
 		return panelRestPackages;
+	}
+
+	public JPanel getPaneRestrictions() {
+		return paneRestrictions;
+	}
+
+	public void loadHosts() {
+		inputHost.addItem("localhost");
 	}
 
 	public void setClientSettingsState(ClientSettingsState state) {

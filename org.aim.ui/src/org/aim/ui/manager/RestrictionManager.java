@@ -1,7 +1,6 @@
 package org.aim.ui.manager;
 
 import java.awt.GridLayout;
-import java.lang.reflect.Modifier;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,11 +23,11 @@ public class RestrictionManager {
 		return SINGLETON;
 	}
 
+	private Restriction globalRestriction;
+
 	private RestrictionManager() {
 		globalRestriction = new Restriction();
 	}
-
-	private Restriction globalRestriction;
 
 	public void addRestriction(RestrictionAddingView view) {
 		// Group: 0 = package, 1 = modifier

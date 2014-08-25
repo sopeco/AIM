@@ -17,19 +17,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 @SuppressWarnings("unchecked")
-public class TextBoxListItem extends JPanel implements ActionListener, KeyListener {
+public class ItemListEntity extends JPanel implements ActionListener, KeyListener {
+
+	/**  */
+	private static final long serialVersionUID = 1L;
+
+	private JButton btnRemove;
 
 	private boolean isTextbox;
 
-	public TextBoxListItem() {
+	private ItemListPanel listPanel;
+
+	private JComponent textField;
+
+	public ItemListEntity() {
 		this("");
 	}
 
-	public TextBoxListItem(String value) {
+	public ItemListEntity(String value) {
 		this(value, null);
 	}
 
-	public TextBoxListItem(String value, List<String> values) {
+	public ItemListEntity(String value, List<String> values) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
@@ -66,19 +75,15 @@ public class TextBoxListItem extends JPanel implements ActionListener, KeyListen
 		add(btnRemove, gbc_btnRemove);
 	}
 
-	public void setEditable(boolean editable) {
-		if (textField instanceof JComboBox)
-			((JComboBox<String>) textField).setEditable(editable);
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnRemove && listPanel != null) {
+			listPanel.removeItem(this);
+		}
 	}
 
-	/**  */
-	private static final long serialVersionUID = 1L;
-	private JComponent textField;
-	private JButton btnRemove;
-	private TextBoxListPanel listPanel;
-
-	public void registerRemoveHandler(TextBoxListPanel panel) {
-		listPanel = panel;
+	public JButton getButton() {
+		return btnRemove;
 	}
 
 	// public JTextField getTextField() {
@@ -93,21 +98,6 @@ public class TextBoxListItem extends JPanel implements ActionListener, KeyListen
 		}
 	}
 
-	public JButton getButton() {
-		return btnRemove;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == btnRemove && listPanel != null) {
-			listPanel.removeItem(this);
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 	}
@@ -118,6 +108,20 @@ public class TextBoxListItem extends JPanel implements ActionListener, KeyListen
 			textField.setBackground(new Color(255, 255, 255));
 		} else {
 			textField.setBackground(new Color(255, 200, 200));
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	public void registerRemoveHandler(ItemListPanel panel) {
+		listPanel = panel;
+	}
+
+	public void setEditable(boolean editable) {
+		if (textField instanceof JComboBox) {
+			((JComboBox<String>) textField).setEditable(editable);
 		}
 	}
 
