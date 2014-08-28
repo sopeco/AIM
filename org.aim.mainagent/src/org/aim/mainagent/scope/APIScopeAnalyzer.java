@@ -77,7 +77,9 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 		for (String annotationName : apiScope.getMethodAnnotationsToMatch()) {
 			try {
 				Class<Annotation> annotationClass = findAnnotation(allLoadedClasses, annotationName);
-				methodAnnotationsToMatch.add(annotationClass);
+				if (annotationClass != null) {
+					methodAnnotationsToMatch.add(annotationClass);
+				}
 			} catch (ClassNotFoundException e) {
 				throw new InstrumentationException("Failed determining scope " + apiScope.getClass().getName(), e);
 			}
@@ -94,8 +96,7 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 				return annotationClass;
 			}
 		}
-		throw new ClassNotFoundException("Class for Annotation with name" + annotationName + " not found!");
-
+		return null;
 	}
 
 	@Override
