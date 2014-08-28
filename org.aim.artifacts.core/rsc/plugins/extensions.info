@@ -14,3 +14,4 @@ org.aim.artifacts.scopes.EntryPointScopeExtension
 org.aim.artifacts.scopes.JDBCScopeExtension
 org.aim.artifacts.scopes.JmsScopeExtension
 org.aim.artifacts.scopes.SpringRequestMappingAnnotationScopeExtension
+org.aim.artifacts.events.probes.MonitorWaitingTimeProbeExtension

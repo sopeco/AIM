@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.events;
+package org.aim.artifacts.events.probes;
 
+import org.aim.api.events.AbstractEventProbe;
+import org.aim.api.events.IMonitorEventProbe;
+import org.aim.api.instrumentation.GenericProbe;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.artifacts.records.EventTimeStampRecord;
 import org.aim.description.probes.MeasurementProbe;
 import org.aim.description.scopes.SynchronizedScope;
-import org.aim.mainagent.probes.GenericProbe;
+import org.lpe.common.extension.IExtension;
 
 /**
  * Event probe for generating the waiting time of threads while they are waiting
@@ -28,7 +31,24 @@ import org.aim.mainagent.probes.GenericProbe;
  * @author Henning Schulz
  * 
  */
-public class ForMonitorWaitingTimeProbe implements IMonitorEventProbe {
+public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMonitorEventProbe {
+
+	/**
+	 * Default Constructor.
+	 */
+	public MonitorWaitingTimeProbe() {
+		super(null);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param provider
+	 *            extension provider.
+	 */
+	public MonitorWaitingTimeProbe(IExtension<?> provider) {
+		super(provider);
+	}
 
 	public static final MeasurementProbe<SynchronizedScope> MODEL_PROBE = new MeasurementProbe<>("SynchronizedProbe");
 

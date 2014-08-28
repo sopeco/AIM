@@ -51,6 +51,8 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	 * @param apiScope
 	 *            concrete instance of an AbstractInstAPIScope specifying a
 	 *            concrete scope.
+	 * @param allLoadedClasses
+	 *            all classes loaded by the JVM
 	 * @throws InstrumentationException
 	 *             if an API class or interface could not be found.
 	 */
