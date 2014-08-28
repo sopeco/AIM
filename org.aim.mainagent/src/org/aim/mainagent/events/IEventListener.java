@@ -15,6 +15,8 @@
  */
 package org.aim.mainagent.events;
 
+import org.aim.api.events.IEventProbe;
+
 /**
  * Common interface for event listener.
  * 

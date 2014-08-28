@@ -15,11 +15,11 @@ import org.aim.api.measurement.MeasurementData;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.api.measurement.collector.IDataCollector;
+import org.aim.artifacts.events.probes.MonitorWaitingTimeProbe;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.artifacts.records.EventTimeStampRecord;
 import org.aim.description.InstrumentationDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.events.ForMonitorWaitingTimeProbe;
 import org.aim.mainagent.sampling.Sampling;
 import org.junit.After;
 import org.junit.Before;
@@ -59,7 +59,7 @@ public class CEventAgentTest {
 		activatedField.setBoolean(null, true);
 
 		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		idBuilder.newSynchronizedScopeEntity().addProbe(ForMonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
+		idBuilder.newSynchronizedScopeEntity().addProbe(MonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
 		InstrumentationDescription desc = idBuilder.build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(desc);
@@ -115,7 +115,7 @@ public class CEventAgentTest {
 		activatedField.setBoolean(null, true);
 
 		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		idBuilder.newSynchronizedScopeEntity().addProbe(ForMonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
+		idBuilder.newSynchronizedScopeEntity().addProbe(MonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
 		InstrumentationDescription desc = idBuilder.build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(desc);

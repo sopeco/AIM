@@ -33,7 +33,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.lpe.common</groupId>
+			<groupId>org.aim</groupId>
 			<artifactId>org.aim.api</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>

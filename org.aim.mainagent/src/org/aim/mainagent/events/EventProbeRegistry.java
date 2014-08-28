@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aim.api.events.IEventProbe;
+
 /**
  * Registry contating event instrumentation information for event listening.
  * 

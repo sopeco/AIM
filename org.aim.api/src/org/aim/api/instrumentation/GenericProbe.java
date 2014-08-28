@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.probes;
+package org.aim.api.instrumentation;
 
-import org.aim.api.instrumentation.ProbeBeforePart;
-import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.api.measurement.collector.IDataCollector;
 
 /**
