@@ -9,9 +9,6 @@ BUILDDIR=./target/
 LIBNAME=CEventAgent
 SOURCES=CEventAgent.c
 
-# Object files needed to create library
-OBJECTS=$(SOURCES:%.c=%.o)
-
 # Library name and options needed to build it
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
@@ -28,17 +25,23 @@ else
 $(error error: unsupported operating system: $(UNAME))
 endif
 
+# Object files needed to create library
 ifeq ($(OS), Windows_NT)
-# Building a shared library
-#LINK_SHARED=$(LINK.c) -shared -o $@
+OBJECTS=$(LIBNAME).obj
+else
+OBJECTS=$(SOURCES:%.c=%.o)
+endif
 
-#COMMON_FLAGS+= /c /O1 /GR- /MD /D_STATIC_CPPLIB
+ifeq ($(OS), Windows_NT)
+VS_DIR = "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC"
+VS_LIB = $(VS_DIR)\lib\amd64
+VS_INCLUDE = $(VS_DIR)\include
+WIN_SDK = "C:\Program Files\Microsoft SDKs\Windows\v7.0\"
 
-#CFLAGS += $(COMMON_FLAGS)
+CFLAGS = /MD /Zi /Ox /Os /Gy /c
+CFLAGS += /I$(VS_LIB) /I$(VS_INCLUDE) /I"$(JAVA_HOME)\include" /I"$(JAVA_HOME)\include\win32"
 
-CFLAGS += /I"$(JAVA_HOME)\include" /I"$(JAVA_HOME)\include\$(JNI_OS)" /MD
-#CFLAGS += /I"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib"
-#CFLAGS += /link /DLL
+LFLAGS = -dll /LIBPATH:$(VS_LIB) /LIBPATH:$(WIN_SDK)\Lib\x64
 else
 # Building a shared library
 LINK_SHARED=$(LINK.c) -shared -o $@
@@ -61,9 +64,17 @@ endif
 build: $(LIBRARY)
 	cp $(LIBRARY) $(BUILDDIR)
 
+ifeq ($(OS), Windows_NT)
+$(LIBRARY): $(OBJECTS)
+	link $(LFLAGS) -out:$(LIBRARY) $(OBJECTS)
+
+$(OBJECTS): $(SOURCES)
+	cl $(CFLAGS) $(SOURCES)
+else
 # Build native library
 $(LIBRARY): $(OBJECTS)
 	$(LINK_SHARED) $(OBJECTS) $(LIBRARIES)
+endif
 
 # Cleanup the built bits
 clean:

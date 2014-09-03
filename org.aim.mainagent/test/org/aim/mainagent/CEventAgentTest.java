@@ -1,7 +1,6 @@
 package org.aim.mainagent;
 
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeNoException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,11 +15,11 @@ import org.aim.api.measurement.MeasurementData;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.api.measurement.collector.IDataCollector;
+import org.aim.artifacts.events.probes.MonitorWaitingTimeProbe;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.artifacts.records.EventTimeStampRecord;
 import org.aim.description.InstrumentationDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.events.ForMonitorWaitingTimeProbe;
 import org.aim.mainagent.sampling.Sampling;
 import org.junit.After;
 import org.junit.Before;
@@ -47,46 +46,34 @@ public class CEventAgentTest {
 	}
 
 	@Before
-	public void instrument() throws InstrumentationException {
-		try {
-			jvmti = new DummyJVMTIFacade();
-		} catch (NoSuchMethodException | SecurityException e) {
-			assumeNoException(e);
-		}
+	public void instrument() throws InstrumentationException, NoSuchMethodException, SecurityException,
+			NoSuchFieldException, IllegalArgumentException, IllegalAccessException, MeasurementException {
+		jvmti = new DummyJVMTIFacade();
 
-		try {
-			Field monitorEventListenerField = CEventAgentAdapter.class.getDeclaredField("initialized");
-			monitorEventListenerField.setAccessible(true);
-			monitorEventListenerField.setBoolean(null, true);
+		Field monitorEventListenerField = CEventAgentAdapter.class.getDeclaredField("initialized");
+		monitorEventListenerField.setAccessible(true);
+		monitorEventListenerField.setBoolean(null, true);
 
-			Field activatedField = CEventAgentAdapter.class.getDeclaredField("activated");
-			activatedField.setAccessible(true);
-			activatedField.setBoolean(null, true);
-		} catch (NoSuchFieldException | SecurityException e) {
-			assumeNoException(e);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			assumeNoException(e);
-		}
+		Field activatedField = CEventAgentAdapter.class.getDeclaredField("activated");
+		activatedField.setAccessible(true);
+		activatedField.setBoolean(null, true);
 
 		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		idBuilder.newSynchronizedScopeEntity().addProbe(ForMonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
+		idBuilder.newSynchronizedScopeEntity().addProbe(MonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
 		InstrumentationDescription desc = idBuilder.build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(desc);
 
-		try {
-			collector = AbstractDataSource.getDefaultDataSource();
+		collector = AbstractDataSource.getDefaultDataSource();
 
-			collector.enable();
-			Sampling.getInstance().start();
-		} catch (MeasurementException e) {
-			assumeNoException(e);
-		}
+		collector.enable();
+		Sampling.getInstance().start();
 	}
 
 	@Test
-	public void monitorEventsTest() throws IllegalAccessException, InvocationTargetException,
-			MeasurementException {
+	public void monitorEventsTest() throws IllegalAccessException, InvocationTargetException, MeasurementException,
+			NoSuchFieldException, SecurityException, NoSuchMethodException, InstrumentationException,
+			InterruptedException {
 		Thread thread = new Thread();
 		jvmti.newMonitorWaitEvent(thread, this, 1000);
 		MeasurementData data = getData();
@@ -106,59 +93,44 @@ public class CEventAgentTest {
 			jvmti.newMonitorEnteredEvent(thread, getClass(), i);
 		}
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			assumeNoException(e);
-		}
+		Thread.sleep(1000);
 
 		data = getData();
 		Assert.assertEquals(102, data.getRecords(EventTimeStampRecord.class).size());
 
 		jvmti.newMonitorEnteredEvent(null, null, -1);
 		jvmti.newMonitorWaitEvent(null, null, -1);
+		data = getData();
+		Assert.assertEquals(104, data.getRecords(EventTimeStampRecord.class).size());
 
 		// redeactivate
 
-		try {
-			Field activatedField = CEventAgentAdapter.class.getDeclaredField("activated");
-			activatedField.setAccessible(true);
-			activatedField.setBoolean(null, false);
+		Field activatedField = CEventAgentAdapter.class.getDeclaredField("activated");
+		activatedField.setAccessible(true);
+		activatedField.setBoolean(null, false);
 
-			Field eventInstrumentorField = AdaptiveInstrumentationFacade.class.getDeclaredField("eventInstrumentor");
-			Method undoInstrumentation = EventInstrumentor.class.getDeclaredMethod("undoInstrumentation");
-			undoInstrumentation.invoke(eventInstrumentorField.get(null));
+		Method undoInstrumentation = EventInstrumentor.class.getDeclaredMethod("undoInstrumentation");
+		undoInstrumentation.invoke(EventInstrumentor.getInstance());
 
-			activatedField.setBoolean(null, true);
-		} catch (NoSuchFieldException | SecurityException e) {
-			assumeNoException(e);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			assumeNoException(e);
-		} catch (NoSuchMethodException e) {
-			assumeNoException(e);
-		}
+		activatedField.setBoolean(null, true);
 
 		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		idBuilder.newSynchronizedScopeEntity().addProbe(ForMonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
+		idBuilder.newSynchronizedScopeEntity().addProbe(MonitorWaitingTimeProbe.MODEL_PROBE).entityDone();
 		InstrumentationDescription desc = idBuilder.build();
 
-		try {
-			AdaptiveInstrumentationFacade.getInstance().instrument(desc);
-		} catch (InstrumentationException e) {
-			assumeNoException(e);
-		}
+		AdaptiveInstrumentationFacade.getInstance().instrument(desc);
 
 		// Redeactivated
 
 		jvmti.newMonitorWaitEvent(thread, getClass(), 1000);
 		data = getData();
-		Assert.assertEquals(103, data.getRecords(EventTimeStampRecord.class).size());
+		Assert.assertEquals(105, data.getRecords(EventTimeStampRecord.class).size());
 	}
-	
+
 	@Test
-	public void loadTest() throws MeasurementException {
+	public void loadTest() throws MeasurementException, InterruptedException {
 		final Thread refThread = new Thread();
-		
+
 		final Thread threadOne = new Thread() {
 			public void run() {
 				for (int i = 0; i < 100; i++) {
@@ -170,7 +142,7 @@ public class CEventAgentTest {
 				}
 			};
 		};
-		
+
 		final Thread threadTwo = new Thread() {
 			public void run() {
 				for (int i = 0; i < 150; i++) {
@@ -182,23 +154,15 @@ public class CEventAgentTest {
 				}
 			};
 		};
-		
+
 		threadOne.start();
 		threadTwo.start();
-		
-		try {
-			threadOne.join();
-			threadTwo.join();
-		} catch (InterruptedException e) {
-			assumeNoException(e);
-		}
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			assumeNoException(e);
-		}
-		
+
+		threadOne.join();
+		threadTwo.join();
+
+		Thread.sleep(2000);
+
 		MeasurementData data = getData();
 		Assert.assertEquals(250, data.getRecords(EventTimeStampRecord.class).size());
 	}
@@ -208,12 +172,8 @@ public class CEventAgentTest {
 		collector.disable();
 	}
 
-	public static MeasurementData getData() throws MeasurementException {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			assumeNoException(e);
-		}
+	public static MeasurementData getData() throws MeasurementException, InterruptedException {
+		Thread.sleep(100);
 
 		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 

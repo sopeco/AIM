@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.events;
+package org.aim.api.events;
 
 /**
  * Common interface for event probes.
