@@ -76,19 +76,14 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             if instrumentation fails
 	 */
-	public synchronized void instrument(
-			InstrumentationDescription instrumentationDescription)
+	public synchronized void instrument(InstrumentationDescription instrumentationDescription)
 			throws InstrumentationException {
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(
-				InstrumentationConstants.AIM_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(
-				InstrumentationConstants.JAVA_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(
-				InstrumentationConstants.JAVASSIST_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(
-				InstrumentationConstants.JAVAX_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(
-				InstrumentationConstants.LPE_COMMON_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.AIM_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVA_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVASSIST_PACKAGE);
+		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVAX_PACKAGE);
+		instrumentationDescription.getGlobalRestriction()
+				.addPackageExclude(InstrumentationConstants.LPE_COMMON_PACKAGE);
 
 		methodInstrumentor.instrument(instrumentationDescription);
 		traceInstrumentor.instrument(instrumentationDescription);
@@ -98,8 +93,7 @@ public final class AdaptiveInstrumentationFacade {
 
 		if (!instrumentationDescription.getSamplingDescriptions().isEmpty()) {
 			try {
-				Sampling.getInstance().addMonitoringJob(
-						instrumentationDescription.getSamplingDescriptions());
+				Sampling.getInstance().addMonitoringJob(instrumentationDescription.getSamplingDescriptions());
 			} catch (MeasurementException e) {
 				throw new InstrumentationException(e);
 			}
@@ -112,8 +106,7 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             if instrumentation fails
 	 */
-	public synchronized void undoInstrumentation()
-			throws InstrumentationException {
+	public synchronized void undoInstrumentation() throws InstrumentationException {
 		methodInstrumentor.undoInstrumentation();
 		traceInstrumentor.undoInstrumentation();
 		eventInstrumentor.undoInstrumentation();
@@ -129,10 +122,8 @@ public final class AdaptiveInstrumentationFacade {
 	 */
 	public synchronized FlatInstrumentationState getInstrumentationState() {
 		FlatInstrumentationState fmInstrumentation = new FlatInstrumentationState();
-		for (FlatInstrumentationEntity fie : methodInstrumentor
-				.getCurrentInstrumentationState()) {
-			fmInstrumentation.addEntity(fie.getMethodSignature(), fie
-					.getProbeType().getName());
+		for (FlatInstrumentationEntity fie : methodInstrumentor.getCurrentInstrumentationState()) {
+			fmInstrumentation.addEntity(fie.getMethodSignature(), fie.getProbeType().getName());
 		}
 		return fmInstrumentation;
 	}
@@ -144,13 +135,11 @@ public final class AdaptiveInstrumentationFacade {
 	 * @throws InstrumentationException
 	 *             thrown if extensions cannot be retrieved
 	 */
-	public synchronized SupportedExtensions getSupportedExtensions()
-			throws InstrumentationException {
+	public synchronized SupportedExtensions getSupportedExtensions() throws InstrumentationException {
 		if (extensions == null) {
 			extensions = new SupportedExtensions();
 
-			for (IExtension<?> extension : ExtensionRegistry.getSingleton()
-					.getExtensions()) {
+			for (IExtension<?> extension : ExtensionRegistry.getSingleton().getExtensions()) {
 				if (extension instanceof AbstractCustomScopeExtension) {
 					extensions.getCustomScopeExtensions().add(extension.getName());
 				} else if (extension instanceof AbstractEnclosingProbeExtension) {

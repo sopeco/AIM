@@ -18,6 +18,7 @@
 		<module>../org.aim.mainagent</module>
 		<module>../org.aim.cagent</module>
 		<module>../org.aim.resourcemonitoring</module>
+		<module>../org.aim.ui</module>
 	</modules>
 
 	<repositories>
