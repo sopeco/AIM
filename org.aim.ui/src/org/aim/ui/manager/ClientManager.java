@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.aim.api.exceptions.InstrumentationException;
+import org.aim.api.exceptions.MeasurementException;
 import org.aim.artifacts.instrumentation.InstrumentationClient;
+import org.aim.description.InstrumentationDescription;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;
 import org.aim.ui.view.MainView.ClientSettingsState;
@@ -106,6 +109,38 @@ public class ClientManager {
 	private void connected() {
 		for (ConnectionStateListener l : csListener) {
 			l.onConnection();
+		}
+	}
+
+	public void startMonitoring() {
+		try {
+			client.enableMonitoring();
+		} catch (MeasurementException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void stopMonitoring() {
+		try {
+			client.disableMonitoring();
+		} catch (MeasurementException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void instrument(InstrumentationDescription instrumentationDescription) {
+		try {
+			client.instrument(instrumentationDescription);
+		} catch (InstrumentationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void uninstrument() {
+		try {
+			client.uninstrument();
+		} catch (InstrumentationException e) {
+			throw new RuntimeException(e);
 		}
 	}
 

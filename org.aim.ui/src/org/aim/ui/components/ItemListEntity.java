@@ -57,6 +57,11 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 			for (String v : values) {
 				((JComboBox<String>) textField).addItem(v);
 			}
+			for (int i = 0; i < ((JComboBox<String>) textField).getItemCount(); i++) {
+				if (((JComboBox<String>) textField).getItemAt(i).equals(value)) {
+					((JComboBox<String>) textField).setSelectedIndex(i);
+				}
+			}
 		}
 
 		GridBagConstraints gbc_textField = new GridBagConstraints();

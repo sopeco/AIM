@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,26 +17,26 @@ import org.aim.ui.manager.ClientManager;
 
 public class ScopePanel extends JPanel implements ActionListener {
 
-	private static final String ALLOCATION_SCOPE = "Allocation Scope";
-
-	private static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
-
-	private static final String METHOD_SCOPE = "Method Scope";
+	public static final String ALLOCATION_SCOPE = "Allocation Scope";
+	public static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
+	public static final String METHOD_SCOPE = "Method Scope";
 
 	/** */
 	private static final long serialVersionUID = 1L;
 
 	private JComboBox<String> comboBox;
 	private JLabel lblSettings;
-	private ItemListPanel panel;
+	private ItemListPanel lpScopeSettings;
+	private JLabel lblTraceScope;
+	private JCheckBox checkBoxTrace;
 
 	public ScopePanel() {
 		setBorder(new TitledBorder(null, "Scope", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
 		JLabel lblType = new JLabel("Type:");
@@ -55,25 +56,40 @@ public class ScopePanel extends JPanel implements ActionListener {
 		gbc_comboBox.gridy = 0;
 		add(comboBox, gbc_comboBox);
 
+		lblTraceScope = new JLabel("Trace Scope:");
+		GridBagConstraints gbc_lblTraceScope = new GridBagConstraints();
+		gbc_lblTraceScope.anchor = GridBagConstraints.WEST;
+		gbc_lblTraceScope.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTraceScope.gridx = 0;
+		gbc_lblTraceScope.gridy = 1;
+		add(lblTraceScope, gbc_lblTraceScope);
+
+		checkBoxTrace = new JCheckBox("");
+		GridBagConstraints gbc_checkBoxTrace = new GridBagConstraints();
+		gbc_checkBoxTrace.insets = new Insets(0, 0, 5, 0);
+		gbc_checkBoxTrace.anchor = GridBagConstraints.WEST;
+		gbc_checkBoxTrace.gridx = 1;
+		gbc_checkBoxTrace.gridy = 1;
+		add(checkBoxTrace, gbc_checkBoxTrace);
+
 		lblSettings = new JLabel("Method Patterns:");
 		GridBagConstraints gbc_lblSettings = new GridBagConstraints();
 		gbc_lblSettings.anchor = GridBagConstraints.NORTH;
 		gbc_lblSettings.insets = new Insets(5, 0, 0, 5);
 		gbc_lblSettings.gridx = 0;
-		gbc_lblSettings.gridy = 1;
+		gbc_lblSettings.gridy = 2;
 		add(lblSettings, gbc_lblSettings);
 
-		panel = new ItemListPanel();
+		lpScopeSettings = new ItemListPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 1;
-		gbc_panel.gridy = 1;
-		add(panel, gbc_panel);
+		gbc_panel.gridy = 2;
+		add(lpScopeSettings, gbc_panel);
 
 		// /
-		panel.setValidationPattern("([a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*\\.)*[a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*");
+		lpScopeSettings.setValidationPattern("([a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*\\.)*[a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*");
 
-		comboBox.addItem("Trace Scope");
 		comboBox.addItem(METHOD_SCOPE);
 		comboBox.addItem(CONSTRUCTOR_SCOPE);
 		comboBox.addItem(ALLOCATION_SCOPE);
@@ -85,13 +101,44 @@ public class ScopePanel extends JPanel implements ActionListener {
 		}
 	}
 
+	public String getSelectedScope() {
+		return (String) comboBox.getSelectedItem();
+	}
+
+	public String[] getSettings() {
+		if (lblSettings.isVisible()) {
+			return lpScopeSettings.getValues().toArray(new String[0]);
+		} else {
+			return new String[0];
+		}
+	}
+
+	public boolean isTraceScope() {
+		return checkBoxTrace.isVisible() && checkBoxTrace.isSelected();
+	}
+
+	public void setScope(String scope) {
+		for (int i = 0; i < comboBox.getItemCount(); i++) {
+			if (comboBox.getItemAt(i).equals(scope)) {
+				comboBox.setSelectedIndex(i);
+				return;
+			}
+		}
+		comboBox.addItem(scope);
+		comboBox.setSelectedIndex(comboBox.getItemCount() - 1);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		panel.removeItems();
+		lpScopeSettings.removeItems();
 		String scp = (String) comboBox.getSelectedItem();
 
 		if (scp.equals(METHOD_SCOPE) || scp.equals(CONSTRUCTOR_SCOPE) || scp.equals(ALLOCATION_SCOPE)) {
 			showSettings();
+
+			if (!scp.equals(ALLOCATION_SCOPE)) {
+				showTraceOption();
+			}
 
 			String lblText;
 			if (scp.equals(METHOD_SCOPE)) {
@@ -103,17 +150,38 @@ public class ScopePanel extends JPanel implements ActionListener {
 			lblSettings.setText(lblText);
 		} else {
 			hideSettings();
+			hideTraceOption();
 		}
 	}
 
 	private void hideSettings() {
 		lblSettings.setVisible(false);
-		panel.setVisible(false);
+		lpScopeSettings.setVisible(false);
 	}
 
 	private void showSettings() {
 		lblSettings.setVisible(true);
-		panel.setVisible(true);
+		lpScopeSettings.setVisible(true);
+	}
+
+	private void hideTraceOption() {
+		lblTraceScope.setVisible(false);
+		checkBoxTrace.setVisible(false);
+	}
+
+	private void showTraceOption() {
+		lblTraceScope.setVisible(true);
+		checkBoxTrace.setVisible(true);
+	}
+
+	public void setTraceScope(boolean b) {
+		checkBoxTrace.setSelected(true);
+	}
+
+	public void setScopeSettings(String[] scopeSettings) {
+		for (String s : scopeSettings) {
+			lpScopeSettings.addItem(s);
+		}
 	}
 
 }

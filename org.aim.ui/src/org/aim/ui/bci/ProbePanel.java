@@ -35,4 +35,14 @@ public class ProbePanel extends JPanel {
 			panel.setPredefinedValues(ClientManager.SINGLETON().getProbes());
 		}
 	}
+	
+	public String[] getProbes() {
+		return panel.getValues().toArray(new String[0]);
+	}
+	
+	public void setProbes(String[] probes) {
+		for (String probe : probes) {
+			panel.addItem(probe);
+		}
+	}
 }

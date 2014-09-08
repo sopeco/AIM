@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -15,6 +16,10 @@ import org.aim.ui.components.ItemListPanel;
 public class RestrictionPanel extends JPanel {
 	/** */
 	private static final long serialVersionUID = 1L;
+	private ItemListPanel lpIncModifier;
+	private ItemListPanel lpExcModifier;
+	private ItemListPanel lpIncPackage;
+	private ItemListPanel lpExcPackage;
 
 	public RestrictionPanel() {
 		setBorder(new TitledBorder(null, "Restrictions", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -42,7 +47,7 @@ public class RestrictionPanel extends JPanel {
 		gbc_lblExclude.gridy = 1;
 		add(lblExclude, gbc_lblExclude);
 
-		ItemListPanel lpExcPackage = new ItemListPanel();
+		lpExcPackage = new ItemListPanel();
 		GridBagConstraints gbc_lpExcPackage = new GridBagConstraints();
 		gbc_lpExcPackage.insets = new Insets(0, 0, 5, 0);
 		gbc_lpExcPackage.fill = GridBagConstraints.BOTH;
@@ -58,7 +63,7 @@ public class RestrictionPanel extends JPanel {
 		gbc_lblInclude.gridy = 2;
 		add(lblInclude, gbc_lblInclude);
 
-		ItemListPanel lpIncPackage = new ItemListPanel();
+		lpIncPackage = new ItemListPanel();
 		GridBagConstraints gbc_lpIncPackage = new GridBagConstraints();
 		gbc_lpIncPackage.insets = new Insets(0, 0, 5, 0);
 		gbc_lpIncPackage.fill = GridBagConstraints.BOTH;
@@ -83,7 +88,7 @@ public class RestrictionPanel extends JPanel {
 		gbc_lblExclude_1.gridy = 4;
 		add(lblExclude_1, gbc_lblExclude_1);
 
-		ItemListPanel lpExcModifier = new ItemListPanel();
+		lpExcModifier = new ItemListPanel();
 		GridBagConstraints gbc_lpExcModifier = new GridBagConstraints();
 		gbc_lpExcModifier.insets = new Insets(0, 0, 5, 0);
 		gbc_lpExcModifier.fill = GridBagConstraints.BOTH;
@@ -99,7 +104,7 @@ public class RestrictionPanel extends JPanel {
 		gbc_lblInclude_1.gridy = 5;
 		add(lblInclude_1, gbc_lblInclude_1);
 
-		ItemListPanel lpIncModifier = new ItemListPanel();
+		lpIncModifier = new ItemListPanel();
 		GridBagConstraints gbc_lpIncModifier = new GridBagConstraints();
 		gbc_lpIncModifier.fill = GridBagConstraints.BOTH;
 		gbc_lpIncModifier.gridx = 1;
@@ -116,4 +121,51 @@ public class RestrictionPanel extends JPanel {
 		lpIncModifier.setEditable(false);
 	}
 
+	public String[] getExcludedPackages() {
+		return lpExcPackage.getValues().toArray(new String[0]);
+	}
+
+	public String[] getIncludedPackages() {
+		return lpIncPackage.getValues().toArray(new String[0]);
+	}
+
+	public int[] getExcludedModifiers() {
+		return modifierIntArray(lpExcModifier.getValues().toArray(new String[0]));
+	}
+
+	public int[] getIncludedModifiers() {
+		return modifierIntArray(lpIncModifier.getValues().toArray(new String[0]));
+	}
+
+	private int[] modifierIntArray(String[] values) {
+		int[] mods = new int[values.length];
+		for (int i = 0; i < mods.length; i++) {
+			mods[i] = Modifier.valueOf(values[i]).ordinal();
+		}
+		return mods;
+	}
+
+	public void setExcludedModifiers(int[] exModifiers) {
+		for (int mod : exModifiers) {
+			lpExcModifier.addItem(Modifier.values()[mod].name());
+		}
+	}
+	
+	public void setIncludedModifiers(int[] inModifiers) {
+		for (int mod : inModifiers) {
+			lpIncModifier.addItem(Modifier.values()[mod].name());
+		}
+	}
+
+	public void setExcludedPackages(String[] exPackages) {
+		for (String s : exPackages) {
+			lpExcPackage.addItem(s);
+		}
+	}
+
+	public void setIncludedPackages(String[] inPackages) {
+		for (String s : inPackages) {
+			lpIncPackage.addItem(s);
+		}
+	}
 }

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -30,12 +31,16 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import org.aim.description.restrictions.Restriction;
 import org.aim.ui.Main;
 import org.aim.ui.bci.InstrumentationEntityWizard;
+import org.aim.ui.bci.RestrictionPanel;
+import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.manager.ClientManager;
+import org.aim.ui.manager.Core;
 
-public class MainView extends JFrame implements ConnectionStateListener {
+public class MainView extends JFrame implements ConnectionStateListener, ActionListener {
 
 	public enum ClientSettingsState {
 		CONNECTED, CONNECTING, DEFAULT
@@ -69,6 +74,16 @@ public class MainView extends JFrame implements ConnectionStateListener {
 	private JTextPane textLog;
 
 	private JButton btnAddIE;
+
+	private JButton btnInstrument;
+
+	private JButton btnMonitoring;
+
+	private JPanel bciPanel;
+
+	private RestrictionPanel panelGlobalRestrictions;
+
+	private JButton btnImportInstrumentationEntity;
 
 	@Override
 	public void onConnection() {
@@ -143,6 +158,21 @@ public class MainView extends JFrame implements ConnectionStateListener {
 		});
 		panel.add(btnConnect);
 
+		JPanel panel_7 = new JPanel();
+		FlowLayout flowLayout_3 = (FlowLayout) panel_7.getLayout();
+		flowLayout_3.setAlignment(FlowLayout.RIGHT);
+		panel.add(panel_7);
+
+		btnInstrument = new JButton("Instrument");
+		btnInstrument.addActionListener(this);
+		btnInstrument.setEnabled(false);
+		panel_7.add(btnInstrument);
+
+		btnMonitoring = new JButton("Start Monitoring");
+		btnMonitoring.addActionListener(this);
+		btnMonitoring.setEnabled(false);
+		panel_7.add(btnMonitoring);
+
 		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
@@ -162,7 +192,7 @@ public class MainView extends JFrame implements ConnectionStateListener {
 		gbl_panel_3.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		panel_3.setLayout(gbl_panel_3);
 
-		JPanel bciPanel = new JPanel();
+		bciPanel = new JPanel();
 		GridBagConstraints gbc_bciPanel = new GridBagConstraints();
 		gbc_bciPanel.insets = new Insets(5, 5, 5, 5);
 		gbc_bciPanel.anchor = GridBagConstraints.NORTH;
@@ -191,6 +221,14 @@ public class MainView extends JFrame implements ConnectionStateListener {
 				dialog.setVisible(true);
 			}
 		});
+		
+		btnImportInstrumentationEntity = new JButton("Import Instrumentation Entity");
+		btnImportInstrumentationEntity.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Core.instance().importRawInstrumentationEntityFromFile();
+			}
+		});
+		panel_2.add(btnImportInstrumentationEntity);
 		panel_2.add(btnAddIE);
 
 		JPanel panel_6 = new JPanel();
@@ -198,6 +236,7 @@ public class MainView extends JFrame implements ConnectionStateListener {
 
 		JPanel panel_4 = new JPanel();
 		tabbedPane.addTab("Global Restrictions", null, panel_4, null);
+		tabbedPane.setEnabledAt(2, false);
 		panel_4.setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_5 = new JPanel();
@@ -270,6 +309,12 @@ public class MainView extends JFrame implements ConnectionStateListener {
 		JLabel lblNoRestrictionsSpecified_1 = new JLabel("   No restrictions specified.");
 		panelRestModifiers.add(lblNoRestrictionsSpecified_1);
 
+		JScrollPane scrollPane = new JScrollPane();
+		tabbedPane.addTab("Global Restriction (2)", null, scrollPane, null);
+
+		panelGlobalRestrictions = new RestrictionPanel();
+		scrollPane.setViewportView(panelGlobalRestrictions);
+
 		textLog = new JTextPane();
 		textLog.setEditable(false);
 
@@ -278,11 +323,28 @@ public class MainView extends JFrame implements ConnectionStateListener {
 
 		getContentPane().add(scrollPaneLog, BorderLayout.SOUTH);
 		//
-		setSize(600, 480);
+		setSize(680, 480);
 
 		loadHosts();
-		
+
 		onDisconnection();
+	}
+
+	public Restriction getGlobalRestriction() {
+		Restriction restriction = new Restriction();
+		for (int mod : panelGlobalRestrictions.getExcludedModifiers()) {
+			restriction.addModifierExclude(mod);
+		}
+		for (int mod : panelGlobalRestrictions.getIncludedModifiers()) {
+			restriction.addModifierInclude(mod);
+		}
+		for (String pge : panelGlobalRestrictions.getExcludedPackages()) {
+			restriction.addPackageExclude(pge);
+		}
+		for (String pge : panelGlobalRestrictions.getIncludedPackages()) {
+			restriction.addPackageInclude(pge);
+		}
+		return restriction;
 	}
 
 	public void addLogMessage(String message) {
@@ -322,12 +384,19 @@ public class MainView extends JFrame implements ConnectionStateListener {
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(true);
 			btnConnect.setText("Disconnect");
+			btnInstrument.setText("Instrument");
+			btnInstrument.setEnabled(true);
+			btnMonitoring.setEnabled(false);
+			btnImportInstrumentationEntity.setEnabled(true);
 			break;
 		case CONNECTING:
 			inputHost.setEnabled(false);
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(false);
 			btnConnect.setText("Connecting..");
+			btnInstrument.setEnabled(false);
+			btnMonitoring.setEnabled(false);
+			btnImportInstrumentationEntity.setEnabled(false);
 			break;
 		case DEFAULT:
 		default:
@@ -335,7 +404,52 @@ public class MainView extends JFrame implements ConnectionStateListener {
 			inputPort.setEnabled(true);
 			btnConnect.setEnabled(true);
 			btnConnect.setText("Connect");
+			btnInstrument.setEnabled(false);
+			btnMonitoring.setEnabled(false);
+			btnImportInstrumentationEntity.setEnabled(false);
 			break;
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnInstrument) {
+			if (btnInstrument.getText().equals("Instrument")) {
+				// Instrument
+				Core.instance().instrument();
+				btnConnect.setEnabled(false);
+				btnInstrument.setText("Uninstrument");
+				btnMonitoring.setEnabled(true);
+			} else {
+				// Uninstrument
+				Core.instance().uninstrument();
+				btnConnect.setEnabled(true);
+				btnInstrument.setText("Instrument");
+				btnMonitoring.setEnabled(false);
+			}
+		} else if (e.getSource() == btnMonitoring) {
+			if (btnMonitoring.getText().equals("Start Monitoring")) {
+				// Start Monitoring
+				btnInstrument.setEnabled(false);
+				btnMonitoring.setText("Stop Monitoring");
+			} else {
+				// Stop Monitoring
+				btnInstrument.setEnabled(true);
+				btnMonitoring.setText("Start Monitoring");
+			}
+		}
+	}
+
+	public void updateInstrumentEntities(Collection<RawInstrumentationEntity> entities) {
+		bciPanel.removeAll();
+		bciPanel.setLayout(new GridLayout(entities.size(), 1, 5, 5));
+
+		for (RawInstrumentationEntity raw : entities) {
+			BCIComponent bci = new BCIComponent();
+			bci.setRawEntity(raw);
+			bciPanel.add(bci);
+		}
+
+		revalidate();
 	}
 }
