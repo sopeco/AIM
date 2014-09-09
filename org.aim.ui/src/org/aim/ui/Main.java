@@ -15,24 +15,35 @@ import org.slf4j.LoggerFactory;
  * @author Marius Oehler
  *
  */
-public class Main {
+public final class Main {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	private static Executor THREAD_POOL = Executors.newCachedThreadPool();
+	private static Executor threadPool = Executors.newCachedThreadPool();
 
 	/**
-	 * Shutdown logic of the application
+	 * Shutdown logic of the application.
 	 */
 	public static void exit() {
 		LOGGER.debug("Exit..");
 		System.exit(0);
 	}
 
+	/**
+	 * This pool can be used, if a thread is needed.
+	 * 
+	 * @return a cached ThreadPool
+	 */
 	public static Executor getThreadPool() {
-		return THREAD_POOL;
+		return threadPool;
 	}
 
+	/**
+	 * The application's starting method.
+	 * 
+	 * @param args
+	 *            - program arguments
+	 */
 	public static void main(String[] args) {
 		LOGGER.debug("Starting AIM UserInterface");
 
@@ -52,6 +63,9 @@ public class Main {
 		MainView.SINGLETON().setLocationRelativeTo(null);
 	}
 
+	/**
+	 * Hidden constructor to prevent instantiation of this class.
+	 */
 	private Main() {
 	}
 
