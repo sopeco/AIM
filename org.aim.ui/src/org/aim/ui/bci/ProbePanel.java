@@ -9,12 +9,21 @@ import javax.swing.border.TitledBorder;
 import org.aim.ui.components.ItemListPanel;
 import org.aim.ui.manager.ClientManager;
 
+/**
+ * Panel to define probes.
+ * 
+ * @author Marius Oehler
+ *
+ */
 public class ProbePanel extends JPanel {
 	/**  */
 	private static final long serialVersionUID = 1L;
 
 	private ItemListPanel panel;
 
+	/**
+	 * Constructor.
+	 */
 	public ProbePanel() {
 		setBorder(new TitledBorder(null, "Probes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -25,21 +34,32 @@ public class ProbePanel extends JPanel {
 		setLayout(gridBagLayout);
 
 		panel = new ItemListPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		add(panel, gbc_panel);
+		GridBagConstraints gbcPanel = new GridBagConstraints();
+		gbcPanel.fill = GridBagConstraints.BOTH;
+		gbcPanel.gridx = 0;
+		gbcPanel.gridy = 0;
+		add(panel, gbcPanel);
 
 		if (ClientManager.SINGLETON().isConnected()) {
 			panel.setPredefinedValues(ClientManager.SINGLETON().getProbes());
 		}
 	}
-	
+
+	/**
+	 * Returns an array of the specified probes.
+	 * 
+	 * @return an array with strings, representing probes
+	 */
 	public String[] getProbes() {
 		return panel.getValues().toArray(new String[0]);
 	}
-	
+
+	/**
+	 * Sets the given probes into the inputfields.
+	 * 
+	 * @param probes
+	 *            - the probes to set
+	 */
 	public void setProbes(String[] probes) {
 		for (String probe : probes) {
 			panel.addItem(probe);

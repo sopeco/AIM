@@ -12,15 +12,27 @@ import javax.swing.JDialog;
 import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.manager.Core;
 
+/**
+ * An wizard to create an InstrumentationEntity.
+ * 
+ * @author Marius Oehler
+ *
+ */
 public class InstrumentationEntityWizard extends JDialog implements ActionListener {
+
 	/**  */
 	private static final long serialVersionUID = 1L;
+	private static final int INSET_VALUE = 5;
+	
 	private JButton btnSave;
-	private ScopePanel scpPanel;
 	private ProbePanel probePanel;
-	private RestrictionPanel restrictionPanel;
 	private RawInstrumentationEntity rawEntity;
+	private RestrictionPanel restrictionPanel;
+	private ScopePanel scpPanel;
 
+	/**
+	 * Constructor.
+	 */
 	public InstrumentationEntityWizard() {
 		setTitle("Add Instrumentation Entity");
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -31,69 +43,60 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		getContentPane().setLayout(gridBagLayout);
 
 		scpPanel = new ScopePanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.gridwidth = 2;
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.anchor = GridBagConstraints.NORTH;
-		gbc_panel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		getContentPane().add(scpPanel, gbc_panel);
+		GridBagConstraints gbcPanel = new GridBagConstraints();
+		gbcPanel.gridwidth = 2;
+		gbcPanel.insets = new Insets(0, 0, INSET_VALUE, 0);
+		gbcPanel.anchor = GridBagConstraints.NORTH;
+		gbcPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcPanel.gridx = 0;
+		gbcPanel.gridy = 0;
+		getContentPane().add(scpPanel, gbcPanel);
 
 		probePanel = new ProbePanel();
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.gridwidth = 2;
-		gbc_panel_1.insets = new Insets(0, 0, 5, 0);
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 0;
-		gbc_panel_1.gridy = 1;
-		getContentPane().add(probePanel, gbc_panel_1);
+		GridBagConstraints gbcPanel1 = new GridBagConstraints();
+		gbcPanel1.gridwidth = 2;
+		gbcPanel1.insets = new Insets(0, 0, INSET_VALUE, 0);
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.gridx = 0;
+		gbcPanel1.gridy = 1;
+		getContentPane().add(probePanel, gbcPanel1);
 
 		restrictionPanel = new RestrictionPanel();
-		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-		gbc_panel_2.gridwidth = 2;
-		gbc_panel_2.insets = new Insets(0, 0, 5, 5);
-		gbc_panel_2.fill = GridBagConstraints.BOTH;
-		gbc_panel_2.gridx = 0;
-		gbc_panel_2.gridy = 2;
-		getContentPane().add(restrictionPanel, gbc_panel_2);
+		GridBagConstraints gbcPanel2 = new GridBagConstraints();
+		gbcPanel2.gridwidth = 2;
+		gbcPanel2.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcPanel2.fill = GridBagConstraints.BOTH;
+		gbcPanel2.gridx = 0;
+		gbcPanel2.gridy = 2;
+		getContentPane().add(restrictionPanel, gbcPanel2);
 
 		btnSave = new JButton("Save");
 		btnSave.addActionListener(this);
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.anchor = GridBagConstraints.SOUTHEAST;
-		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 3;
-		getContentPane().add(btnSave, gbc_btnNewButton);
+		GridBagConstraints gbcBtnNewButton = new GridBagConstraints();
+		gbcBtnNewButton.anchor = GridBagConstraints.SOUTHEAST;
+		gbcBtnNewButton.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcBtnNewButton.gridx = 0;
+		// CHECKSTYLE:OFF
+		gbcBtnNewButton.gridy = 3;
+		// CHECKSTYLE:ON
+		getContentPane().add(btnSave, gbcBtnNewButton);
 
-		JButton btnNewButton_1 = new JButton("Cancel");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		JButton btnNewButton1 = new JButton("Cancel");
+		btnNewButton1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
 		});
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 0);
-		gbc_btnNewButton_1.anchor = GridBagConstraints.SOUTHEAST;
-		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
-		gbc_btnNewButton_1.gridx = 1;
-		gbc_btnNewButton_1.gridy = 3;
-		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
-	}
-
-	public RawInstrumentationEntity getRawInstrumentationEntity() {
-		RawInstrumentationEntity entity = new RawInstrumentationEntity();
-		entity.setScope(scpPanel.getSelectedScope());
-		entity.setTraceScope(scpPanel.isTraceScope());
-		entity.setScopeSettings(scpPanel.getSettings());
-		entity.setProbes(probePanel.getProbes());
-		entity.setExcModifiers(restrictionPanel.getExcludedModifiers());
-		entity.setIncModifiers(restrictionPanel.getIncludedModifiers());
-		entity.setExcPackages(restrictionPanel.getExcludedPackages());
-		entity.setIncPackages(restrictionPanel.getIncludedPackages());
-		return entity;
+		GridBagConstraints gbcBtnNewButton1 = new GridBagConstraints();
+		gbcBtnNewButton1.insets = new Insets(0, 0, INSET_VALUE, 0);
+		gbcBtnNewButton.insets = new Insets(0, 0, INSET_VALUE, 0);
+		// CHECKSTYLE:OFF
+		gbcBtnNewButton1.gridy = 3;
+		// CHECKSTYLE:ON
+		gbcBtnNewButton1.gridx = 1;
+		gbcBtnNewButton1.anchor = GridBagConstraints.SOUTHEAST;
+		getContentPane().add(btnNewButton1, gbcBtnNewButton1);
 	}
 
 	@Override
@@ -108,6 +111,30 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		}
 	}
 
+	/**
+	 * Builds the RawInstrumentationEntity out of the wizard's inputfields.
+	 * 
+	 * @return the {@link RawInstrumentationEntity}
+	 */
+	public RawInstrumentationEntity getRawInstrumentationEntity() {
+		RawInstrumentationEntity entity = new RawInstrumentationEntity();
+		entity.setScope(scpPanel.getSelectedScope());
+		entity.setTraceScope(scpPanel.isTraceScope());
+		entity.setScopeSettings(scpPanel.getSettings());
+		entity.setProbes(probePanel.getProbes());
+		entity.setExcModifiers(restrictionPanel.getExcludedModifiers());
+		entity.setIncModifiers(restrictionPanel.getIncludedModifiers());
+		entity.setExcPackages(restrictionPanel.getExcludedPackages());
+		entity.setIncPackages(restrictionPanel.getIncludedPackages());
+		return entity;
+	}
+
+	/**
+	 * Loads an {@link RawInstrumentationEntity} into the wizard.
+	 * 
+	 * @param entity
+	 *            - the {@link RawInstrumentationEntity} to load
+	 */
 	public void setRawInstrumentationEntity(RawInstrumentationEntity entity) {
 		rawEntity = entity;
 		scpPanel.setScope(entity.getScope());

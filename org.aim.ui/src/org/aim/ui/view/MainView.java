@@ -248,7 +248,7 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		btnAddRestriction.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RestrictionAddingView view = new RestrictionAddingView(MainView.this);
+				new RestrictionAddingView(MainView.this);
 			}
 		});
 		panel_5.add(btnAddRestriction);

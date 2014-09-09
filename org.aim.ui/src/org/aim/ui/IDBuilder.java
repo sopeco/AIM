@@ -10,16 +10,29 @@ import org.aim.description.restrictions.Restriction;
 import org.aim.ui.bci.ScopePanel;
 import org.aim.ui.entities.RawInstrumentationEntity;
 
-public class IDBuilder {
+/**
+ * 
+ * @author Marius Oehler
+ *
+ */
+public final class IDBuilder {
 
-	private IDBuilder() {
-	}
-
-	public static InstrumentationDescription build(Collection<RawInstrumentationEntity> rie,
+	/**
+	 * Builds an {@link InstrumentationDescription} from a collection of
+	 * {@link RawInstrumentationEntity}.
+	 * 
+	 * @param instrumentationEntites
+	 *            - collection of {@link RawInstrumentationEntity} which
+	 *            represents {@link org.aim.description.InstrumentationEntity}
+	 * @param globalRestriction
+	 *            - the global restrictions
+	 * @return an {@link InstrumentationDescription}
+	 */
+	public static InstrumentationDescription build(Collection<RawInstrumentationEntity> instrumentationEntites,
 			Restriction globalRestriction) {
 		InstrumentationDescriptionBuilder descBuilder = new InstrumentationDescriptionBuilder();
 
-		for (RawInstrumentationEntity entity : rie) {
+		for (RawInstrumentationEntity entity : instrumentationEntites) {
 			InstrumentationEntityBuilder<?> entBuilder;
 
 			// ###### Create Scope
@@ -70,7 +83,7 @@ public class IDBuilder {
 		}
 
 		// ###### Sampler
-		//TODO
+		// TODO
 
 		// ###### Global Restriction
 		RestrictionBuilder<InstrumentationDescriptionBuilder> globalRestrictionBuilder = descBuilder
@@ -96,5 +109,11 @@ public class IDBuilder {
 		InstrumentationDescription instDescription = descBuilder.build();
 
 		return instDescription;
+	}
+
+	/**
+	 * Hidden constructor to prevent instantiation of this class.
+	 */
+	private IDBuilder() {
 	}
 }
