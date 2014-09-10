@@ -185,7 +185,7 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 		gbc_lblNewLabel_2.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblNewLabel_2.insets = new Insets(0, 5, 0, 5);
+		gbc_lblNewLabel_2.insets = new Insets(0, 5, 5, 5);
 		gbc_lblNewLabel_2.gridx = 0;
 		gbc_lblNewLabel_2.gridy = 7;
 		add(lblNewLabel_2, gbc_lblNewLabel_2);
@@ -193,7 +193,7 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblPackageInc = new JLabel("PackageInc");
 		GridBagConstraints gbc_lblPackageInc = new GridBagConstraints();
 		gbc_lblPackageInc.gridwidth = 4;
-		gbc_lblPackageInc.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPackageInc.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPackageInc.anchor = GridBagConstraints.WEST;
 		gbc_lblPackageInc.gridx = 1;
 		gbc_lblPackageInc.gridy = 7;

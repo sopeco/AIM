@@ -16,28 +16,53 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * 
+ * ItemPanel that is used by the {@link ItemListPanel}.
+ * 
+ * @author Marius Oehler
+ *
+ */
 @SuppressWarnings("unchecked")
 public class ItemListEntity extends JPanel implements ActionListener, KeyListener {
 
 	/**  */
 	private static final long serialVersionUID = 1L;
+	
+	private static final int INSET_VALUE = 5;
+	private static final Color WARNING_BG_COLOR = new Color(255, 200, 200);
 
 	private JButton btnRemove;
-
 	private boolean isTextbox;
-
 	private ItemListPanel listPanel;
-
 	private JComponent textField;
 
+	/**
+	 * Constructor. Equal to <code>ItemListEntity("")</code>.
+	 */
 	public ItemListEntity() {
 		this("");
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param value
+	 *            - the value of this item
+	 */
 	public ItemListEntity(String value) {
 		this(value, null);
 	}
 
+	/**
+	 * Construcotr. Sets the value of this item to the given value and produces
+	 * a list with the values out of the given list.
+	 * 
+	 * @param value
+	 *            - value of this item
+	 * @param values
+	 *            - list of selectable values
+	 */
 	public ItemListEntity(String value, List<String> values) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
@@ -64,20 +89,20 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 			}
 		}
 
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 0, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 0;
-		add(textField, gbc_textField);
+		GridBagConstraints gbcTextField = new GridBagConstraints();
+		gbcTextField.insets = new Insets(0, 0, 0, INSET_VALUE);
+		gbcTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbcTextField.gridx = 0;
+		gbcTextField.gridy = 0;
+		add(textField, gbcTextField);
 		// textField.setColumns(10);
 
 		btnRemove = new JButton("Remove");
 		btnRemove.addActionListener(this);
-		GridBagConstraints gbc_btnRemove = new GridBagConstraints();
-		gbc_btnRemove.gridx = 1;
-		gbc_btnRemove.gridy = 0;
-		add(btnRemove, gbc_btnRemove);
+		GridBagConstraints gbcBtnRemove = new GridBagConstraints();
+		gbcBtnRemove.gridx = 1;
+		gbcBtnRemove.gridy = 0;
+		add(btnRemove, gbcBtnRemove);
 	}
 
 	@Override
@@ -87,14 +112,11 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 		}
 	}
 
-	public JButton getButton() {
-		return btnRemove;
-	}
-
-	// public JTextField getTextField() {
-	// return textField;
-	// }
-
+	/**
+	 * Returns the value of this item.
+	 * 
+	 * @return the item's value
+	 */
 	public String getText() {
 		if (isTextbox) {
 			return ((JTextField) textField).getText();
@@ -110,9 +132,9 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (listPanel.validateValue(getText())) {
-			textField.setBackground(new Color(255, 255, 255));
+			textField.setBackground(Color.WHITE);
 		} else {
-			textField.setBackground(new Color(255, 200, 200));
+			textField.setBackground(WARNING_BG_COLOR);
 		}
 	}
 
@@ -120,10 +142,23 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 	public void keyTyped(KeyEvent e) {
 	}
 
+	/**
+	 * Registers an {@link ItemListPanel} which is listening to actions of the
+	 * remove button.
+	 * 
+	 * @param panel
+	 *            - panel that is listening
+	 */
 	public void registerRemoveHandler(ItemListPanel panel) {
 		listPanel = panel;
 	}
 
+	/**
+	 * Sets whether this item is editable.
+	 * 
+	 * @param editable
+	 *            - is editable
+	 */
 	public void setEditable(boolean editable) {
 		if (textField instanceof JComboBox) {
 			((JComboBox<String>) textField).setEditable(editable);

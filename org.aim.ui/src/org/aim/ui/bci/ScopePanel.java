@@ -106,8 +106,8 @@ public class ScopePanel extends JPanel implements ActionListener {
 		comboBox.addItem(CONSTRUCTOR_SCOPE);
 		comboBox.addItem(ALLOCATION_SCOPE);
 
-		if (ClientManager.SINGLETON().isConnected()) {
-			for (String i : ClientManager.SINGLETON().getScopes()) {
+		if (ClientManager.instance().isConnected()) {
+			for (String i : ClientManager.instance().getScopes()) {
 				comboBox.addItem(i);
 			}
 		}

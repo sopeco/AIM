@@ -40,8 +40,8 @@ public class ProbePanel extends JPanel {
 		gbcPanel.gridy = 0;
 		add(panel, gbcPanel);
 
-		if (ClientManager.SINGLETON().isConnected()) {
-			panel.setPredefinedValues(ClientManager.SINGLETON().getProbes());
+		if (ClientManager.instance().isConnected()) {
+			panel.setPredefinedValues(ClientManager.instance().getProbes());
 		}
 	}
 
