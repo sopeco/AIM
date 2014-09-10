@@ -3,7 +3,6 @@ package org.aim.ui.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -63,12 +62,6 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 
 	private JTextField inputPort;
 
-	private JPanel panelRestModifiers;
-
-	private JPanel panelRestPackages;
-
-	private JPanel paneRestrictions;
-
 	private JScrollPane scrollPaneLog;
 
 	private JTextPane textLog;
@@ -93,10 +86,12 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 	@Override
 	public void onDisconnection() {
 		btnAddIE.setEnabled(false);
+
+		setClientSettingsState(ClientSettingsState.DEFAULT);
 	}
 
 	private MainView() {
-		ClientManager.SINGLETON().addConnectionStateListener(this);
+		ClientManager.instance().addConnectionStateListener(this);
 
 		setTitle("AIM Control");
 		addWindowListener(new WindowAdapter() {
@@ -151,7 +146,7 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 				Main.getThreadPool().execute(new Runnable() {
 					@Override
 					public void run() {
-						ClientManager.SINGLETON().actionButton();
+						ClientManager.instance().actionButton();
 					}
 				});
 			}
@@ -221,8 +216,9 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 				dialog.setVisible(true);
 			}
 		});
-		
+
 		btnImportInstrumentationEntity = new JButton("Import Instrumentation Entity");
+		btnImportInstrumentationEntity.setEnabled(false);
 		btnImportInstrumentationEntity.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Core.instance().importRawInstrumentationEntityFromFile();
@@ -234,83 +230,8 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		JPanel panel_6 = new JPanel();
 		tabbedPane.addTab("Sampler", null, panel_6, null);
 
-		JPanel panel_4 = new JPanel();
-		tabbedPane.addTab("Global Restrictions", null, panel_4, null);
-		tabbedPane.setEnabledAt(2, false);
-		panel_4.setLayout(new BorderLayout(0, 0));
-
-		JPanel panel_5 = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panel_5.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
-		panel_4.add(panel_5, BorderLayout.SOUTH);
-
-		JButton btnAddRestriction = new JButton("Add Restriction");
-		btnAddRestriction.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new RestrictionAddingView(MainView.this);
-			}
-		});
-		panel_5.add(btnAddRestriction);
-
-		JButton btnRemoveRestriction = new JButton("Remove Selected");
-		panel_5.add(btnRemoveRestriction);
-
-		JScrollPane scrollPaneRestrictions = new JScrollPane();
-		panel_4.add(scrollPaneRestrictions, BorderLayout.CENTER);
-
-		paneRestrictions = new JPanel();
-		scrollPaneRestrictions.setViewportView(paneRestrictions);
-		GridBagLayout gbl_paneRestrictions = new GridBagLayout();
-		gbl_paneRestrictions.columnWidths = new int[] { 0, 0 };
-		gbl_paneRestrictions.rowHeights = new int[] { 0, 0, 0, 0, 0 };
-		gbl_paneRestrictions.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_paneRestrictions.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		paneRestrictions.setLayout(gbl_paneRestrictions);
-
-		JLabel lblNewLabel_3 = new JLabel("Packages");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
-		gbc_lblNewLabel_3.anchor = GridBagConstraints.WEST;
-		gbc_lblNewLabel_3.insets = new Insets(5, 5, 5, 0);
-		gbc_lblNewLabel_3.gridx = 0;
-		gbc_lblNewLabel_3.gridy = 0;
-		paneRestrictions.add(lblNewLabel_3, gbc_lblNewLabel_3);
-
-		panelRestPackages = new JPanel();
-		GridBagConstraints gbc_panelRestPackages = new GridBagConstraints();
-		gbc_panelRestPackages.insets = new Insets(0, 0, 5, 0);
-		gbc_panelRestPackages.fill = GridBagConstraints.BOTH;
-		gbc_panelRestPackages.gridx = 0;
-		gbc_panelRestPackages.gridy = 1;
-		paneRestrictions.add(panelRestPackages, gbc_panelRestPackages);
-		panelRestPackages.setLayout(new GridLayout(1, 0, 0, 0));
-
-		JLabel lblNoRestrictionsSpecified = new JLabel("   No restrictions specified.");
-		panelRestPackages.add(lblNoRestrictionsSpecified);
-
-		JLabel lblNewLabel_2 = new JLabel("Modifiers");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.anchor = GridBagConstraints.WEST;
-		gbc_lblNewLabel_2.insets = new Insets(5, 5, 5, 0);
-		gbc_lblNewLabel_2.gridx = 0;
-		gbc_lblNewLabel_2.gridy = 2;
-		paneRestrictions.add(lblNewLabel_2, gbc_lblNewLabel_2);
-
-		panelRestModifiers = new JPanel();
-		GridBagConstraints gbc_panelRestModifiers = new GridBagConstraints();
-		gbc_panelRestModifiers.fill = GridBagConstraints.BOTH;
-		gbc_panelRestModifiers.gridx = 0;
-		gbc_panelRestModifiers.gridy = 3;
-		paneRestrictions.add(panelRestModifiers, gbc_panelRestModifiers);
-		panelRestModifiers.setLayout(new GridLayout(1, 0, 0, 0));
-
-		JLabel lblNoRestrictionsSpecified_1 = new JLabel("   No restrictions specified.");
-		panelRestModifiers.add(lblNoRestrictionsSpecified_1);
-
 		JScrollPane scrollPane = new JScrollPane();
-		tabbedPane.addTab("Global Restriction (2)", null, scrollPane, null);
+		tabbedPane.addTab("Global Restriction", null, scrollPane, null);
 
 		panelGlobalRestrictions = new RestrictionPanel();
 		scrollPane.setViewportView(panelGlobalRestrictions);
@@ -359,18 +280,6 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 
 	public JTextField getInputPort() {
 		return inputPort;
-	}
-
-	public JPanel getPanelRestrictionModifiers() {
-		return panelRestModifiers;
-	}
-
-	public JPanel getPanelRestrictionPackages() {
-		return panelRestPackages;
-	}
-
-	public JPanel getPaneRestrictions() {
-		return paneRestrictions;
 	}
 
 	public void loadHosts() {

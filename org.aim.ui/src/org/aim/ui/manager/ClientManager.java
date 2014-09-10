@@ -14,17 +14,30 @@ import org.aim.ui.view.MainView.ClientSettingsState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientManager {
+/**
+ * 
+ * Manages the connection to the SUT.
+ * 
+ * @author Marius Oehler
+ *
+ */
+public final class ClientManager {
+
+	private static ClientManager instance;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientManager.class);
 
-	private static ClientManager SINGLETON;
-
-	public static ClientManager SINGLETON() {
-		if (SINGLETON == null) {
-			SINGLETON = new ClientManager();
+	/**
+	 * Returns an instance of this class. This object is the only instance
+	 * (singleton) of this class.
+	 * 
+	 * @return instance of {@link ClientManager}
+	 */
+	public static ClientManager instance() {
+		if (instance == null) {
+			instance = new ClientManager();
 		}
-		return SINGLETON;
+		return instance;
 	}
 
 	private InstrumentationClient client;
@@ -45,10 +58,19 @@ public class ClientManager {
 		}
 	}
 
+	/**
+	 * Adds another {@link ConnectionStateListener}.
+	 * 
+	 * @param listener
+	 *            - listener to register
+	 */
 	public void addConnectionStateListener(ConnectionStateListener listener) {
 		csListener.add(listener);
 	}
 
+	/**
+	 * Provoke the connection buildup to the specified controller.
+	 */
 	public void connect() {
 		MainView.SINGLETON().addLogMessage("Connecting..");
 
@@ -87,8 +109,14 @@ public class ClientManager {
 		}
 	}
 
+	private void connected() {
+		for (ConnectionStateListener l : csListener) {
+			l.onConnection();
+		}
+	}
+
 	/**
-	 *
+	 * Disconnect the client from the agent.
 	 */
 	private void disconnect() {
 		LOGGER.debug("Disconnecting..");
@@ -106,28 +134,37 @@ public class ClientManager {
 		}
 	}
 
-	private void connected() {
-		for (ConnectionStateListener l : csListener) {
-			l.onConnection();
-		}
+	/**
+	 * Returns the a list of probes (classes) which are supported by the
+	 * connected agent.
+	 * 
+	 * @return probes supported by the connected agent
+	 */
+	public List<String> getProbes() {
+		List<String> probes = client.getSupportedExtensions().getEnclosingProbeExtensions();
+		return probes;
 	}
 
-	public void startMonitoring() {
-		try {
-			client.enableMonitoring();
-		} catch (MeasurementException e) {
-			throw new RuntimeException(e);
-		}
+	/**
+	 * Returns the a list of scopes (classes) which are supported by the
+	 * connected agent.
+	 * 
+	 * @return scopes supported by the connected agent
+	 */
+	public List<String> getScopes() {
+		List<String> scopeExtensions = new ArrayList<String>();
+		scopeExtensions.addAll(client.getSupportedExtensions().getApiScopeExtensions());
+		scopeExtensions.addAll(client.getSupportedExtensions().getCustomScopeExtensions());
+		return scopeExtensions;
 	}
 
-	public void stopMonitoring() {
-		try {
-			client.disableMonitoring();
-		} catch (MeasurementException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+	/**
+	 * Instrument the target system with the given
+	 * {@link InstrumentationDescription}.
+	 * 
+	 * @param instrumentationDescription
+	 *            - description to instrument
+	 */
 	public void instrument(InstrumentationDescription instrumentationDescription) {
 		try {
 			client.instrument(instrumentationDescription);
@@ -136,31 +173,55 @@ public class ClientManager {
 		}
 	}
 
+	/**
+	 * Returns whether a connection to an agent is established.
+	 * 
+	 * @return true if a connection is established
+	 */
+	public boolean isConnected() {
+		return client != null;
+	}
+
+	/**
+	 * Remove the given {@link ConnectionStateListener}.
+	 * 
+	 * @param listener
+	 *            - listener to remove
+	 */
+	public void removeConnectionStateListener(ConnectionStateListener listener) {
+		csListener.remove(listener);
+	}
+
+	/**
+	 * Enables the monitoring.
+	 */
+	public void startMonitoring() {
+		try {
+			client.enableMonitoring();
+		} catch (MeasurementException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Stops the monitoring.
+	 */
+	public void stopMonitoring() {
+		try {
+			client.disableMonitoring();
+		} catch (MeasurementException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Uninstrument the target system.
+	 */
 	public void uninstrument() {
 		try {
 			client.uninstrument();
 		} catch (InstrumentationException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public List<String> getProbes() {
-		List<String> probes = client.getSupportedExtensions().getEnclosingProbeExtensions();
-		return probes;
-	}
-
-	public List<String> getScopes() {
-		List<String> scopeExtensions = new ArrayList<String>();
-		scopeExtensions.addAll(client.getSupportedExtensions().getApiScopeExtensions());
-		scopeExtensions.addAll(client.getSupportedExtensions().getCustomScopeExtensions());
-		return scopeExtensions;
-	}
-
-	public boolean isConnected() {
-		return client != null;
-	}
-
-	public void removeConnectionStateListener(ConnectionStateListener listener) {
-		csListener.remove(listener);
 	}
 }

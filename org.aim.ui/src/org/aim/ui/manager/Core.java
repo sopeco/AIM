@@ -38,11 +38,11 @@ public final class Core {
 	}
 
 	public void instrument() {
-		ClientManager.SINGLETON().instrument(buildInstrumentationDescription());
+		ClientManager.instance().instrument(buildInstrumentationDescription());
 	}
 
 	public void uninstrument() {
-		ClientManager.SINGLETON().uninstrument();
+		ClientManager.instance().uninstrument();
 	}
 
 	public void addRawInstrumentationEntity(RawInstrumentationEntity entity) {
