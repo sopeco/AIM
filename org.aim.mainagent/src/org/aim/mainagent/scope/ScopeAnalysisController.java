@@ -127,25 +127,28 @@ public class ScopeAnalysisController {
 		List<Class> toKeep = new ArrayList<>();
 
 		for (Class clazz : allLoadedClasses) {
-			String className = clazz.getName();
 			boolean invalidClass = false;
-			if (instrumentationDescription.getGlobalRestriction().isExcluded(className)) { // TODO:
-																							// use
-																							// IDM
-				invalidClass = true;
-			} else if (clazz.getClassLoader() == null) {
-				invalidClass = true;
-			} else if (clazz.isInterface() || clazz.isPrimitive() || clazz.isArray() || clazz.isAnnotation()
-					|| clazz.isAnonymousClass() || clazz.isEnum() || clazz.isSynthetic() || clazz.isLocalClass()) {
-				invalidClass = true;
-			} else {
-				try {
-					clazz.getClassLoader().loadClass(this.getClass().getName());
-				} catch (ClassNotFoundException cnfe) {
+			try {
+				String className = clazz.getName();
+				if (instrumentationDescription.getGlobalRestriction().isExcluded(className)) { // TODO:
+																								// use
+																								// IDM
 					invalidClass = true;
+				} else if (clazz.getClassLoader() == null) {
+					invalidClass = true;
+				} else if (clazz.isInterface() || clazz.isPrimitive() || clazz.isArray() || clazz.isAnnotation()
+						|| clazz.isAnonymousClass() || clazz.isEnum() || clazz.isSynthetic() || clazz.isLocalClass()) {
+					invalidClass = true;
+				} else {
+					try {
+						clazz.getClassLoader().loadClass(this.getClass().getName());
+					} catch (ClassNotFoundException cnfe) {
+						invalidClass = true;
+					}
 				}
+			} catch (Throwable t) {
+				invalidClass = true;
 			}
-
 			if (!invalidClass) {
 				toKeep.add(clazz);
 			}

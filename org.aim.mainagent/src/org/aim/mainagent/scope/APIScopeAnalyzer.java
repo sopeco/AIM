@@ -92,10 +92,14 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	private Class<Annotation> findAnnotation(List<Class> allLoadedClasses, String annotationName)
 			throws ClassNotFoundException {
 		for (Class<?> clazz : allLoadedClasses) {
-			if (clazz.getName().equals(annotationName)) {
-				@SuppressWarnings("unchecked")
-				Class<Annotation> annotationClass = (Class<Annotation>) clazz;
-				return annotationClass;
+			try {
+				if (clazz.getName().equals(annotationName)) {
+					@SuppressWarnings("unchecked")
+					Class<Annotation> annotationClass = (Class<Annotation>) clazz;
+					return annotationClass;
+				}
+			} catch (Throwable t) {
+				continue;
 			}
 		}
 		return null;
