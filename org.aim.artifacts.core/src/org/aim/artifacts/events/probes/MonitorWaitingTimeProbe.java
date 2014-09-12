@@ -69,9 +69,8 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 		}
 		locationBuilder.append("@");
 		locationBuilder.append(monitor == null ? 0 : monitor.hashCode());
-		locationBuilder.append(":");
-		locationBuilder.append(threadId);
 		record.setLocation(locationBuilder.toString());
+		record.setThreadId(threadId);
 		record.setEventType("monitor-" + eventType);
 		record.setEventNanoTimestamp(eventTimeStamp);
 		record.setCallId(GenericProbe.getNewCallID());
