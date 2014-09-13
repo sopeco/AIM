@@ -5,8 +5,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.lang.model.element.Modifier;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,207 +18,256 @@ import javax.swing.border.LineBorder;
 import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.manager.Core;
 
-import javax.swing.ImageIcon;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+/**
+ * Component to display a {@link RawInstrumentationEntity}.
+ * 
+ * @author Marius Oehler
+ *
+ */
 public class BCIComponent extends JPanel implements ActionListener {
 
 	/** */
 	private static final long serialVersionUID = 1L;
-	private RawInstrumentationEntity entity;
-	private JLabel lblScopeValue;
-	private JLabel lblProbesValue;
-	private JLabel lblModExc;
-	private JLabel lblModInc;
-	private JLabel lblPackageExc;
-	private JLabel lblPackageInc;
-	private JButton btnRemove;
+	
+	private static final int BOLD_FONT_SIZE = 11;
+	private static final int INSET_VALUE = 5;
+	private static final int THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, SEVEN = 7;
+	
 	private JButton btnEdit;
 	private JButton btnExport;
+	private JButton btnRemove;
+	private RawInstrumentationEntity entity;
+	private GridBagConstraints gbcBtnEdit;
+	private GridBagConstraints gbcBtnExport;
+	private GridBagConstraints gbcBtnRemove;
+	private GridBagConstraints gbcLblExclude;
+	private GridBagConstraints gbcLblModExc;
+	private GridBagConstraints gbcLblModifier;
+	private GridBagConstraints gbcLblModInc;
+	private GridBagConstraints gbcLblNewLabel;
+	private GridBagConstraints gbcLblNewLabel1;
+	private GridBagConstraints gbcLblNewLabel2;
+	private GridBagConstraints gbcLblPackageExc;
+	private GridBagConstraints gbcLblPackageInc;
+	private GridBagConstraints gbcLblPackages;
+	private GridBagConstraints gbcLblProbes;
+	private GridBagConstraints gbcLblProbesValue;
+	private GridBagConstraints gbcLblScope;
+	private GridBagConstraints gbcLblScopeValue;
+	private GridBagLayout gridBagLayout;
+	private JLabel lblExclude;
+	private JLabel lblModExc;
+	private JLabel lblModifier;
+	private JLabel lblModInc;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel1;
+	private JLabel lblNewLabel2;
+	private JLabel lblPackageExc;
+	private JLabel lblPackageInc;
+	private JLabel lblPackages;
+	private JLabel lblProbes;
+	private JLabel lblProbesValue;
+	private JLabel lblScope;
+	private JLabel lblScopeValue;
 
+	/**
+	 * Constructor.
+	 */
 	public BCIComponent() {
-		setBorder(new LineBorder(new Color(192, 192, 192), 1, true));
-		// setPreferredSize(new Dimension(500, 100));
-		// setSize(500, 100);
+		initFields();
 
-		GridBagLayout gridBagLayout = new GridBagLayout();
+		setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
+
+		// CHECKSTYLE:OFF
 		gridBagLayout.columnWidths = new int[] { 70, 200, 0, 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 14, 0, 0, 0, 0, 0, 0, 0, 0 };
+		// CHECKSTYLE:ON
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		JLabel lblScope = new JLabel("Scope");
-		lblScope.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblScope = new GridBagConstraints();
-		gbc_lblScope.insets = new Insets(5, 5, 5, 5);
-		gbc_lblScope.anchor = GridBagConstraints.WEST;
-		gbc_lblScope.gridx = 0;
-		gbc_lblScope.gridy = 0;
-		add(lblScope, gbc_lblScope);
+		gbcLblScope.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblScope.anchor = GridBagConstraints.WEST;
+		gbcLblScope.gridx = 0;
+		gbcLblScope.gridy = 0;
+		add(lblScope, gbcLblScope);
 
-		lblScopeValue = new JLabel("New label");
-		GridBagConstraints gbc_lblScopeValue = new GridBagConstraints();
-		gbc_lblScopeValue.anchor = GridBagConstraints.WEST;
-		gbc_lblScopeValue.insets = new Insets(5, 0, 5, 5);
-		gbc_lblScopeValue.gridx = 1;
-		gbc_lblScopeValue.gridy = 0;
-		add(lblScopeValue, gbc_lblScopeValue);
+		gbcLblScopeValue.anchor = GridBagConstraints.WEST;
+		gbcLblScopeValue.insets = new Insets(INSET_VALUE, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblScopeValue.gridx = 1;
+		gbcLblScopeValue.gridy = 0;
+		add(lblScopeValue, gbcLblScopeValue);
 
-		btnExport = new JButton("");
 		btnExport.addActionListener(this);
 		btnExport.setIcon(new ImageIcon(BCIComponent.class.getResource("/icons/document-export.png")));
-		GridBagConstraints gbc_btnExport = new GridBagConstraints();
-		gbc_btnExport.insets = new Insets(5, 0, 5, 5);
-		gbc_btnExport.gridx = 2;
-		gbc_btnExport.gridy = 0;
-		add(btnExport, gbc_btnExport);
+		gbcBtnExport.insets = new Insets(INSET_VALUE, 0, INSET_VALUE, INSET_VALUE);
+		gbcBtnExport.gridx = 2;
+		gbcBtnExport.gridy = 0;
+		add(btnExport, gbcBtnExport);
 
-		btnEdit = new JButton("");
 		btnEdit.addActionListener(this);
 		btnEdit.setIcon(new ImageIcon(BCIComponent.class.getResource("/icons/pencil.png")));
-		GridBagConstraints gbc_btnEdit = new GridBagConstraints();
-		gbc_btnEdit.insets = new Insets(5, 0, 5, 5);
-		gbc_btnEdit.gridx = 3;
-		gbc_btnEdit.gridy = 0;
-		add(btnEdit, gbc_btnEdit);
+		gbcBtnEdit.insets = new Insets(INSET_VALUE, 0, INSET_VALUE, INSET_VALUE);
+		gbcBtnEdit.gridx = THREE;
+		gbcBtnEdit.gridy = 0;
+		add(btnEdit, gbcBtnEdit);
 
-		btnRemove = new JButton("");
 		btnRemove.addActionListener(this);
 		btnRemove.setIcon(new ImageIcon(BCIComponent.class.getResource("/icons/cross.png")));
-		GridBagConstraints gbc_btnRemove = new GridBagConstraints();
-		gbc_btnRemove.insets = new Insets(5, 0, 5, 0);
-		gbc_btnRemove.gridx = 4;
-		gbc_btnRemove.gridy = 0;
-		add(btnRemove, gbc_btnRemove);
 
-		JLabel lblProbes = new JLabel("Probes");
-		lblProbes.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblProbes = new GridBagConstraints();
-		gbc_lblProbes.anchor = GridBagConstraints.NORTHWEST;
-		gbc_lblProbes.insets = new Insets(5, 5, 5, 5);
-		gbc_lblProbes.gridx = 0;
-		gbc_lblProbes.gridy = 1;
-		add(lblProbes, gbc_lblProbes);
+		gbcBtnRemove.insets = new Insets(INSET_VALUE, 0, INSET_VALUE, 0);
+		gbcBtnRemove.gridx = FOUR;
+		gbcBtnRemove.gridy = 0;
+		add(btnRemove, gbcBtnRemove);
 
-		lblProbesValue = new JLabel("New label");
-		GridBagConstraints gbc_lblProbesValue = new GridBagConstraints();
-		gbc_lblProbesValue.gridwidth = 4;
-		gbc_lblProbesValue.insets = new Insets(5, 0, 5, 5);
-		gbc_lblProbesValue.anchor = GridBagConstraints.WEST;
-		gbc_lblProbesValue.gridx = 1;
-		gbc_lblProbesValue.gridy = 1;
-		add(lblProbesValue, gbc_lblProbesValue);
+		gbcLblProbes.anchor = GridBagConstraints.NORTHWEST;
+		gbcLblProbes.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblProbes.gridx = 0;
+		gbcLblProbes.gridy = 1;
+		add(lblProbes, gbcLblProbes);
 
-		JLabel lblModifier = new JLabel("Modifier");
-		lblModifier.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblModifier = new GridBagConstraints();
-		gbc_lblModifier.anchor = GridBagConstraints.WEST;
-		gbc_lblModifier.insets = new Insets(5, 5, 5, 5);
-		gbc_lblModifier.gridx = 0;
-		gbc_lblModifier.gridy = 2;
-		add(lblModifier, gbc_lblModifier);
+		gbcLblProbesValue.gridwidth = FOUR;
+		gbcLblProbesValue.insets = new Insets(INSET_VALUE, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblProbesValue.anchor = GridBagConstraints.WEST;
+		gbcLblProbesValue.gridx = 1;
+		gbcLblProbesValue.gridy = 1;
+		add(lblProbesValue, gbcLblProbesValue);
 
-		JLabel lblExclude = new JLabel("Exclude");
-		lblExclude.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblExclude = new GridBagConstraints();
-		gbc_lblExclude.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblExclude.insets = new Insets(0, 5, 5, 5);
-		gbc_lblExclude.gridx = 0;
-		gbc_lblExclude.gridy = 3;
-		add(lblExclude, gbc_lblExclude);
+		gbcLblModifier.anchor = GridBagConstraints.WEST;
+		gbcLblModifier.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblModifier.gridx = 0;
+		gbcLblModifier.gridy = 2;
+		add(lblModifier, gbcLblModifier);
 
-		lblModExc = new JLabel("ModExc");
-		GridBagConstraints gbc_lblModExc = new GridBagConstraints();
-		gbc_lblModExc.gridwidth = 4;
-		gbc_lblModExc.anchor = GridBagConstraints.WEST;
-		gbc_lblModExc.insets = new Insets(0, 0, 5, 5);
-		gbc_lblModExc.gridx = 1;
-		gbc_lblModExc.gridy = 3;
-		add(lblModExc, gbc_lblModExc);
+		gbcLblExclude.anchor = GridBagConstraints.NORTHEAST;
+		gbcLblExclude.insets = new Insets(0, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblExclude.gridx = 0;
+		gbcLblExclude.gridy = THREE;
+		add(lblExclude, gbcLblExclude);
 
-		JLabel lblNewLabel = new JLabel("Include");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblNewLabel.insets = new Insets(0, 5, 5, 5);
-		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 4;
-		add(lblNewLabel, gbc_lblNewLabel);
+		gbcLblModExc.gridwidth = FOUR;
+		gbcLblModExc.anchor = GridBagConstraints.WEST;
+		gbcLblModExc.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblModExc.gridx = 1;
+		gbcLblModExc.gridy = THREE;
+		add(lblModExc, gbcLblModExc);
 
-		lblModInc = new JLabel("ModInc");
-		GridBagConstraints gbc_lblModInc = new GridBagConstraints();
-		gbc_lblModInc.gridwidth = 4;
-		gbc_lblModInc.insets = new Insets(0, 0, 5, 5);
-		gbc_lblModInc.anchor = GridBagConstraints.WEST;
-		gbc_lblModInc.gridx = 1;
-		gbc_lblModInc.gridy = 4;
-		add(lblModInc, gbc_lblModInc);
+		gbcLblNewLabel.anchor = GridBagConstraints.NORTHEAST;
+		gbcLblNewLabel.insets = new Insets(0, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblNewLabel.gridx = 0;
+		gbcLblNewLabel.gridy = FOUR;
+		add(lblNewLabel, gbcLblNewLabel);
 
-		JLabel lblPackages = new JLabel("Packages");
-		lblPackages.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblPackages = new GridBagConstraints();
-		gbc_lblPackages.anchor = GridBagConstraints.WEST;
-		gbc_lblPackages.insets = new Insets(5, 5, 5, 5);
-		gbc_lblPackages.gridx = 0;
-		gbc_lblPackages.gridy = 5;
-		add(lblPackages, gbc_lblPackages);
+		gbcLblModInc.gridwidth = FOUR;
+		gbcLblModInc.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblModInc.anchor = GridBagConstraints.WEST;
+		gbcLblModInc.gridx = 1;
+		gbcLblModInc.gridy = FOUR;
+		add(lblModInc, gbcLblModInc);
 
-		JLabel lblNewLabel_1 = new JLabel("Exclude");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		gbc_lblNewLabel_1.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblNewLabel_1.insets = new Insets(0, 5, 5, 5);
-		gbc_lblNewLabel_1.gridx = 0;
-		gbc_lblNewLabel_1.gridy = 6;
-		add(lblNewLabel_1, gbc_lblNewLabel_1);
+		gbcLblPackages.anchor = GridBagConstraints.WEST;
+		gbcLblPackages.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblPackages.gridx = 0;
+		gbcLblPackages.gridy = FIVE;
+		add(lblPackages, gbcLblPackages);
 
-		lblPackageExc = new JLabel("PackageExc");
-		GridBagConstraints gbc_lblPackageExc = new GridBagConstraints();
-		gbc_lblPackageExc.gridwidth = 4;
-		gbc_lblPackageExc.anchor = GridBagConstraints.WEST;
-		gbc_lblPackageExc.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPackageExc.gridx = 1;
-		gbc_lblPackageExc.gridy = 6;
-		add(lblPackageExc, gbc_lblPackageExc);
+		gbcLblNewLabel1.anchor = GridBagConstraints.NORTHEAST;
+		gbcLblNewLabel1.insets = new Insets(0, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblNewLabel1.gridx = 0;
+		gbcLblNewLabel1.gridy = SIX;
+		add(lblNewLabel1, gbcLblNewLabel1);
 
-		JLabel lblNewLabel_2 = new JLabel("Include");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblNewLabel_2.insets = new Insets(0, 5, 5, 5);
-		gbc_lblNewLabel_2.gridx = 0;
-		gbc_lblNewLabel_2.gridy = 7;
-		add(lblNewLabel_2, gbc_lblNewLabel_2);
+		gbcLblPackageExc.gridwidth = FOUR;
+		gbcLblPackageExc.anchor = GridBagConstraints.WEST;
+		gbcLblPackageExc.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblPackageExc.gridx = 1;
+		gbcLblPackageExc.gridy = SIX;
+		add(lblPackageExc, gbcLblPackageExc);
 
-		lblPackageInc = new JLabel("PackageInc");
-		GridBagConstraints gbc_lblPackageInc = new GridBagConstraints();
-		gbc_lblPackageInc.gridwidth = 4;
-		gbc_lblPackageInc.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPackageInc.anchor = GridBagConstraints.WEST;
-		gbc_lblPackageInc.gridx = 1;
-		gbc_lblPackageInc.gridy = 7;
-		add(lblPackageInc, gbc_lblPackageInc);
+		gbcLblNewLabel2.anchor = GridBagConstraints.NORTHEAST;
+		gbcLblNewLabel2.insets = new Insets(0, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcLblNewLabel2.gridx = 0;
+		gbcLblNewLabel2.gridy = SEVEN;
+		add(lblNewLabel2, gbcLblNewLabel2);
 
-		RawInstrumentationEntity dummy = new RawInstrumentationEntity();
-		dummy.setScope("org.ScopeName");
-		dummy.setProbes(new String[] { "Probe 1", "PRobe 2" });
-		dummy.setExcModifiers(new int[] { 1, 2 });
-		dummy.setIncModifiers(new int[] { 0 });
-		dummy.setExcPackages(new String[] { "org.test.*" });
-		dummy.setIncPackages(new String[] {});
-		entity = dummy;
+		gbcLblPackageInc.gridwidth = FOUR;
+		gbcLblPackageInc.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
+		gbcLblPackageInc.anchor = GridBagConstraints.WEST;
+		gbcLblPackageInc.gridx = 1;
+		gbcLblPackageInc.gridy = SEVEN;
+		add(lblPackageInc, gbcLblPackageInc);
+
+		for (JLabel label : new JLabel[] { lblNewLabel2, lblScope, lblProbes, lblExclude, lblModifier, lblNewLabel,
+				lblPackages, lblNewLabel1 }) {
+			label.setFont(new Font("Tahoma", Font.BOLD, BOLD_FONT_SIZE));
+		}
 
 		updateView();
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == btnRemove) {
+			Core.instance().removeRawInstrumentationEntity(entity);
+		} else if (event.getSource() == btnEdit) {
+			Core.instance().editRawInstrumentationEntity(entity);
+		} else if (event.getSource() == btnExport) {
+			Core.instance().exportRawInstrumentationEntityInFile(entity);
+		}
+	}
+
+	private void initFields() {
+		gridBagLayout = new GridBagLayout();
+		lblScope = new JLabel("Scope");
+		gbcLblScope = new GridBagConstraints();
+		lblScopeValue = new JLabel("New label");
+		gbcLblScopeValue = new GridBagConstraints();
+		btnExport = new JButton("");
+		gbcBtnExport = new GridBagConstraints();
+		btnEdit = new JButton("");
+		gbcBtnEdit = new GridBagConstraints();
+		lblProbes = new JLabel("Probes");
+		gbcLblProbes = new GridBagConstraints();
+		lblProbesValue = new JLabel("New label");
+		gbcLblProbesValue = new GridBagConstraints();
+		lblModifier = new JLabel("Modifier");
+		gbcLblModifier = new GridBagConstraints();
+		lblExclude = new JLabel("Exclude");
+		gbcLblExclude = new GridBagConstraints();
+		lblModExc = new JLabel("ModExc");
+		gbcLblModExc = new GridBagConstraints();
+		lblNewLabel = new JLabel("Include");
+		gbcLblNewLabel = new GridBagConstraints();
+		lblModInc = new JLabel("ModInc");
+		gbcLblModInc = new GridBagConstraints();
+		lblPackages = new JLabel("Packages");
+		gbcLblPackages = new GridBagConstraints();
+		lblNewLabel1 = new JLabel("Exclude");
+		gbcLblNewLabel1 = new GridBagConstraints();
+		btnRemove = new JButton("");
+		gbcBtnRemove = new GridBagConstraints();
+		lblPackageExc = new JLabel("PackageExc");
+		gbcLblPackageExc = new GridBagConstraints();
+		lblNewLabel2 = new JLabel("Include");
+		gbcLblNewLabel2 = new GridBagConstraints();
+		lblPackageInc = new JLabel("PackageInc");
+		gbcLblPackageInc = new GridBagConstraints();
+	}
+
+	/**
+	 * Sets the {@link RawInstrumentationEntity} to display.
+	 * 
+	 * @param entity
+	 *            - entity to show
+	 */
 	public void setRawEntity(RawInstrumentationEntity entity) {
 		this.entity = entity;
 		updateView();
 	}
 
+	/**
+	 * Refreshes the view and its components.
+	 */
 	public void updateView() {
 		if (entity == null) {
 			return;
@@ -286,16 +338,5 @@ public class BCIComponent extends JPanel implements ActionListener {
 			pacInc += "</html>";
 		}
 		lblPackageInc.setText(pacInc);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() == btnRemove) {
-			Core.instance().removeRawInstrumentationEntity(entity);
-		} else if (event.getSource() == btnEdit) {
-			Core.instance().editRawInstrumentationEntity(entity);
-		} else if (event.getSource() == btnExport) {
-			Core.instance().exportRawInstrumentationEntityInFile(entity);
-		}
 	}
 }

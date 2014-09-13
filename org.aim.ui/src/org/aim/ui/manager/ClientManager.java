@@ -72,37 +72,37 @@ public final class ClientManager {
 	 * Provoke the connection buildup to the specified controller.
 	 */
 	public void connect() {
-		MainView.SINGLETON().addLogMessage("Connecting..");
+		MainView.instance().addLogMessage("Connecting..");
 
-		MainView.SINGLETON().setClientSettingsState(ClientSettingsState.CONNECTING);
+		MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTING);
 
-		final String host = MainView.SINGLETON().getInputHost().getSelectedItem().toString();
-		final String port = MainView.SINGLETON().getInputPort().getText();
+		final String host = MainView.instance().getInputHost().getSelectedItem().toString();
+		final String port = MainView.instance().getInputPort().getText();
 
 		// validate input
 		if (host.isEmpty()) {
-			MainView.SINGLETON().addLogMessage("The host is not specified");
-			MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
+			MainView.instance().addLogMessage("The host is not specified");
+			MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
 		} else if (port.isEmpty()) {
-			MainView.SINGLETON().addLogMessage("The port is not specified");
-			MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
+			MainView.instance().addLogMessage("The port is not specified");
+			MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
 		} else if (!port.matches("^\\d+")) {
-			MainView.SINGLETON().addLogMessage("'" + port + "' is not a valid port value..");
-			MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
+			MainView.instance().addLogMessage("'" + port + "' is not a valid port value..");
+			MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
 		} else {
 			LOGGER.debug("Connecting to {}:{}", host, port);
 
 			if (!InstrumentationClient.testConnection(host, port)) {
-				MainView.SINGLETON().addLogMessage("Can't establish connection to " + host + ":" + port + "");
+				MainView.instance().addLogMessage("Can't establish connection to " + host + ":" + port + "");
 				LOGGER.debug("Can't establish connection to {}:{}", host, port);
 
-				MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
+				MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
 			} else {
-				MainView.SINGLETON().addLogMessage("Connection establish to " + host + ":" + port + "");
+				MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
 				LOGGER.debug("Client connected to {}:{}", host, port);
 				client = new InstrumentationClient(host, port);
 
-				MainView.SINGLETON().setClientSettingsState(ClientSettingsState.CONNECTED);
+				MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTED);
 
 				connected();
 			}
@@ -120,8 +120,8 @@ public final class ClientManager {
 	 */
 	private void disconnect() {
 		LOGGER.debug("Disconnecting..");
-		MainView.SINGLETON().setClientSettingsState(ClientSettingsState.DEFAULT);
-		MainView.SINGLETON().addLogMessage("Connection reversed");
+		MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
+		MainView.instance().addLogMessage("Connection reversed");
 		if (client != null) {
 			client = null;
 		}

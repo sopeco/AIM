@@ -59,8 +59,8 @@ public final class Main {
 			e.printStackTrace();
 		}
 
-		MainView.SINGLETON().setVisible(true);
-		MainView.SINGLETON().setLocationRelativeTo(null);
+		MainView.instance().setVisible(true);
+		MainView.instance().setLocationRelativeTo(null);
 	}
 
 	/**
