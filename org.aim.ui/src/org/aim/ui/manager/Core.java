@@ -1,5 +1,6 @@
 package org.aim.ui.manager;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,10 +21,23 @@ import org.aim.ui.bci.InstrumentationEntityWizard;
 import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.view.MainView;
 
+/**
+ * Major part of the applications logic.
+ * 
+ * @author Marius Oehler
+ *
+ */
 public final class Core {
+
+	private static final Dimension ENTITY_WIZARD_SIZE = new Dimension(400, 500);
 
 	private static Core instance;
 
+	/**
+	 * Get the singleton instance of this class.
+	 * 
+	 * @return {@link Core} instance
+	 */
 	public static Core instance() {
 		if (instance == null) {
 			instance = new Core();
@@ -37,53 +51,59 @@ public final class Core {
 		currentInstrumentEntities = new ArrayList<RawInstrumentationEntity>();
 	}
 
-	public void instrument() {
-		ClientManager.instance().instrument(buildInstrumentationDescription());
-	}
-
-	public void uninstrument() {
-		ClientManager.instance().uninstrument();
-	}
-
+	/**
+	 * Adds a {@link RawInstrumentationEntity} to the application's set of
+	 * entities.
+	 * 
+	 * @param entity
+	 *            - entity to add
+	 */
 	public void addRawInstrumentationEntity(RawInstrumentationEntity entity) {
 		currentInstrumentEntities.add(entity);
-		MainView.SINGLETON().updateInstrumentEntities(currentInstrumentEntities);
+		MainView.instance().updateInstrumentEntities(currentInstrumentEntities);
 	}
 
+	/**
+	 * Returns an {@link InstrumentationDescription} of the applications
+	 * {@link RawInstrumentationEntity} and other settings like sampler and
+	 * restrictions.
+	 * 
+	 * @return the built {@link InstrumentationDescription}
+	 */
 	public InstrumentationDescription buildInstrumentationDescription() {
-		Restriction globalRestriction = MainView.SINGLETON().getGlobalRestriction();
+		Restriction globalRestriction = MainView.instance().getGlobalRestriction();
 		return IDBuilder.build(currentInstrumentEntities, globalRestriction);
 	}
 
-	public void removeRawInstrumentationEntity(RawInstrumentationEntity entity) {
-		currentInstrumentEntities.remove(entity);
-		MainView.SINGLETON().updateInstrumentEntities(currentInstrumentEntities);
-	}
-
+	/**
+	 * Opens a dialog to edit the settings of the given
+	 * {@link RawInstrumentationEntity}.
+	 * 
+	 * @param entity
+	 *            - entity to edit
+	 */
 	public void editRawInstrumentationEntity(RawInstrumentationEntity entity) {
 		InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
-		dialog.setSize(400, 500);
+		dialog.setSize(ENTITY_WIZARD_SIZE);
 		dialog.setModal(true);
-		dialog.setLocationRelativeTo(MainView.SINGLETON());
+		dialog.setLocationRelativeTo(MainView.instance());
 		dialog.setRawInstrumentationEntity(entity);
 		dialog.setVisible(true);
 	}
 
-	public void updateRawInstrumentationEntity(RawInstrumentationEntity oldEntity, RawInstrumentationEntity newEntity) {
-		for (int i = 0; i < currentInstrumentEntities.size(); i++) {
-			if (currentInstrumentEntities.get(i) == oldEntity) {
-				currentInstrumentEntities.set(i, newEntity);
-			}
-		}
-		MainView.SINGLETON().updateInstrumentEntities(currentInstrumentEntities);
-	}
-
+	/**
+	 * Exports a {@link RawInstrumentationEntity} to a XML file. The target file
+	 * can be chosen by a file chooser.
+	 * 
+	 * @param entity
+	 *            - entity to export
+	 */
 	public void exportRawInstrumentationEntityInFile(RawInstrumentationEntity entity) {
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("XML Files", "xml");
 		chooser.setFileFilter(filter);
 		chooser.setApproveButtonText("Export");
-		int returnVal = chooser.showOpenDialog(MainView.SINGLETON());
+		int returnVal = chooser.showOpenDialog(MainView.instance());
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File outFile = chooser.getSelectedFile();
 			if (!outFile.getAbsolutePath().endsWith(".xml")) {
@@ -102,12 +122,16 @@ public final class Core {
 		}
 	}
 
+	/**
+	 * Imports a {@link RawInstrumentationEntity} from a XML file. The source
+	 * file can be chosen by a file chooser.
+	 */
 	public void importRawInstrumentationEntityFromFile() {
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("XML Files", "xml");
 		chooser.setFileFilter(filter);
 		chooser.setApproveButtonText("Export");
-		int returnVal = chooser.showOpenDialog(MainView.SINGLETON());
+		int returnVal = chooser.showOpenDialog(MainView.instance());
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File inFile = chooser.getSelectedFile();
 
@@ -115,7 +139,7 @@ public final class Core {
 				JAXBContext context = JAXBContext.newInstance(RawInstrumentationEntity.class);
 				Unmarshaller um = context.createUnmarshaller();
 				RawInstrumentationEntity entity = (RawInstrumentationEntity) um.unmarshal(new FileReader(inFile));
-				
+
 				addRawInstrumentationEntity(entity);
 			} catch (JAXBException e) {
 				throw new RuntimeException(e);
@@ -123,5 +147,49 @@ public final class Core {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	/**
+	 * Induce the instrumentation of the connected agent.
+	 */
+	public void instrument() {
+		ClientManager.instance().instrument(buildInstrumentationDescription());
+	}
+
+	/**
+	 * Removes a {@link RawInstrumentationEntity} of the aplication's set of
+	 * entities.
+	 * 
+	 * @param entity
+	 *            - entity to remove
+	 */
+	public void removeRawInstrumentationEntity(RawInstrumentationEntity entity) {
+		currentInstrumentEntities.remove(entity);
+		MainView.instance().updateInstrumentEntities(currentInstrumentEntities);
+	}
+
+	/**
+	 * Induce the uninstrumentation of the connected agent.
+	 */
+	public void uninstrument() {
+		ClientManager.instance().uninstrument();
+	}
+
+	/**
+	 * Replaces the <code>oldEntity</code> with the <code>newEntity</code> in
+	 * the application's set of entites.
+	 * 
+	 * @param oldEntity
+	 *            - entity to replace
+	 * @param newEntity
+	 *            - entity to store
+	 */
+	public void updateRawInstrumentationEntity(RawInstrumentationEntity oldEntity, RawInstrumentationEntity newEntity) {
+		for (int i = 0; i < currentInstrumentEntities.size(); i++) {
+			if (currentInstrumentEntities.get(i) == oldEntity) {
+				currentInstrumentEntities.set(i, newEntity);
+			}
+		}
+		MainView.instance().updateInstrumentEntities(currentInstrumentEntities);
 	}
 }

@@ -39,56 +39,53 @@ import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.manager.ClientManager;
 import org.aim.ui.manager.Core;
 
-public class MainView extends JFrame implements ConnectionStateListener, ActionListener {
+/**
+ * The application's main window.
+ * 
+ * @author Marius Oehler
+ *
+ */
+public final class MainView extends JFrame implements ConnectionStateListener, ActionListener {
 
+	/**
+	 * Connetion states.
+	 */
 	public enum ClientSettingsState {
 		CONNECTED, CONNECTING, DEFAULT
 	}
 
 	/**  */
 	private static final long serialVersionUID = 1L;
+	
+	private static final int INSET_VALUE = 5;
+	private static MainView instance;
+	private static final Dimension INSTRUMENTATION_WIZARD_SIZE = new Dimension(400, 500);
+	private static final Dimension LOG_PANEL_SIZE = new Dimension(100, 60);
+	private static final Dimension MAIN_WINDOW_SIZE = new Dimension(680, 480);
 
-	private static MainView SINGLETON;
-
-	public static MainView SINGLETON() {
-		if (SINGLETON == null) {
-			SINGLETON = new MainView();
+	/**
+	 * Returns the singleton instance of this class.
+	 * 
+	 * @return {@link MainView} instance
+	 */
+	public static MainView instance() {
+		if (instance == null) {
+			instance = new MainView();
 		}
-		return SINGLETON;
+		return instance;
 	}
-
-	private JButton btnConnect;
-	private JComboBox<String> inputHost;
-
-	private JTextField inputPort;
-
-	private JScrollPane scrollPaneLog;
-
-	private JTextPane textLog;
-
-	private JButton btnAddIE;
-
-	private JButton btnInstrument;
-
-	private JButton btnMonitoring;
 
 	private JPanel bciPanel;
-
-	private RestrictionPanel panelGlobalRestrictions;
-
+	private JButton btnAddIE;
+	private JButton btnConnect;
 	private JButton btnImportInstrumentationEntity;
-
-	@Override
-	public void onConnection() {
-		btnAddIE.setEnabled(true);
-	}
-
-	@Override
-	public void onDisconnection() {
-		btnAddIE.setEnabled(false);
-
-		setClientSettingsState(ClientSettingsState.DEFAULT);
-	}
+	private JButton btnInstrument;
+	private JButton btnMonitoring;
+	private JComboBox<String> inputHost;
+	private JTextField inputPort;
+	private RestrictionPanel panelGlobalRestrictions;
+	private JScrollPane scrollPaneLog;
+	private JTextPane textLog;
 
 	private MainView() {
 		ClientManager.instance().addConnectionStateListener(this);
@@ -127,108 +124,90 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		panel.add(lblNewLabel);
 
 		inputHost = new JComboBox<String>();
+		// CHECKSTYLE:OFF
 		inputHost.setPreferredSize(new Dimension(200, 20));
+		// CHECKSTYLE:ON
 		inputHost.setEditable(true);
 		panel.add(inputHost);
 
-		JLabel lblNewLabel_1 = new JLabel("Port:");
-		panel.add(lblNewLabel_1);
+		JLabel lblNewLabel1 = new JLabel("Port:");
+		panel.add(lblNewLabel1);
 
 		inputPort = new JTextField();
 		inputPort.setText("1010");
 		panel.add(inputPort);
+		// CHECKSTYLE:OFF
 		inputPort.setColumns(5);
+		// CHECKSTYLE:ON
 
 		btnConnect = new JButton("Connect");
-		btnConnect.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Main.getThreadPool().execute(new Runnable() {
-					@Override
-					public void run() {
-						ClientManager.instance().actionButton();
-					}
-				});
-			}
-		});
+		btnConnect.addActionListener(this);
 		panel.add(btnConnect);
 
-		JPanel panel_7 = new JPanel();
-		FlowLayout flowLayout_3 = (FlowLayout) panel_7.getLayout();
-		flowLayout_3.setAlignment(FlowLayout.RIGHT);
-		panel.add(panel_7);
+		JPanel panel7 = new JPanel();
+		FlowLayout flowLayout3 = (FlowLayout) panel7.getLayout();
+		flowLayout3.setAlignment(FlowLayout.RIGHT);
+		panel.add(panel7);
 
 		btnInstrument = new JButton("Instrument");
 		btnInstrument.addActionListener(this);
 		btnInstrument.setEnabled(false);
-		panel_7.add(btnInstrument);
+		panel7.add(btnInstrument);
 
 		btnMonitoring = new JButton("Start Monitoring");
 		btnMonitoring.addActionListener(this);
 		btnMonitoring.setEnabled(false);
-		panel_7.add(btnMonitoring);
+		panel7.add(btnMonitoring);
 
 		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Instrumentation Entities", null, panel_1, null);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		JPanel panel1 = new JPanel();
+		tabbedPane.addTab("Instrumentation Entities", null, panel1, null);
+		panel1.setLayout(new BorderLayout(0, 0));
 
 		JScrollPane bciScrollPane = new JScrollPane();
-		panel_1.add(bciScrollPane);
+		panel1.add(bciScrollPane);
 
-		JPanel panel_3 = new JPanel();
-		bciScrollPane.setViewportView(panel_3);
-		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[] { 577, 0 };
-		gbl_panel_3.rowHeights = new int[] { 241, 0 };
-		gbl_panel_3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
-		panel_3.setLayout(gbl_panel_3);
+		JPanel panel3 = new JPanel();
+		bciScrollPane.setViewportView(panel3);
+		GridBagLayout gblPanel3 = new GridBagLayout();
+		// CHECKSTYLE:OFF
+		gblPanel3.columnWidths = new int[] { 577, 0 };
+		gblPanel3.rowHeights = new int[] { 241, 0 };
+		// CHECKSTYLE:ON
+		gblPanel3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gblPanel3.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+		panel3.setLayout(gblPanel3);
 
 		bciPanel = new JPanel();
-		GridBagConstraints gbc_bciPanel = new GridBagConstraints();
-		gbc_bciPanel.insets = new Insets(5, 5, 5, 5);
-		gbc_bciPanel.anchor = GridBagConstraints.NORTH;
-		gbc_bciPanel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_bciPanel.gridx = 0;
-		gbc_bciPanel.gridy = 0;
-		panel_3.add(bciPanel, gbc_bciPanel);
+		GridBagConstraints gbcBciPanel = new GridBagConstraints();
+		gbcBciPanel.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
+		gbcBciPanel.anchor = GridBagConstraints.NORTH;
+		gbcBciPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcBciPanel.gridx = 0;
+		gbcBciPanel.gridy = 0;
+		panel3.add(bciPanel, gbcBciPanel);
+		// CHECKSTYLE:OFF
 		bciPanel.setLayout(new GridLayout(2, 1, 5, 5));
+		// CHECKSTYLE:ON
 
-		bciPanel.add(new BCIComponent());
-		bciPanel.add(new BCIComponent());
-
-		JPanel panel_2 = new JPanel();
-		FlowLayout flowLayout_2 = (FlowLayout) panel_2.getLayout();
-		flowLayout_2.setAlignment(FlowLayout.RIGHT);
-		panel_1.add(panel_2, BorderLayout.SOUTH);
+		JPanel panel2 = new JPanel();
+		FlowLayout flowLayout2 = (FlowLayout) panel2.getLayout();
+		flowLayout2.setAlignment(FlowLayout.RIGHT);
+		panel1.add(panel2, BorderLayout.SOUTH);
 
 		btnAddIE = new JButton("Add Instrumentation Entity");
-		btnAddIE.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
-				dialog.setSize(400, 500);
-				dialog.setModal(true);
-				dialog.setLocationRelativeTo(MainView.this);
-				dialog.setVisible(true);
-			}
-		});
+		btnAddIE.addActionListener(this);
 
 		btnImportInstrumentationEntity = new JButton("Import Instrumentation Entity");
 		btnImportInstrumentationEntity.setEnabled(false);
-		btnImportInstrumentationEntity.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Core.instance().importRawInstrumentationEntityFromFile();
-			}
-		});
-		panel_2.add(btnImportInstrumentationEntity);
-		panel_2.add(btnAddIE);
+		btnImportInstrumentationEntity.addActionListener(this);
+		panel2.add(btnImportInstrumentationEntity);
+		panel2.add(btnAddIE);
 
-		JPanel panel_6 = new JPanel();
-		tabbedPane.addTab("Sampler", null, panel_6, null);
+		JPanel panel6 = new JPanel();
+		tabbedPane.addTab("Sampler", null, panel6, null);
 
 		JScrollPane scrollPane = new JScrollPane();
 		tabbedPane.addTab("Global Restriction", null, scrollPane, null);
@@ -240,17 +219,78 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		textLog.setEditable(false);
 
 		scrollPaneLog = new JScrollPane(textLog);
-		scrollPaneLog.setPreferredSize(new Dimension(100, 60));
+		scrollPaneLog.setPreferredSize(LOG_PANEL_SIZE);
 
 		getContentPane().add(scrollPaneLog, BorderLayout.SOUTH);
-		//
-		setSize(680, 480);
+
+		setSize(MAIN_WINDOW_SIZE);
 
 		loadHosts();
 
 		onDisconnection();
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnAddIE) {
+			InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
+			dialog.setSize(INSTRUMENTATION_WIZARD_SIZE);
+			dialog.setModal(true);
+			dialog.setLocationRelativeTo(MainView.this);
+			dialog.setVisible(true);
+		} else if (e.getSource() == btnConnect) {
+			Main.getThreadPool().execute(new Runnable() {
+				@Override
+				public void run() {
+					ClientManager.instance().actionButton();
+				}
+			});
+		} else if (e.getSource() == btnImportInstrumentationEntity) {
+			Core.instance().importRawInstrumentationEntityFromFile();
+		} else if (e.getSource() == btnInstrument) {
+			if (btnInstrument.getText().equals("Instrument")) {
+				// Instrument
+				Core.instance().instrument();
+				btnConnect.setEnabled(false);
+				btnInstrument.setText("Uninstrument");
+				btnMonitoring.setEnabled(true);
+			} else {
+				// Uninstrument
+				Core.instance().uninstrument();
+				btnConnect.setEnabled(true);
+				btnInstrument.setText("Instrument");
+				btnMonitoring.setEnabled(false);
+			}
+		} else if (e.getSource() == btnMonitoring) {
+			if (btnMonitoring.getText().equals("Start Monitoring")) {
+				// Start Monitoring
+				btnInstrument.setEnabled(false);
+				btnMonitoring.setText("Stop Monitoring");
+			} else {
+				// Stop Monitoring
+				btnInstrument.setEnabled(true);
+				btnMonitoring.setText("Start Monitoring");
+			}
+		}
+	}
+
+	/**
+	 * Prints the given string to the log box.
+	 * 
+	 * @param message
+	 *            - text to print
+	 */
+	public void addLogMessage(String message) {
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
+		textLog.setText(textLog.getText() + "\n" + format.format(new Date()) + " - " + message);
+		scrollPaneLog.getVerticalScrollBar().setValue(scrollPaneLog.getVerticalScrollBar().getMaximum());
+	}
+
+	/**
+	 * Returns the global restriction settings.
+	 * 
+	 * @return global restrictions
+	 */
 	public Restriction getGlobalRestriction() {
 		Restriction restriction = new Restriction();
 		for (int mod : panelGlobalRestrictions.getExcludedModifiers()) {
@@ -268,24 +308,49 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		return restriction;
 	}
 
-	public void addLogMessage(String message) {
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
-		textLog.setText(textLog.getText() + "\n" + format.format(new Date()) + " - " + message);
-		scrollPaneLog.getVerticalScrollBar().setValue(scrollPaneLog.getVerticalScrollBar().getMaximum());
-	}
-
+	/**
+	 * Returns the agent's host.
+	 * 
+	 * @return agent's host
+	 */
 	public JComboBox<String> getInputHost() {
 		return inputHost;
 	}
 
+	/**
+	 * Returns the agent's port.
+	 * 
+	 * @return agent's port
+	 */
 	public JTextField getInputPort() {
 		return inputPort;
 	}
 
+	/**
+	 * Loads recently hosts to the host input field.
+	 */
 	public void loadHosts() {
 		inputHost.addItem("localhost");
 	}
 
+	@Override
+	public void onConnection() {
+		btnAddIE.setEnabled(true);
+	}
+
+	@Override
+	public void onDisconnection() {
+		btnAddIE.setEnabled(false);
+
+		setClientSettingsState(ClientSettingsState.DEFAULT);
+	}
+
+	/**
+	 * Sets a new {@link ClientSettingsState}.
+	 * 
+	 * @param state
+	 *            - new state
+	 */
 	public void setClientSettingsState(ClientSettingsState state) {
 		switch (state) {
 		case CONNECTED:
@@ -320,38 +385,17 @@ public class MainView extends JFrame implements ConnectionStateListener, ActionL
 		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == btnInstrument) {
-			if (btnInstrument.getText().equals("Instrument")) {
-				// Instrument
-				Core.instance().instrument();
-				btnConnect.setEnabled(false);
-				btnInstrument.setText("Uninstrument");
-				btnMonitoring.setEnabled(true);
-			} else {
-				// Uninstrument
-				Core.instance().uninstrument();
-				btnConnect.setEnabled(true);
-				btnInstrument.setText("Instrument");
-				btnMonitoring.setEnabled(false);
-			}
-		} else if (e.getSource() == btnMonitoring) {
-			if (btnMonitoring.getText().equals("Start Monitoring")) {
-				// Start Monitoring
-				btnInstrument.setEnabled(false);
-				btnMonitoring.setText("Stop Monitoring");
-			} else {
-				// Stop Monitoring
-				btnInstrument.setEnabled(true);
-				btnMonitoring.setText("Start Monitoring");
-			}
-		}
-	}
-
+	/**
+	 * Sets the collection of {@link RawInstrumentationEntity} to display.
+	 * 
+	 * @param entities
+	 *            - set of entites to display
+	 */
 	public void updateInstrumentEntities(Collection<RawInstrumentationEntity> entities) {
 		bciPanel.removeAll();
+		// CHECKSTYLE:OFF
 		bciPanel.setLayout(new GridLayout(entities.size(), 1, 5, 5));
+		// CHECKSTYLE:ON
 
 		for (RawInstrumentationEntity raw : entities) {
 			BCIComponent bci = new BCIComponent();
