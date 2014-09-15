@@ -31,13 +31,13 @@ import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.description.internal.InstrumentationSet;
 import org.aim.description.restrictions.Restriction;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.builder.ProbeBuilder;
 import org.aim.mainagent.builder.Snippet;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
 import org.aim.mainagent.utils.JavassistWrapper;
 import org.aim.mainagent.utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Conducts instrumentation of methods and constructors.
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class BCInjector {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BCInjector.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(BCInjector.class);
 
 	private static BCInjector instance;
 

@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.aim.api.exceptions.MeasurementException;
 import org.aim.api.measurement.AbstractRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.lpe.common.util.system.LpeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The abstract {@link Datacollector} should be the super-class for all data
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class AbstractDataSource implements IDataCollector, IDataReader, Runnable {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDataSource.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(AbstractDataSource.class);
 	protected static final int BUFFER_SIZE = 1024;
 	private static final long MILLISECONDS_TO_WAIT = 500;
 

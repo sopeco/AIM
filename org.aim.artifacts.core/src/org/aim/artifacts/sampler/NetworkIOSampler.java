@@ -18,11 +18,11 @@ package org.aim.artifacts.sampler;
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
 import org.aim.artifacts.records.NetworkInterfaceInfoRecord;
 import org.aim.artifacts.records.NetworkRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.SigarException;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for recording the network of the underlying system. Currently capable
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NetworkIOSampler extends AbstractResourceSampler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NetworkIOSampler.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(NetworkIOSampler.class);
 
 	private static String[] networkInterfaces = null;
 

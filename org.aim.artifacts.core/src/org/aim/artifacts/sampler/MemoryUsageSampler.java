@@ -17,11 +17,11 @@ package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
 import org.aim.artifacts.records.MemoryRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.SigarException;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for recording the memory of the underlying system. Currently capable of
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryUsageSampler extends AbstractResourceSampler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MemoryUsageSampler.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(MemoryUsageSampler.class);
 
 	/**
 	 * Constructor.

@@ -22,12 +22,12 @@ import org.aim.description.InstrumentationDescription;
 import org.aim.description.InstrumentationEntity;
 import org.aim.description.probes.MeasurementProbe;
 import org.aim.description.scopes.SynchronizedScope;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.EventProbeRegistry;
 import org.aim.mainagent.events.MonitorEventListener;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Instrumentor responsible for activating and deactivating JVM events and
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class EventInstrumentor implements IInstrumentor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EventInstrumentor.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EventInstrumentor.class);
 
 	private static EventInstrumentor instance;
 

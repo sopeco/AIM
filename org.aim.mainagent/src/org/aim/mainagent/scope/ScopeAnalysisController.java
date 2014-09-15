@@ -40,10 +40,10 @@ import org.aim.description.scopes.ConstructorScope;
 import org.aim.description.scopes.CustomScope;
 import org.aim.description.scopes.MethodScope;
 import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Analyzes the whole scope.
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ScopeAnalysisController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ScopeAnalysisController.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(ScopeAnalysisController.class);
 	private InstrumentationDescription instrumentationDescription;
 
 	/**

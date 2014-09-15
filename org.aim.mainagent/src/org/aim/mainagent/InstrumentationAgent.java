@@ -15,6 +15,8 @@
  */
 package org.aim.mainagent;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.Properties;
@@ -23,6 +25,10 @@ import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.instrumentation.InstrumentationClient;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
+import org.aim.logging.AIMLoggingConfig;
+import org.aim.logging.LoggingLevel;
 import org.aim.mainagent.instrumentor.JInstrumentation;
 import org.aim.mainagent.service.CurrentTimeServlet;
 import org.aim.mainagent.service.DisableMeasurementServlet;
@@ -42,8 +48,6 @@ import org.glassfish.grizzly.http.server.Response;
 import org.lpe.common.config.GlobalConfiguration;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.util.system.LpeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link InstrumentationAgent} is a java agent which provides the service
@@ -55,19 +59,29 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class InstrumentationAgent {
-	private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentationAgent.class);
+	private static AIMLogger logger;
 
-	private static final String PORT_KEY = "port=";
-	private static final String DATA_COLLECTOR_KEY = "collector=";
-	private static final String PLUGINS_ROOT_KEY = "pluginsRootDir=";
+	private static AIMLogger getLogger() {
+		if (logger == null) {
+			logger = AIMLoggerFactory.getLogger(InstrumentationAgent.class);
+		}
+		return logger;
+	}
+
+	private static final String PORT_KEY = "port";
+	private static final String DATA_COLLECTOR_KEY = "collector";
+	private static final String PLUGINS_ROOT_KEY = "pluginsRootDir";
+	private static final String LOGGING_TYPE_KEY = "logType";
+	private static final String LOGGING_FILE_KEY = "logFile";
+	private static final String LOGGING_LEVEL_KEY = "logLevel";
 	private static final String DEFAULT_PLUGINS_FOLDER = "plugins";
 
 	public static final String URL_PATH_INSTRUMENTATION = InstrumentationClient.URL_PATH_INSTRUMENTATION;
 	public static final String URL_PATH_MEASUREMENT = InstrumentationClient.URL_PATH_MEASUREMENT;
 	public static final String PATH_PREFIX = InstrumentationClient.PATH_PREFIX;
 
+	private static final AIMLoggingConfig aimLoggingConfig = new AIMLoggingConfig();
 	private static final Properties properties = new Properties();
-
 	private static String port = "8888";
 	private static String pluginsRoot;
 	private static String collectorType = MemoryDataSource.class.getName();
@@ -111,25 +125,29 @@ public final class InstrumentationAgent {
 	 *            Java instrumentation instance
 	 */
 	public static void agentmain(String agentArgs, Instrumentation inst) {
-		boolean cAgentInitializedSuccessfully = CEventAgentAdapter.initialize();
-		if (!cAgentInitializedSuccessfully) {
-			LOGGER.warn("The C event agent could not be initialized and will not be used therefore.");
-			// TODO: handle this case
-		}
-
 		try {
+			parseArgs(agentArgs);
+			AIMLoggerFactory.initialize(aimLoggingConfig);
+
+			boolean cAgentInitializedSuccessfully = CEventAgentAdapter.initialize();
+			if (!cAgentInitializedSuccessfully) {
+				getLogger().warn("The C event agent could not be initialized and will not be used therefore.");
+				// TODO: handle this case
+			}
+
 			if (!inst.isRedefineClassesSupported()) {
 				throw new IllegalStateException(
 						"Redefining classes not supported, InstrumentationAgent cannot work properly!");
 			}
-			parseArgs(agentArgs);
+
 			initializeGlobalConfig();
 			LpeSystemUtils.loadNativeLibraries();
 			JInstrumentation.getInstance().setjInstrumentation(inst);
 			initDataCollector();
 			startServer();
 		} catch (Exception e) {
-			LOGGER.error("Agent ERROR: {}", e);
+			e.printStackTrace();
+			getLogger().error("Agent ERROR: {}", e);
 		}
 	}
 
@@ -161,14 +179,14 @@ public final class InstrumentationAgent {
 			addServlet(server, new GetDataServlet(), URL_PATH_MEASUREMENT + "/getdata");
 			addServlet(server, new CurrentTimeServlet(), URL_PATH_MEASUREMENT + "/currentTime");
 			addServlet(server, new MeasureOverheadServlet(), URL_PATH_MEASUREMENT + "/measureOverhead");
-
 			server.start();
-			LOGGER.info("Started Instrumentation Agent Server: {}.", getAddress());
+			getLogger().info("Started Instrumentation Agent Server: {}.", getAddress());
 
 		} catch (IllegalArgumentException iae) {
-			LOGGER.error("Illegal Argument Exception happend in main method of ServerLauncher: {}", iae.getMessage());
+			getLogger().error("Illegal Argument Exception happend in main method of ServerLauncher: {}",
+					iae.getMessage());
 		} catch (IOException ioe) {
-			LOGGER.error("IO Exception happend in main method of ServerLauncher: {}", ioe.getMessage());
+			getLogger().error("IO Exception happend in main method of ServerLauncher: {}", ioe.getMessage());
 		}
 
 	}
@@ -194,20 +212,42 @@ public final class InstrumentationAgent {
 		if (agentArgs == null) {
 			return;
 		}
-		String[] args = agentArgs.split(",");
-		for (String arg : args) {
-			if (arg.startsWith(PORT_KEY)) {
-				port = arg.substring(PORT_KEY.length());
-			} else if (arg.startsWith(DATA_COLLECTOR_KEY)) {
-				collectorType = arg.substring(DATA_COLLECTOR_KEY.length());
-			} else if (arg.startsWith(PLUGINS_ROOT_KEY)) {
-				pluginsRoot = arg.substring(PLUGINS_ROOT_KEY.length());
-			} else if (arg.contains("=")) {
-				String[] keyValuePair = arg.split("=");
-				if (keyValuePair.length == 2) {
-					properties.put(keyValuePair[0], keyValuePair[1]);
-				}
+		File agentConfigFile = new File(agentArgs);
+		if (!agentConfigFile.isFile() || !agentConfigFile.exists()) {
+			return;
+		}
+		Properties agentProperties = new Properties();
+		try (FileReader reader = new FileReader(agentConfigFile)) {
+			agentProperties.load(reader);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
+		for (Object key : agentProperties.keySet()) {
+			if (key.toString().equals(PORT_KEY)) {
+				port = agentProperties.getProperty(PORT_KEY);
+			} else if (key.toString().equals(DATA_COLLECTOR_KEY)) {
+				collectorType = agentProperties.getProperty(DATA_COLLECTOR_KEY);
+			} else if (key.toString().equals(PLUGINS_ROOT_KEY)) {
+				pluginsRoot = agentProperties.getProperty(PLUGINS_ROOT_KEY);
+			} else if (key.toString().equals(LOGGING_LEVEL_KEY)) {
+				aimLoggingConfig.setLoggingLevel(LoggingLevel.logLevelFromName(agentProperties
+						.getProperty(LOGGING_LEVEL_KEY)));
+			} else if (key.toString().equals(LOGGING_TYPE_KEY)) {
+				if (agentProperties.getProperty(LOGGING_TYPE_KEY).compareToIgnoreCase(
+						AIMLoggingConfig.LoggingType.STDOUT.toString()) == 0) {
+					aimLoggingConfig.setLoggingType(AIMLoggingConfig.LoggingType.STDOUT);
+				} else if (agentProperties.getProperty(LOGGING_TYPE_KEY).compareToIgnoreCase(
+						AIMLoggingConfig.LoggingType.FILE.toString()) == 0) {
+					aimLoggingConfig.setLoggingType(AIMLoggingConfig.LoggingType.FILE);
+				}
+			} else if (key.toString().equals(LOGGING_FILE_KEY)) {
+				String fileName = agentProperties.getProperty(LOGGING_FILE_KEY);
+				File file = new File(fileName);
+				aimLoggingConfig.setFileName(file.getAbsolutePath());
+
+			} else {
+				properties.put(key.toString(), agentProperties.getProperty(key.toString()));
 			}
 		}
 	}
