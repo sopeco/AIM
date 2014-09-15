@@ -1,25 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.aim</groupId>
-    <artifactId>org.aim.parent</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
-    <relativePath>../org.aim.parent</relativePath>
-  </parent>
-  
-  <artifactId>org.aim.description</artifactId>
-  <name>Instrumentation Description</name>
-  
-  <dependencies>
-  	<dependency>
-  		<groupId>org.codehaus.jackson</groupId>
-  		<artifactId>jackson-core-asl</artifactId>
-  		<version>1.9.13</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.lpe.common</groupId>
-  		<artifactId>org.lpe.common.utils</artifactId>
-  		<version>1.0.4-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.aim</groupId>
+		<artifactId>org.aim.parent</artifactId>
+		<version>1.0.4-SNAPSHOT</version>
+		<relativePath>../org.aim.parent</relativePath>
+	</parent>
+
+	<artifactId>org.aim.description</artifactId>
+	<name>Instrumentation Description</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

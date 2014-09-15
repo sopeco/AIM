@@ -28,12 +28,12 @@ import org.aim.api.instrumentation.description.internal.InstrumentationSet;
 import org.aim.description.InstrumentationDescription;
 import org.aim.description.restrictions.Restriction;
 import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.instrumentor.BCInjector;
 import org.aim.mainagent.instrumentor.JAgentSwapper;
 import org.aim.mainagent.instrumentor.JInstrumentation;
 import org.aim.mainagent.scope.ScopeAnalysisController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Keeps track of and conducts method instrumentation.
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class MethodInstrumentor implements IInstrumentor {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MethodInstrumentor.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(MethodInstrumentor.class);
 	private final Set<FlatInstrumentationEntity> currentInstrumentationState = new HashSet<>();
 
 	@SuppressWarnings("rawtypes")

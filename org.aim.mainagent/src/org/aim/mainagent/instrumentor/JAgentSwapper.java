@@ -19,8 +19,8 @@ import java.lang.instrument.ClassDefinition;
 import java.util.Map;
 
 import org.aim.api.exceptions.InstrumentationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 
 /**
  * Responsible for swapping bytecode.
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class JAgentSwapper implements BCSwapper {
-	private static final Logger LOGGER = LoggerFactory.getLogger(JAgentSwapper.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(JAgentSwapper.class);
 
 	private static JAgentSwapper instance;
 

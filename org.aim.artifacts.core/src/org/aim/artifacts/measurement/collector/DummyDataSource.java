@@ -22,8 +22,8 @@ import org.aim.api.exceptions.MeasurementException;
 import org.aim.api.measurement.AbstractRecord;
 import org.aim.api.measurement.MeasurementData;
 import org.aim.api.measurement.collector.AbstractDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 
 /**
  * The {@link DummyDataSource} droppes all collected records to simulate a
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DummyDataSource extends AbstractDataSource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FileDataSource.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(FileDataSource.class);
 
 	@Override
 	protected void process(AbstractRecord record) {

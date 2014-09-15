@@ -33,9 +33,9 @@ import org.aim.description.scopes.CustomScope;
 import org.aim.description.scopes.MethodScope;
 import org.aim.description.scopes.MethodsEnclosingScope;
 import org.aim.description.scopes.TraceScope;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Instrumentor for traces.
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class TraceInstrumentor implements IInstrumentor {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TraceInstrumentor.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(TraceInstrumentor.class);
 	private static TraceInstrumentor instance;
 
 	/**

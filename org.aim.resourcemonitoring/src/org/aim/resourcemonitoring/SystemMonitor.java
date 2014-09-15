@@ -26,9 +26,9 @@ import org.aim.api.measurement.sampling.AbstractSampler;
 import org.aim.api.measurement.sampling.ResourceSamplerFactory;
 import org.aim.api.measurement.sampling.SamplingExecuter;
 import org.aim.description.sampling.SamplingDescription;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.lpe.common.util.system.LpeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * System Monitoring Utility. Once configured it manages all recorders and
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class SystemMonitor {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SystemMonitor.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(SystemMonitor.class);
 
 	private static SystemMonitor instance;
 

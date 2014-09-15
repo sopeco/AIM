@@ -17,12 +17,12 @@ package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
 import org.aim.artifacts.records.DiskRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.hyperic.sigar.DiskUsage;
 import org.hyperic.sigar.FileSystem;
 import org.hyperic.sigar.SigarException;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for recording the disk of the underlying system. Currently capable of
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DiskIOSampler extends AbstractResourceSampler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DiskIOSampler.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(DiskIOSampler.class);
 	private static final String READS = "reads";
 	private static final String WRITES = "writes";
 

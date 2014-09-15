@@ -16,9 +16,9 @@
 package org.aim.mainagent;
 
 import org.aim.description.restrictions.Restriction;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.MonitorEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Adapter for the JVMTI Event Agent. To use this agent, the CEventAgent has to
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class CEventAgentAdapter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CEventAgentAdapter.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(CEventAgentAdapter.class);
 
 	private static final String PACKAGE_AIM = "org.aim";
 	private static final String PACKAGE_LPE_COMMON = "org.lpe.common";

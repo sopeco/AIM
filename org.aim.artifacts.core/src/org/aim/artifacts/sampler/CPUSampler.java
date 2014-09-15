@@ -17,11 +17,11 @@ package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
 import org.aim.artifacts.records.CPUUtilizationRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.SigarException;
 import org.lpe.common.extension.IExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for recording the cpu of the underlying system. Currently capable of
@@ -42,7 +42,7 @@ public class CPUSampler extends AbstractResourceSampler {
 		super(provider);
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CPUSampler.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(CPUSampler.class);
 
 	/**
 	 * Fetches the current cpu utilization and passes it in a CPUUtilization

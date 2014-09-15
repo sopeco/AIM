@@ -31,10 +31,10 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractRecord} encapsulates the common functionality of all
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
 public abstract class AbstractRecord implements Serializable {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRecord.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(AbstractRecord.class);
 
 	private static final long serialVersionUID = -4324134213075474222L;
 	private static final Map<Class<? extends AbstractRecord>, Field[]> fields = new HashMap<Class<? extends AbstractRecord>, Field[]>();
@@ -55,7 +55,6 @@ public abstract class AbstractRecord implements Serializable {
 	public static final String PAR_PROCESS_ID = "processId";
 
 	private static final String PROCESS_ID_CONSTANT = ManagementFactory.getRuntimeMXBean().getName();
-	
 
 	@RecordValue(metric = true, name = PAR_TIMESTAMP, isTimestamp = true)
 	long timeStamp;
@@ -568,12 +567,11 @@ public abstract class AbstractRecord implements Serializable {
 	}
 
 	/**
-	 * @param processId the processId to set
+	 * @param processId
+	 *            the processId to set
 	 */
 	public void setProcessId(String processId) {
 		this.processId = processId;
 	}
-
-	
 
 }

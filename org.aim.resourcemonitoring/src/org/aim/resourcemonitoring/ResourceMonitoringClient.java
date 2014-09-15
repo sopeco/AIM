@@ -25,9 +25,9 @@ import org.aim.api.exceptions.MeasurementException;
 import org.aim.api.measurement.MeasurementData;
 import org.aim.artifacts.measurement.collector.StreamReader;
 import org.aim.description.InstrumentationDescription;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.lpe.common.util.web.LpeWebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.WebResource;
 
@@ -38,7 +38,7 @@ import com.sun.jersey.api.client.WebResource;
  * 
  */
 public class ResourceMonitoringClient {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMonitoringClient.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(ResourceMonitoringClient.class);
 
 	private static final String REST = ServerLauncher.PREFIX + "/MonitoringService";
 	private static final String TEST_CONNECTION = "testConnection";

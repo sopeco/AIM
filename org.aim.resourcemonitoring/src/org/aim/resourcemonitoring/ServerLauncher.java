@@ -22,11 +22,11 @@ import java.util.Properties;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.resourcemonitoring.service.MonitoringService;
 import org.lpe.common.util.system.LpeSystemUtils;
 import org.lpe.common.util.web.WebServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main class of the System Monitoring Utility. Starts a grizzly server and
@@ -36,14 +36,13 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class ServerLauncher {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServerLauncher.class);
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(ServerLauncher.class);
 	public static final String PREFIX = "sampler";
 	private static final String PORT_KEY = "port=";
 	private static final String DATA_COLLECTOR_KEY = "collector=";
 	private static String port = "8889";
 	private static String collectorType = MemoryDataSource.class.getName();
 	private static final Properties properties = new Properties();
-	
 
 	private ServerLauncher() {
 	}
@@ -87,7 +86,7 @@ public final class ServerLauncher {
 	 * @param agentArgs
 	 *            arguments as string
 	 */
-	private static void parseArgs(String [] agentArgs) {
+	private static void parseArgs(String[] agentArgs) {
 		if (agentArgs == null) {
 			return;
 		}
@@ -105,7 +104,7 @@ public final class ServerLauncher {
 			}
 		}
 	}
-	
+
 	/**
 	 * Initializes the data collector.
 	 */
