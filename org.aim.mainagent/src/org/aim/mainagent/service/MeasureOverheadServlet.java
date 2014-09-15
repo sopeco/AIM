@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.aim.api.instrumentation.entities.OverheadData;
 import org.aim.api.instrumentation.entities.OverheadRecord;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
@@ -34,10 +36,11 @@ import org.overhead.OverheadEstimator;
  * 
  */
 public class MeasureOverheadServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
 
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
-
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
 		String json = "";
 		if (br != null) {
@@ -48,6 +51,7 @@ public class MeasureOverheadServlet implements Service {
 		ObjectMapper mapper = new ObjectMapper(factory);
 
 		String probeClassName = json;
+		LOGGER.info("Requested overhead measurement for probe {}", probeClassName);
 		OverheadData oData = new OverheadData();
 
 		List<OverheadRecord> records = OverheadEstimator.measureOverhead(probeClassName);

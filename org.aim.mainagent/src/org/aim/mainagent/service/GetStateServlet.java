@@ -16,6 +16,8 @@
 package org.aim.mainagent.service;
 
 import org.aim.api.instrumentation.entities.FlatInstrumentationState;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.AdaptiveInstrumentationFacade;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,9 +31,11 @@ import org.glassfish.grizzly.http.server.Response;
  * 
  */
 public class GetStateServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
 
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
+		LOGGER.info("Requested instrumentation state");
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 

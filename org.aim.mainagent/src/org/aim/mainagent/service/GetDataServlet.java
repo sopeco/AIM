@@ -18,6 +18,8 @@ package org.aim.mainagent.service;
 import java.io.OutputStream;
 
 import org.aim.api.measurement.collector.AbstractDataSource;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
@@ -29,15 +31,18 @@ import org.glassfish.grizzly.http.util.HttpStatus;
  * 
  */
 public class GetDataServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
+
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
-
+		LOGGER.info("Requested data transfer ...");
 		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		final OutputStream oStream = resp.getOutputStream();
 		resp.setContentType("text/plain");
 		resp.setStatus(HttpStatus.OK_200);
 		dataSource.pipeToOutputStream(oStream);
+		LOGGER.info("Data transfer finished!");
 
 	}
 }

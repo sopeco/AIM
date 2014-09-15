@@ -16,6 +16,8 @@
 package org.aim.mainagent.service;
 
 import org.aim.api.instrumentation.entities.SupportedExtensions;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.AdaptiveInstrumentationFacade;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -28,9 +30,11 @@ import org.glassfish.grizzly.http.server.Response;
  *
  */
 public class GetSupportedExtensionsServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
 
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
+		LOGGER.info("Requested supported extensions");
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
