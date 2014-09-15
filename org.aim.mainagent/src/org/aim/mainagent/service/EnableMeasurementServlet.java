@@ -18,6 +18,8 @@ package org.aim.mainagent.service;
 import org.aim.api.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.sampling.Sampling;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
@@ -29,14 +31,19 @@ import org.glassfish.grizzly.http.server.Response;
  * 
  */
 public class EnableMeasurementServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
+
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
 		try {
+			LOGGER.info("Enabling measurement ...");
 			IDataCollector collector = AbstractDataSource.getDefaultDataSource();
 
 			collector.enable();
 			Sampling.getInstance().start();
+			LOGGER.info("Measurement enabled!");
 		} catch (MeasurementException e) {
+			LOGGER.error("Error during enabling measurement! Reason: {}", e);
 			throw new Exception(e);
 		}
 	}

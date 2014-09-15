@@ -101,6 +101,7 @@ public class FileDataSource extends AbstractDataSource {
 		} catch (IOException e) {
 			throw new MeasurementException("Measurement error! Failed creating FileDataWriter.", e);
 		}
+		LOGGER.debug("data sink: {}", sink);
 		LOGGER.debug("File writer initialized");
 
 	}

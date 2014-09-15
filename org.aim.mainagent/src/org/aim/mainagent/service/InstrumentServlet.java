@@ -16,6 +16,8 @@
 package org.aim.mainagent.service;
 
 import org.aim.description.InstrumentationDescription;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.AdaptiveInstrumentationFacade;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
@@ -29,13 +31,16 @@ import org.glassfish.grizzly.http.server.Response;
  * 
  */
 public class InstrumentServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
+
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
-			ObjectMapper mapper = new ObjectMapper();
-			InstrumentationDescription description = mapper.readValue(req.getInputStream(),
-					InstrumentationDescription.class);
-			AdaptiveInstrumentationFacade.getInstance().instrument(description);
-
+		LOGGER.info("Requested instrumentation ...");
+		ObjectMapper mapper = new ObjectMapper();
+		InstrumentationDescription description = mapper.readValue(req.getInputStream(),
+				InstrumentationDescription.class);
+		AdaptiveInstrumentationFacade.getInstance().instrument(description);
+		LOGGER.info("Instrumentation finished!");
 
 	}
 }

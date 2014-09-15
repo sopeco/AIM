@@ -15,6 +15,8 @@
  */
 package org.aim.mainagent.service;
 
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
@@ -25,8 +27,11 @@ import org.glassfish.grizzly.http.server.Response;
  *
  */
 public class TestConnectionServlet implements Service {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
+
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
+		LOGGER.info("Tested connection");
 		resp.setContentType("application/json");
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(resp.getOutputStream(), true);
