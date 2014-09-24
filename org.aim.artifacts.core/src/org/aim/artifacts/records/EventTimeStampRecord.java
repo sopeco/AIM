@@ -71,10 +71,10 @@ public class EventTimeStampRecord extends AbstractRecord {
 	@RecordValue(name = PAR_LOCATION)
 	String location;
 
-	@RecordValue(name = PAR_NANO_TIMESTAMP)
+	@RecordValue(name = PAR_NANO_TIMESTAMP, metric=true)
 	long eventNanoTimestamp;
 	
-	@RecordValue(name = PAR_THREAD_ID)
+	@RecordValue(name = PAR_THREAD_ID, metric=true)
 	private
 	long threadId;
 
