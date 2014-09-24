@@ -14,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,6 +39,8 @@ import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.manager.ClientManager;
 import org.aim.ui.manager.Core;
+import org.aim.ui.view.sampler.SamplerComponent;
+import org.aim.ui.view.sampler.SamplerPanel;
 
 /**
  * The application's main window.
@@ -54,14 +57,14 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		CONNECTED, CONNECTING, DEFAULT
 	}
 
-	/**  */
-	private static final long serialVersionUID = 1L;
-	
 	private static final int INSET_VALUE = 5;
+
 	private static MainView instance;
 	private static final Dimension INSTRUMENTATION_WIZARD_SIZE = new Dimension(400, 500);
 	private static final Dimension LOG_PANEL_SIZE = new Dimension(100, 60);
 	private static final Dimension MAIN_WINDOW_SIZE = new Dimension(680, 480);
+	/**  */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -84,7 +87,9 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	private JComboBox<String> inputHost;
 	private JTextField inputPort;
 	private RestrictionPanel panelGlobalRestrictions;
+	private SamplerPanel samplerPanel;
 	private JScrollPane scrollPaneLog;
+
 	private JTextPane textLog;
 
 	private MainView() {
@@ -206,8 +211,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		panel2.add(btnImportInstrumentationEntity);
 		panel2.add(btnAddIE);
 
-		JPanel panel6 = new JPanel();
-		tabbedPane.addTab("Sampler", null, panel6, null);
+		samplerPanel = new SamplerPanel();
+		tabbedPane.addTab("Sampler", null, samplerPanel, null);
 
 		JScrollPane scrollPane = new JScrollPane();
 		tabbedPane.addTab("Global Restriction", null, scrollPane, null);
@@ -287,6 +292,15 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	}
 
 	/**
+	 * Returns the list including all {@link SamplerComponent}s.
+	 * 
+	 * @return lits containing {@link SamplerComponent}
+	 */
+	public List<SamplerComponent> getAllSamplerComponents() {
+		return samplerPanel.getAllSamplerComponents();
+	}
+
+	/**
 	 * Returns the global restriction settings.
 	 * 
 	 * @return global restrictions
@@ -362,6 +376,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			btnInstrument.setEnabled(true);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(true);
+			samplerPanel.getBtnAddSampler().setEnabled(true);
 			break;
 		case CONNECTING:
 			inputHost.setEnabled(false);
@@ -371,6 +386,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
+			samplerPanel.getBtnAddSampler().setEnabled(false);
 			break;
 		case DEFAULT:
 		default:
@@ -381,6 +397,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
+			samplerPanel.getBtnAddSampler().setEnabled(false);
 			break;
 		}
 	}

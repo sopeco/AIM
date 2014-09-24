@@ -292,10 +292,10 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblProbesValue.setText(probes);
 
 		String modExc = "<html>";
-		if (entity.getExcModifiers().length == 0) {
+		if (entity.getExcludedModifiers().length == 0) {
 			modExc = "-";
 		} else {
-			for (int mod : entity.getExcModifiers()) {
+			for (int mod : entity.getExcludedModifiers()) {
 				modExc += Modifier.values()[mod];
 				modExc += "<br>";
 			}
@@ -304,10 +304,10 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblModExc.setText(modExc);
 
 		String modInc = "<html>";
-		if (entity.getIncModifiers().length == 0) {
+		if (entity.getIncludedModifiers().length == 0) {
 			modInc = "-";
 		} else {
-			for (int mod : entity.getIncModifiers()) {
+			for (int mod : entity.getIncludedModifiers()) {
 				modInc += Modifier.values()[mod];
 				modInc += "<br>";
 			}
@@ -316,10 +316,10 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblModInc.setText(modInc);
 
 		String pacExc = "<html>";
-		if (entity.getExcPackages().length == 0) {
+		if (entity.getExcludedPackages().length == 0) {
 			pacExc = "-";
 		} else {
-			for (String pge : entity.getExcPackages()) {
+			for (String pge : entity.getExcludedPackages()) {
 				pacExc += pge;
 				pacExc += "<br>";
 			}
@@ -328,10 +328,10 @@ public class BCIComponent extends JPanel implements ActionListener {
 		lblPackageExc.setText(pacExc);
 
 		String pacInc = "<html>";
-		if (entity.getIncPackages().length == 0) {
+		if (entity.getIncludedPackages().length == 0) {
 			pacInc = "-";
 		} else {
-			for (String pge : entity.getIncPackages()) {
+			for (String pge : entity.getIncludedPackages()) {
 				pacInc += pge;
 				pacInc += "<br>";
 			}

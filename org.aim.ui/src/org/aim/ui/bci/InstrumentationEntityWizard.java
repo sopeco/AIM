@@ -122,10 +122,10 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		entity.setTraceScope(scpPanel.isTraceScope());
 		entity.setScopeSettings(scpPanel.getSettings());
 		entity.setProbes(probePanel.getProbes());
-		entity.setExcModifiers(restrictionPanel.getExcludedModifiers());
-		entity.setIncModifiers(restrictionPanel.getIncludedModifiers());
-		entity.setExcPackages(restrictionPanel.getExcludedPackages());
-		entity.setIncPackages(restrictionPanel.getIncludedPackages());
+		entity.setExcludedModifiers(restrictionPanel.getExcludedModifiers());
+		entity.setIncludedModifiers(restrictionPanel.getIncludedModifiers());
+		entity.setExcludedPackages(restrictionPanel.getExcludedPackages());
+		entity.setIncludedPackages(restrictionPanel.getIncludedPackages());
 		return entity;
 	}
 
@@ -141,9 +141,9 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		scpPanel.setTraceScope(true);
 		scpPanel.setScopeSettings(entity.getScopeSettings());
 		probePanel.setProbes(entity.getProbes());
-		restrictionPanel.setExcludedPackages(entity.getExcPackages());
-		restrictionPanel.setIncludedPackages(entity.getIncPackages());
-		restrictionPanel.setExcludedModifiers(entity.getExcModifiers());
-		restrictionPanel.setIncludedModifiers(entity.getIncModifiers());
+		restrictionPanel.setExcludedPackages(entity.getExcludedPackages());
+		restrictionPanel.setIncludedPackages(entity.getIncludedPackages());
+		restrictionPanel.setExcludedModifiers(entity.getExcludedModifiers());
+		restrictionPanel.setIncludedModifiers(entity.getIncludedModifiers());
 	}
 }

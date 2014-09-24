@@ -146,6 +146,16 @@ public final class ClientManager {
 	}
 
 	/**
+	 * Returns the a list of sampler (classes) which are supported by the
+	 * connected agent.
+	 * 
+	 * @return sampler supported by the connected agent
+	 */
+	public List<String> getSampler() {
+		return client.getSupportedExtensions().getSamplerExtensions();
+	}
+	
+	/**
 	 * Returns the a list of scopes (classes) which are supported by the
 	 * connected agent.
 	 * 
