@@ -9,6 +9,8 @@ import org.aim.description.builder.RestrictionBuilder;
 import org.aim.description.restrictions.Restriction;
 import org.aim.ui.bci.ScopePanel;
 import org.aim.ui.entities.RawInstrumentationEntity;
+import org.aim.ui.view.MainView;
+import org.aim.ui.view.sampler.SamplerComponent;
 
 /**
  * 
@@ -50,6 +52,10 @@ public final class IDBuilder {
 				}
 			} else if (entity.getScope().equals(ScopePanel.ALLOCATION_SCOPE)) {
 				entBuilder = descBuilder.newAllocationScopeEntity(entity.getScopeSettings());
+			} else if (entity.getScope().equals(ScopePanel.MEMORY_SCOPE)) {
+				entBuilder = descBuilder.newMemoryScopeEntity();
+			} else if (entity.getScope().equals(ScopePanel.SYNCHRONIZED_SCOPE)) {
+				entBuilder = descBuilder.newSynchronizedScopeEntity();
 			} else {
 				entBuilder = descBuilder.newAPIScopeEntity(entity.getScope());
 			}
@@ -62,17 +68,17 @@ public final class IDBuilder {
 			// ###### Add Restrictions
 			RestrictionBuilder<?> restrictionBuilder = entBuilder.newLocalRestriction();
 
-			for (int modifier : entity.getExcModifiers()) {
+			for (int modifier : entity.getExcludedModifiers()) {
 				restrictionBuilder.excludeModifier(modifier);
 			}
-			for (int modifier : entity.getIncModifiers()) {
+			for (int modifier : entity.getIncludedModifiers()) {
 				restrictionBuilder.includeModifier(modifier);
 			}
 
-			for (String pge : entity.getExcPackages()) {
+			for (String pge : entity.getExcludedPackages()) {
 				restrictionBuilder.excludePackage(pge);
 			}
-			for (String pge : entity.getIncPackages()) {
+			for (String pge : entity.getIncludedPackages()) {
 				restrictionBuilder.includePackage(pge);
 			}
 
@@ -83,7 +89,9 @@ public final class IDBuilder {
 		}
 
 		// ###### Sampler
-		// TODO
+		for (SamplerComponent comp : MainView.instance().getAllSamplerComponents()) {
+			descBuilder.newSampling(comp.getSampler(), comp.getDelay());
+		}
 
 		// ###### Global Restriction
 		RestrictionBuilder<InstrumentationDescriptionBuilder> globalRestrictionBuilder = descBuilder

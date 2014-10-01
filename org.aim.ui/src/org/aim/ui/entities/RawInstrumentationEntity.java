@@ -13,41 +13,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "entity")
 public class RawInstrumentationEntity {
 
-	private int[] excModifiers;
-	private String[] excPackages;
-	private int[] incModifiers;
-	private String[] incPackages;
+	private int[] excludedModifiers;
+	private String[] excludedPackages;
+	private int[] includedModifiers;
+	private String[] includedPackages;
 	private boolean isTraceScope;
 	private String[] probes;
 	private String scope;
 	private String[] scopeSettings;
 
 	/**
-	 * @return the excModifiers
+	 * @return the excludedModifiers
 	 */
-	public int[] getExcModifiers() {
-		return excModifiers;
+	public int[] getExcludedModifiers() {
+		return excludedModifiers;
 	}
 
 	/**
-	 * @return the excPackages
+	 * @return the excludedPackages
 	 */
-	public String[] getExcPackages() {
-		return excPackages;
+	public String[] getExcludedPackages() {
+		return excludedPackages;
 	}
 
 	/**
-	 * @return the incModifiers
+	 * @return the includedModifiers
 	 */
-	public int[] getIncModifiers() {
-		return incModifiers;
+	public int[] getIncludedModifiers() {
+		return includedModifiers;
 	}
 
 	/**
-	 * @return the incPackages
+	 * @return the includedPackages
 	 */
-	public String[] getIncPackages() {
-		return incPackages;
+	public String[] getIncludedPackages() {
+		return includedPackages;
 	}
 
 	/**
@@ -79,35 +79,35 @@ public class RawInstrumentationEntity {
 	}
 
 	/**
-	 * @param excModifiers
-	 *            the excModifiers to set
+	 * @param excludedModifiers
+	 *            the excludedModifiers to set
 	 */
-	public void setExcModifiers(int[] excModifiers) {
-		this.excModifiers = excModifiers;
+	public void setExcludedModifiers(int[] excludedModifiers) {
+		this.excludedModifiers = excludedModifiers;
 	}
 
 	/**
-	 * @param excPackages
-	 *            the excPackages to set
+	 * @param excludedPackages
+	 *            the excludedPackages to set
 	 */
-	public void setExcPackages(String[] excPackages) {
-		this.excPackages = excPackages;
+	public void setExcludedPackages(String[] excludedPackages) {
+		this.excludedPackages = excludedPackages;
 	}
 
 	/**
-	 * @param incModifiers
-	 *            the incModifiers to set
+	 * @param includedModifiers
+	 *            the includedModifiers to set
 	 */
-	public void setIncModifiers(int[] incModifiers) {
-		this.incModifiers = incModifiers;
+	public void setIncludedModifiers(int[] includedModifiers) {
+		this.includedModifiers = includedModifiers;
 	}
 
 	/**
-	 * @param incPackages
-	 *            the incPackages to set
+	 * @param includedPackages
+	 *            the includedPackages to set
 	 */
-	public void setIncPackages(String[] incPackages) {
-		this.incPackages = incPackages;
+	public void setIncludedPackages(String[] includedPackages) {
+		this.includedPackages = includedPackages;
 	}
 
 	/**

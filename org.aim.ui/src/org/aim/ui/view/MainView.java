@@ -11,10 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
@@ -38,6 +37,8 @@ import org.aim.ui.entities.RawInstrumentationEntity;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.manager.ClientManager;
 import org.aim.ui.manager.Core;
+import org.aim.ui.view.sampler.SamplerComponent;
+import org.aim.ui.view.sampler.SamplerPanel;
 
 /**
  * The application's main window.
@@ -54,14 +55,13 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		CONNECTED, CONNECTING, DEFAULT
 	}
 
-	/**  */
-	private static final long serialVersionUID = 1L;
-	
 	private static final int INSET_VALUE = 5;
+
 	private static MainView instance;
 	private static final Dimension INSTRUMENTATION_WIZARD_SIZE = new Dimension(400, 500);
-	private static final Dimension LOG_PANEL_SIZE = new Dimension(100, 60);
-	private static final Dimension MAIN_WINDOW_SIZE = new Dimension(680, 480);
+	private static final Dimension MAIN_WINDOW_SIZE = new Dimension(750, 480);
+	/**  */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -84,8 +84,9 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	private JComboBox<String> inputHost;
 	private JTextField inputPort;
 	private RestrictionPanel panelGlobalRestrictions;
-	private JScrollPane scrollPaneLog;
-	private JTextPane textLog;
+	private SamplerPanel samplerPanel;
+
+	private JButton btnDownloadDataset;
 
 	private MainView() {
 		ClientManager.instance().addConnectionStateListener(this);
@@ -159,6 +160,11 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		btnMonitoring.setEnabled(false);
 		panel7.add(btnMonitoring);
 
+		btnDownloadDataset = new JButton("");
+		btnDownloadDataset.addActionListener(this);
+		btnDownloadDataset.setIcon(new ImageIcon(MainView.class.getResource("/icons/disk-arrow.png")));
+		panel7.add(btnDownloadDataset);
+
 		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
@@ -206,8 +212,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		panel2.add(btnImportInstrumentationEntity);
 		panel2.add(btnAddIE);
 
-		JPanel panel6 = new JPanel();
-		tabbedPane.addTab("Sampler", null, panel6, null);
+		samplerPanel = new SamplerPanel();
+		tabbedPane.addTab("Sampler", null, samplerPanel, null);
 
 		JScrollPane scrollPane = new JScrollPane();
 		tabbedPane.addTab("Global Restriction", null, scrollPane, null);
@@ -215,16 +221,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		panelGlobalRestrictions = new RestrictionPanel();
 		scrollPane.setViewportView(panelGlobalRestrictions);
 
-		textLog = new JTextPane();
-		textLog.setEditable(false);
-
-		scrollPaneLog = new JScrollPane(textLog);
-		scrollPaneLog.setPreferredSize(LOG_PANEL_SIZE);
-
-		getContentPane().add(scrollPaneLog, BorderLayout.SOUTH);
-
 		setSize(MAIN_WINDOW_SIZE);
-
+		
 		loadHosts();
 
 		onDisconnection();
@@ -271,6 +269,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 				btnInstrument.setEnabled(true);
 				btnMonitoring.setText("Start Monitoring");
 			}
+		} else if (e.getSource() == btnDownloadDataset) {
+			Core.instance().downloadDataset();
 		}
 	}
 
@@ -281,9 +281,20 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 *            - text to print
 	 */
 	public void addLogMessage(String message) {
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
-		textLog.setText(textLog.getText() + "\n" + format.format(new Date()) + " - " + message);
-		scrollPaneLog.getVerticalScrollBar().setValue(scrollPaneLog.getVerticalScrollBar().getMaximum());
+		// SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
+		// textLog.setText(textLog.getText() + "\n" + format.format(new Date())
+		// +
+		// " - " + message);
+		// scrollPaneLog.getVerticalScrollBar().setValue(scrollPaneLog.getVerticalScrollBar().getMaximum());
+	}
+
+	/**
+	 * Returns the list including all {@link SamplerComponent}s.
+	 * 
+	 * @return lits containing {@link SamplerComponent}
+	 */
+	public List<SamplerComponent> getAllSamplerComponents() {
+		return samplerPanel.getAllSamplerComponents();
 	}
 
 	/**
@@ -358,29 +369,35 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(true);
 			btnConnect.setText("Disconnect");
+			btnDownloadDataset.setEnabled(true);
 			btnInstrument.setText("Instrument");
 			btnInstrument.setEnabled(true);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(true);
+			samplerPanel.getBtnAddSampler().setEnabled(true);
 			break;
 		case CONNECTING:
 			inputHost.setEnabled(false);
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(false);
+			btnDownloadDataset.setEnabled(false);
 			btnConnect.setText("Connecting..");
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
+			samplerPanel.getBtnAddSampler().setEnabled(false);
 			break;
 		case DEFAULT:
 		default:
 			inputHost.setEnabled(true);
 			inputPort.setEnabled(true);
 			btnConnect.setEnabled(true);
+			btnDownloadDataset.setEnabled(false);
 			btnConnect.setText("Connect");
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
+			samplerPanel.getBtnAddSampler().setEnabled(false);
 			break;
 		}
 	}
