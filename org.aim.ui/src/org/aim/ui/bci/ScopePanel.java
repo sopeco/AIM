@@ -5,13 +5,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.aim.ui.components.ExtendedComboBox;
 import org.aim.ui.components.ItemListPanel;
 import org.aim.ui.manager.ClientManager;
 
@@ -26,6 +29,8 @@ public class ScopePanel extends JPanel implements ActionListener {
 	public static final String ALLOCATION_SCOPE = "Allocation Scope";
 	public static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
 	public static final String METHOD_SCOPE = "Method Scope";
+	public static final String MEMORY_SCOPE = "Memory Scope";
+	public static final String SYNCHRONIZED_SCOPE = "Synchronized Scope";
 
 	private static final int INSET_VALUE = 5;
 
@@ -33,11 +38,13 @@ public class ScopePanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JCheckBox checkBoxTrace;
-	private JComboBox<String> comboBox;
+	private ExtendedComboBox comboBox;
 	private JLabel lblSettings;
 	private JLabel lblTraceScope;
 	private ItemListPanel lpScopeSettings;
 
+	private Map<String, String> scopeMapping = new HashMap<String, String>();
+	
 	/**
 	 * Constructor.
 	 */
@@ -58,7 +65,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		gbcLblType.gridy = 0;
 		add(lblType, gbcLblType);
 
-		comboBox = new JComboBox<String>();
+		comboBox = new ExtendedComboBox();
 		comboBox.addActionListener(this);
 		GridBagConstraints gbcComboBox = new GridBagConstraints();
 		gbcComboBox.insets = new Insets(0, 0, INSET_VALUE, 0);
@@ -102,15 +109,47 @@ public class ScopePanel extends JPanel implements ActionListener {
 		lpScopeSettings
 				.setValidationPattern("([a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*\\.)*[a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*");
 
+		comboBox.addDelimiter("Scopes");
+
 		comboBox.addItem(METHOD_SCOPE);
 		comboBox.addItem(CONSTRUCTOR_SCOPE);
 		comboBox.addItem(ALLOCATION_SCOPE);
+		comboBox.addItem(MEMORY_SCOPE);
+		comboBox.addItem(SYNCHRONIZED_SCOPE);
 
+		scopeMapping.put(METHOD_SCOPE, METHOD_SCOPE);
+		scopeMapping.put(CONSTRUCTOR_SCOPE, CONSTRUCTOR_SCOPE);
+		scopeMapping.put(ALLOCATION_SCOPE, ALLOCATION_SCOPE);
+		scopeMapping.put(MEMORY_SCOPE, MEMORY_SCOPE);
+		scopeMapping.put(SYNCHRONIZED_SCOPE, SYNCHRONIZED_SCOPE);
+		
 		if (ClientManager.instance().isConnected()) {
-			for (String i : ClientManager.instance().getScopes()) {
-				comboBox.addItem(i);
+			List<String> apiScopes = ClientManager.instance().getApiScopes();
+			if (!apiScopes.isEmpty()) {
+				comboBox.addDelimiter("API Scopes");
+				for (String i : apiScopes) {
+					scopeMapping.put(abbreviateString(i), i);
+					comboBox.addItem(abbreviateString(i));
+				}
+			}
+
+			List<String> customScopes = ClientManager.instance().getCustomScopes();
+			if (!customScopes.isEmpty()) {
+				comboBox.addDelimiter("Custom Scopes");
+				for (String i : customScopes) {
+					scopeMapping.put(abbreviateString(i), i);
+					comboBox.addItem(abbreviateString(i));
+				}
 			}
 		}
+	}
+
+	private String abbreviateString(String scopeName) {
+		int lastIndexOf = scopeName.lastIndexOf('.');
+		if (lastIndexOf >= 0) {
+			return scopeName.substring(lastIndexOf + 1);
+		}
+		return scopeName;
 	}
 
 	@Override
@@ -118,7 +157,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		lpScopeSettings.removeItems();
 		String scp = (String) comboBox.getSelectedItem();
 
-		if (scp.equals(METHOD_SCOPE) || scp.equals(CONSTRUCTOR_SCOPE) || scp.equals(ALLOCATION_SCOPE)) {
+		if (scp != null && (scp.equals(METHOD_SCOPE) || scp.equals(CONSTRUCTOR_SCOPE) || scp.equals(ALLOCATION_SCOPE))) {
 			showSettings();
 
 			if (!scp.equals(ALLOCATION_SCOPE)) {
@@ -145,7 +184,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @return scope name
 	 */
 	public String getSelectedScope() {
-		return (String) comboBox.getSelectedItem();
+		return scopeMapping.get((String) comboBox.getSelectedItem());
 	}
 
 	/**

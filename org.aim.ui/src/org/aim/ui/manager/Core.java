@@ -150,6 +150,21 @@ public final class Core {
 	}
 
 	/**
+	 * Downloads the dataset of the connected agent.
+	 */
+	public void downloadDataset() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setApproveButtonText("Download");
+		int returnVal = chooser.showOpenDialog(MainView.instance());
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File targetDir = chooser.getSelectedFile();
+			ClientManager.instance().downloadDataset(targetDir);
+		}
+	}
+
+	/**
 	 * Induce the instrumentation of the connected agent.
 	 */
 	public void instrument() {

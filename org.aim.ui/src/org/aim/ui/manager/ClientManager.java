@@ -1,13 +1,21 @@
 package org.aim.ui.manager;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.exceptions.MeasurementException;
+import org.aim.api.measurement.dataset.Parameter;
+import org.aim.api.measurement.utils.RecordCSVWriter;
 import org.aim.artifacts.instrumentation.InstrumentationClient;
 import org.aim.description.InstrumentationDescription;
+import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;
 import org.aim.ui.view.MainView.ClientSettingsState;
@@ -135,6 +143,53 @@ public final class ClientManager {
 	}
 
 	/**
+	 * Downloads the agent's dataset into the specified directory.
+	 * 
+	 * @param targetDirectory
+	 *            target directory of the file
+	 */
+	public void downloadDataset(final File targetDirectory) {
+		Main.getThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					PipedOutputStream outPipe = new PipedOutputStream();
+					PipedInputStream inPipe = new PipedInputStream(outPipe);
+					client.pipeToOutputStream(outPipe);
+
+					RecordCSVWriter.getInstance().pipeDataToDatasetFiles(inPipe, targetDirectory.getAbsolutePath(),
+							new HashSet<Parameter>());
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (MeasurementException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	/**
+	 * Returns the a list of api scopes (classes) which are supported by the
+	 * connected agent.
+	 * 
+	 * @return api scopes supported by the connected agent
+	 */
+	public List<String> getApiScopes() {
+		return client.getSupportedExtensions().getApiScopeExtensions();
+	}
+
+	/**
+	 * Returns the a list of custom scopes (classes) which are supported by the
+	 * connected agent.
+	 * 
+	 * @return custom scopes supported by the connected agent
+	 */
+	public List<String> getCustomScopes() {
+		return client.getSupportedExtensions().getCustomScopeExtensions();
+	}
+
+	/**
 	 * Returns the a list of probes (classes) which are supported by the
 	 * connected agent.
 	 * 
@@ -154,7 +209,7 @@ public final class ClientManager {
 	public List<String> getSampler() {
 		return client.getSupportedExtensions().getSamplerExtensions();
 	}
-	
+
 	/**
 	 * Returns the a list of scopes (classes) which are supported by the
 	 * connected agent.

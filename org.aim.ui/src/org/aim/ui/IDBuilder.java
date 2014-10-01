@@ -52,6 +52,10 @@ public final class IDBuilder {
 				}
 			} else if (entity.getScope().equals(ScopePanel.ALLOCATION_SCOPE)) {
 				entBuilder = descBuilder.newAllocationScopeEntity(entity.getScopeSettings());
+			} else if (entity.getScope().equals(ScopePanel.MEMORY_SCOPE)) {
+				entBuilder = descBuilder.newMemoryScopeEntity();
+			} else if (entity.getScope().equals(ScopePanel.SYNCHRONIZED_SCOPE)) {
+				entBuilder = descBuilder.newSynchronizedScopeEntity();
 			} else {
 				entBuilder = descBuilder.newAPIScopeEntity(entity.getScope());
 			}
