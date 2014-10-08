@@ -62,7 +62,6 @@ public final class JavassistWrapper {
 	 *             if class cannot be found
 	 */
 	public CtClass getCtClass(Class<?> targetClass) throws NotFoundException, ClassNotFoundException {
-
 		if (pool.find(targetClass.getName()) == null) {
 			LOGGER.info("CtClass {} not found in the current pool. Extending pool...", targetClass.getName());
 			ClassPath cp = new LoaderClassPath(targetClass.getClassLoader());

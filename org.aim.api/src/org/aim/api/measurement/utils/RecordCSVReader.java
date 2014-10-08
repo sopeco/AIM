@@ -211,10 +211,11 @@ public final class RecordCSVReader {
 
 			csvReader = new CSVReader(fReader, RecordCSVWriter.VALUE_SEPARATOR);
 
-			String[] line = csvReader.readNext();
+			
 			// skip header
 			csvReader.readNext();
-
+			String[] line = csvReader.readNext();
+			
 			while (line != null) {
 				AbstractRecord record = recordType.newInstance();
 
