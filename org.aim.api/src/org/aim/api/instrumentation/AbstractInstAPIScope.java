@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aim.description.scopes.Scope;
 import org.lpe.common.extension.AbstractExtensionArtifact;
 import org.lpe.common.extension.IExtension;
 
@@ -32,7 +33,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstAPIScope extends AbstractExtensionArtifact {
+public abstract class AbstractInstAPIScope extends AbstractExtensionArtifact implements Scope {
 
 	/**
 	 * Constructor.

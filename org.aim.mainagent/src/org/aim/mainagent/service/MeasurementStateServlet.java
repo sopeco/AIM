@@ -7,6 +7,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 
+/**
+ * Servlet to request the measurement state of the AIM agent.
+ * 
+ * @author Alexander Wert
+ * 
+ */
 public class MeasurementStateServlet implements Service {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(MeasurementStateServlet.class);
 

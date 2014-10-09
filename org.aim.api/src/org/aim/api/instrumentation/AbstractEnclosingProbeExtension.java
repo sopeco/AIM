@@ -47,4 +47,10 @@ public abstract class AbstractEnclosingProbeExtension implements IExtension<Abst
 	 */
 	public abstract Class<? extends AbstractEnclosingProbe> getProbeClass();
 
+	/**
+	 * Returns the type of the scope this probe is applicable to.
+	 * 
+	 * @return class of the scope
+	 */
+	public abstract Set<Class<?>> getScopeDependencies();
 }

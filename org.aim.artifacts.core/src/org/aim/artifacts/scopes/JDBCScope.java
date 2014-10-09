@@ -82,4 +82,9 @@ public class JDBCScope extends AbstractInstAPIScope {
 		addMethod("javax.sql.XADataSource", "getXAConnection()");
 		addMethod("javax.sql.XADataSource", "getXAConnection(java.lang.String,java.lang.String)");
 	}
+	
+	@Override
+	public long getId() {
+		return 0;
+	}
 }

@@ -15,8 +15,13 @@
  */
 package org.aim.artifacts.probes;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.description.scopes.MethodsEnclosingScope;
+
 /**
  * Extension Provider for the Thread Tracing probe.
  * 
@@ -35,4 +40,10 @@ public class ThreadTracingProbeExtension extends AbstractEnclosingProbeExtension
 		return ThreadTracingProbe.class;
 	}
 
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		Set<Class<?>> supportedScopes = new HashSet<>();
+		supportedScopes.add(MethodsEnclosingScope.class);
+		return supportedScopes;
+	}
 }

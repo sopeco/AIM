@@ -50,7 +50,7 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 		super(provider);
 	}
 
-	public static final MeasurementProbe<SynchronizedScope> MODEL_PROBE = new MeasurementProbe<>("SynchronizedProbe");
+	public static final MeasurementProbe<SynchronizedScope> MODEL_PROBE = new MeasurementProbe<>(MonitorWaitingTimeProbe.class.getName());
 
 	private Object monitor;
 	private long eventTimeStamp;
