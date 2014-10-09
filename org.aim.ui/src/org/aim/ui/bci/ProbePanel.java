@@ -65,4 +65,19 @@ public class ProbePanel extends JPanel {
 			panel.addItem(probe);
 		}
 	}
+	
+	
+	public void filterProbes(String scope) {
+//		if (rawEntity == null) {
+//			return;
+//		}
+//		scpPanel.getSelectedScope();
+//
+//		List<String> filtered = new ArrayList<String>();
+//		for (String probe : rawEntity.getProbes()) {
+//
+//		}
+//
+//		probePanel.setProbes(filtered.toArray(new String[0]));
+	}
 }
