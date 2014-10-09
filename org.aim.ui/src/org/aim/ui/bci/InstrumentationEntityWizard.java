@@ -152,6 +152,6 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 	 * selected scope are shown.
 	 */
 	public void filterProbes() {
-		probePanel.filterProbes(scpPanel.getSelectedScope());
+		probePanel.filterProbes(scpPanel.getSelectedScope(), scpPanel.isTraceScope());
 	}
 }
