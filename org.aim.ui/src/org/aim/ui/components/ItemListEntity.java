@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -105,6 +106,19 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 		gbcBtnRemove.gridx = 1;
 		gbcBtnRemove.gridy = 0;
 		add(btnRemove, gbcBtnRemove);
+	}
+
+	/**
+	 * Replaces the current values.
+	 * 
+	 * @param values
+	 *            new values
+	 */
+	public void setValues(Collection<String> values) {
+		((JComboBox<String>) textField).removeAllItems();
+		for (String v : values) {
+			((JComboBox<String>) textField).addItem(v);
+		}
 	}
 
 	@Override

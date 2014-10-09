@@ -129,7 +129,25 @@ public class ItemListPanel extends JPanel implements ActionListener {
 	 *            - predefined values
 	 */
 	public void setPredefinedValues(List<String> values) {
+		setPredefinedValues(values, false);
+	}
+
+	/**
+	 * Sets predefined values which can be selected.
+	 * 
+	 * @param values
+	 *            - predefined values
+	 * @param clear
+	 *            remove current values
+	 */
+	public void setPredefinedValues(List<String> values, boolean clear) {
 		predefinedValues = values;
+
+		if (clear) {
+			for (ItemListEntity entity : items) {
+				entity.setValues(values);
+			}
+		}
 	}
 
 	/**
