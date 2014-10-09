@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 
 /**
  * Component to provide an input with multiple textfields or comboboxes.
@@ -33,7 +34,8 @@ public class ItemListPanel extends JPanel implements ActionListener {
 	public ItemListPanel() {
 		setLayout(new GridLayout(0, 1, 0, 0));
 
-		addButton = new JButton("Add");
+		addButton = new JButton("");
+		addButton.setIcon(new ImageIcon(ItemListPanel.class.getResource("/icons/plus-circle.png")));
 		addButton.addActionListener(this);
 		add(addButton);
 	}

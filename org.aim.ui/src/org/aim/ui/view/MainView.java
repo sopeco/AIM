@@ -141,7 +141,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		inputPort.setColumns(5);
 		// CHECKSTYLE:ON
 
-		btnConnect = new JButton("Connect");
+		btnConnect = new JButton("");
+		btnConnect.setIcon(new ImageIcon(MainView.class.getResource("/icons/plug-disconnect.png")));
 		btnConnect.addActionListener(this);
 		panel.add(btnConnect);
 
@@ -160,7 +161,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		btnMonitoring.setEnabled(false);
 		panel7.add(btnMonitoring);
 
-		btnDownloadDataset = new JButton("");
+		btnDownloadDataset = new JButton("Data Download");
 		btnDownloadDataset.addActionListener(this);
 		btnDownloadDataset.setIcon(new ImageIcon(MainView.class.getResource("/icons/disk-arrow.png")));
 		panel7.add(btnDownloadDataset);
@@ -204,15 +205,18 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		panel1.add(panel2, BorderLayout.SOUTH);
 
 		btnAddIE = new JButton("Add Instrumentation Entity");
+		btnAddIE.setIcon(new ImageIcon(MainView.class.getResource("/icons/plus-circle.png")));
 		btnAddIE.addActionListener(this);
 
 		btnImportInstrumentationEntity = new JButton("Import Instrumentation Entity");
+		btnImportInstrumentationEntity.setIcon(new ImageIcon(MainView.class.getResource("/icons/document-import.png")));
 		btnImportInstrumentationEntity.setEnabled(false);
 		btnImportInstrumentationEntity.addActionListener(this);
 		panel2.add(btnImportInstrumentationEntity);
 		panel2.add(btnAddIE);
 
 		samplerPanel = new SamplerPanel();
+		samplerPanel.getBtnAddSampler().setIcon(new ImageIcon(MainView.class.getResource("/icons/plus-circle.png")));
 		tabbedPane.addTab("Sampler", null, samplerPanel, null);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -222,7 +226,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		scrollPane.setViewportView(panelGlobalRestrictions);
 
 		setSize(MAIN_WINDOW_SIZE);
-		
+
 		loadHosts();
 
 		onDisconnection();
@@ -264,10 +268,12 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 				// Start Monitoring
 				btnInstrument.setEnabled(false);
 				btnMonitoring.setText("Stop Monitoring");
+				ClientManager.instance().startMonitoring();
 			} else {
 				// Stop Monitoring
 				btnInstrument.setEnabled(true);
 				btnMonitoring.setText("Start Monitoring");
+				ClientManager.instance().stopMonitoring();
 			}
 		} else if (e.getSource() == btnDownloadDataset) {
 			Core.instance().downloadDataset();
@@ -347,6 +353,14 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	@Override
 	public void onConnection() {
 		btnAddIE.setEnabled(true);
+
+		if (ClientManager.instance().isMonitoringEnabled()) {
+			// Monitoring is enabled
+			btnInstrument.setEnabled(false);
+			btnMonitoring.setEnabled(true);
+			btnInstrument.setText("Uninstrument");
+			btnMonitoring.setText("Stop Monitoring");
+		}
 	}
 
 	@Override
@@ -368,7 +382,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputHost.setEnabled(false);
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(true);
-			btnConnect.setText("Disconnect");
+			//btnConnect.setText("Disconnect");
+			btnConnect.setIcon(new ImageIcon(MainView.class.getResource("/icons/plug-connect.png")));
 			btnDownloadDataset.setEnabled(true);
 			btnInstrument.setText("Instrument");
 			btnInstrument.setEnabled(true);
@@ -381,7 +396,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(false);
 			btnDownloadDataset.setEnabled(false);
-			btnConnect.setText("Connecting..");
+			//btnConnect.setText("Connecting..");
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
@@ -393,7 +408,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputPort.setEnabled(true);
 			btnConnect.setEnabled(true);
 			btnDownloadDataset.setEnabled(false);
-			btnConnect.setText("Connect");
+			//btnConnect.setText("Connect");
+			btnConnect.setIcon(new ImageIcon(MainView.class.getResource("/icons/plug-disconnect.png")));
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);

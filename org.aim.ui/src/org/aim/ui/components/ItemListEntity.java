@@ -15,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ImageIcon;
 
 /**
  * 
@@ -97,7 +98,8 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 		add(textField, gbcTextField);
 		// textField.setColumns(10);
 
-		btnRemove = new JButton("Remove");
+		btnRemove = new JButton("");
+		btnRemove.setIcon(new ImageIcon(ItemListEntity.class.getResource("/icons/cross.png")));
 		btnRemove.addActionListener(this);
 		GridBagConstraints gbcBtnRemove = new GridBagConstraints();
 		gbcBtnRemove.gridx = 1;

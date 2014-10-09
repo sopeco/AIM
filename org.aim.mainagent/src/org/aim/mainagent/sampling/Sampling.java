@@ -125,7 +125,6 @@ public final class Sampling {
 	 * Stops the system monitor and all recorders.
 	 */
 	public void stop() {
-
 		for (SamplingExecuter samplingExecuter : monitoringJobs.values()) {
 			samplingExecuter.stop();
 		}
@@ -134,5 +133,4 @@ public final class Sampling {
 		}
 		LOGGER.info("Stopped Application Resource Sampling");
 	}
-
 }
