@@ -31,13 +31,15 @@ import org.glassfish.grizzly.http.server.Response;
  */
 public class DisableMeasurementServlet implements Service {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(DisableMeasurementServlet.class);
+
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
 		LOGGER.info("Disabling measurement ...");
-		IDataCollector collector =	AbstractDataSource.getDefaultDataSource();
+		IDataCollector collector = AbstractDataSource.getDefaultDataSource();
 
 		collector.disable();
 		Sampling.getInstance().stop();
+		MeasurementStateServlet.setMeasurementState(false);
 		LOGGER.info("Measurement disabled!");
 	}
 }

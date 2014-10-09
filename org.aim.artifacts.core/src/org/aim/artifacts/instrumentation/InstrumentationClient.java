@@ -45,18 +45,29 @@ public class InstrumentationClient {
 	public static final String URL_PATH_MEASUREMENT = "measurement";
 	public static final String PATH_PREFIX = "agent";
 
-	private static final String TEST_CONNECTION = PATH_PREFIX + "/" + "testConnection";
-	private static final String INSTRUMENT = PATH_PREFIX + "/" + URL_PATH_INSTRUMENTATION + "/" + "instrument";
-	private static final String UNINSTRUMENT = PATH_PREFIX + "/" + URL_PATH_INSTRUMENTATION + "/" + "uninstrument";
-	private static final String GET_STATE = PATH_PREFIX + "/" + URL_PATH_INSTRUMENTATION + "/" + "getState";
-	private static final String GET_SUPPORTED_EXTENSIONS = PATH_PREFIX + "/" + URL_PATH_INSTRUMENTATION + "/"
-			+ "getSupportedExtensions";
+	private static final String TEST_CONNECTION = PATH_PREFIX + "/"
+			+ "testConnection";
+	private static final String INSTRUMENT = PATH_PREFIX + "/"
+			+ URL_PATH_INSTRUMENTATION + "/" + "instrument";
+	private static final String UNINSTRUMENT = PATH_PREFIX + "/"
+			+ URL_PATH_INSTRUMENTATION + "/" + "uninstrument";
+	private static final String GET_STATE = PATH_PREFIX + "/"
+			+ URL_PATH_INSTRUMENTATION + "/" + "getState";
+	private static final String GET_SUPPORTED_EXTENSIONS = PATH_PREFIX + "/"
+			+ URL_PATH_INSTRUMENTATION + "/" + "getSupportedExtensions";
 
-	private static final String ENABLE = PATH_PREFIX + "/" + URL_PATH_MEASUREMENT + "/" + "enable";
-	private static final String DISABLE = PATH_PREFIX + "/" + URL_PATH_MEASUREMENT + "/" + "disable";
-	private static final String GET_DATA = PATH_PREFIX + "/" + URL_PATH_MEASUREMENT + "/" + "getdata";
-	private static final String CURRENT_TIME = PATH_PREFIX + "/" + URL_PATH_MEASUREMENT + "/" + "currentTime";
-	private static final String MEASURE_OVERHEAD = PATH_PREFIX + "/" + URL_PATH_MEASUREMENT + "/" + "measureOverhead";
+	private static final String ENABLE = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "enable";
+	private static final String DISABLE = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "disable";
+	private static final String GET_DATA = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "getdata";
+	private static final String CURRENT_TIME = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "currentTime";
+	private static final String MEASURE_OVERHEAD = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "measureOverhead";
+	private static final String MONITORING_STATE = PATH_PREFIX + "/"
+			+ URL_PATH_MEASUREMENT + "/" + "monitoringState";
 
 	private final String baseUrl;
 	private String host;
@@ -87,9 +98,11 @@ public class InstrumentationClient {
 	 * @throws InstrumentationException
 	 *             thrown if exception occur during instrumentation
 	 */
-	public void instrument(InstrumentationDescription description) throws InstrumentationException {
+	public void instrument(InstrumentationDescription description)
+			throws InstrumentationException {
 
-		webResource.path(INSTRUMENT).type(MediaType.APPLICATION_JSON).post(description);
+		webResource.path(INSTRUMENT).type(MediaType.APPLICATION_JSON)
+				.post(description);
 
 	}
 
@@ -126,6 +139,17 @@ public class InstrumentationClient {
 	 */
 	public void disableMonitoring() throws MeasurementException {
 		webResource.path(DISABLE).post();
+
+	}
+
+	/**
+	 * Retrieves the state whether monitoring is enabled.
+	 * 
+	 * @return boolean whether monitoring is enabled
+	 */
+	public boolean isMonitoringEnabled() {
+		return webResource.path(MONITORING_STATE)
+				.accept(MediaType.APPLICATION_JSON).get(Boolean.class);
 	}
 
 	/**
@@ -134,7 +158,8 @@ public class InstrumentationClient {
 	 * @return a flat representation of the internal instrumentation state.
 	 */
 	public FlatInstrumentationState getInstrumentationState() {
-		return webResource.path(GET_STATE).accept(MediaType.APPLICATION_JSON).get(FlatInstrumentationState.class);
+		return webResource.path(GET_STATE).accept(MediaType.APPLICATION_JSON)
+				.get(FlatInstrumentationState.class);
 	}
 
 	/**
@@ -144,7 +169,8 @@ public class InstrumentationClient {
 	 * @return an object wrapping all supported extensions
 	 */
 	public SupportedExtensions getSupportedExtensions() {
-		return webResource.path(GET_SUPPORTED_EXTENSIONS).accept(MediaType.APPLICATION_JSON)
+		return webResource.path(GET_SUPPORTED_EXTENSIONS)
+				.accept(MediaType.APPLICATION_JSON)
 				.get(SupportedExtensions.class);
 	}
 
@@ -179,9 +205,12 @@ public class InstrumentationClient {
 	 *            type of the probe
 	 * @return overhead information.
 	 */
-	public OverheadData measureProbeOverhead(Class<? extends AbstractEnclosingProbe> probeType) {
+	public OverheadData measureProbeOverhead(
+			Class<? extends AbstractEnclosingProbe> probeType) {
 		String probeClassName = probeType.getName();
-		return webResource.path(MEASURE_OVERHEAD).accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
+		return webResource.path(MEASURE_OVERHEAD)
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
 				.post(OverheadData.class, probeClassName);
 	}
 
@@ -192,7 +221,8 @@ public class InstrumentationClient {
 	 * @throws MeasurementException
 	 *             thrown if data cannot be retrieved
 	 */
-	public void pipeToOutputStream(OutputStream oStream) throws MeasurementException {
+	public void pipeToOutputStream(OutputStream oStream)
+			throws MeasurementException {
 		HttpURLConnection connection = null;
 		try {
 			connection = LpeWebUtils.get(baseUrl + "/" + GET_DATA);
@@ -214,7 +244,8 @@ public class InstrumentationClient {
 	 * @return the current local timestamp of the specific controller
 	 */
 	public long getCurrentTime() {
-		return webResource.path(CURRENT_TIME).accept(MediaType.APPLICATION_JSON).get(Long.class);
+		return webResource.path(CURRENT_TIME)
+				.accept(MediaType.APPLICATION_JSON).get(Long.class);
 	}
 
 	/**

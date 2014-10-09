@@ -28,11 +28,11 @@ public class BCIComponent extends JPanel implements ActionListener {
 
 	/** */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final int BOLD_FONT_SIZE = 11;
 	private static final int INSET_VALUE = 5;
 	private static final int THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, SEVEN = 7;
-	
+
 	private JButton btnEdit;
 	private JButton btnExport;
 	private JButton btnRemove;

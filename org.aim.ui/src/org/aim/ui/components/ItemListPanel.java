@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -19,7 +20,7 @@ public class ItemListPanel extends JPanel implements ActionListener {
 
 	/**  */
 	private static final long serialVersionUID = 1L;
-	
+
 	private JButton addButton;
 	private boolean isEditable = true;
 	private List<ItemListEntity> items = new ArrayList<ItemListEntity>();
@@ -33,7 +34,8 @@ public class ItemListPanel extends JPanel implements ActionListener {
 	public ItemListPanel() {
 		setLayout(new GridLayout(0, 1, 0, 0));
 
-		addButton = new JButton("Add");
+		addButton = new JButton("");
+		addButton.setIcon(new ImageIcon(ItemListPanel.class.getResource("/icons/plus-circle.png")));
 		addButton.addActionListener(this);
 		add(addButton);
 	}

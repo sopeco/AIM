@@ -41,6 +41,7 @@ public class EnableMeasurementServlet implements Service {
 
 			collector.enable();
 			Sampling.getInstance().start();
+			MeasurementStateServlet.setMeasurementState(true);
 			LOGGER.info("Measurement enabled!");
 		} catch (MeasurementException e) {
 			LOGGER.error("Error during enabling measurement! Reason: {}", e);

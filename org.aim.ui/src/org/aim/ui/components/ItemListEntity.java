@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -28,7 +29,7 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 
 	/**  */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final int INSET_VALUE = 5;
 	private static final Color WARNING_BG_COLOR = new Color(255, 200, 200);
 
@@ -97,7 +98,8 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 		add(textField, gbcTextField);
 		// textField.setColumns(10);
 
-		btnRemove = new JButton("Remove");
+		btnRemove = new JButton("");
+		btnRemove.setIcon(new ImageIcon(ItemListEntity.class.getResource("/icons/cross.png")));
 		btnRemove.addActionListener(this);
 		GridBagConstraints gbcBtnRemove = new GridBagConstraints();
 		gbcBtnRemove.gridx = 1;
