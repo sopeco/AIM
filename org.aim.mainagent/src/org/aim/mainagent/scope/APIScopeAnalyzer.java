@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,28 +120,11 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 		if (scopeEntities == null) {
 			scopeEntities = new HashSet<>();
 		}
-		for (Class<?> apiClass : methodsToMatch.keySet()) {
-			if (apiClass.isAssignableFrom(clazz)) {
-				for (MethodSignature methodSignature : methodsToMatch.get(apiClass)) {
-					try {
-						Method targetMethod = clazz.getMethod(methodSignature.getMethodName(),
-								methodSignature.getParameters());
-						if (!Modifier.isAbstract(targetMethod.getModifiers())
-								&& targetMethod.getDeclaringClass().equals(clazz)) {
-							scopeEntities.add(new FlatScopeEntity(clazz, Utils.getMethodSignature(targetMethod, true)));
-						}
-					} catch (Exception e) {
-						// method not found
-						// --> class does not contain the desired method
-						continue;
-					}
-				}
-			}
-		}
 
 		Set<Method> methods = new HashSet<>();
 		for (Method m : clazz.getMethods()) {
-			if (!Modifier.isAbstract(m.getModifiers()) && !Modifier.isNative(m.getModifiers())) {
+			if (!Modifier.isAbstract(m.getModifiers()) && !Modifier.isNative(m.getModifiers())
+					&& m.getDeclaringClass().equals(clazz)) {
 				methods.add(m);
 			}
 		}
@@ -152,6 +136,17 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 		}
 
 		for (Method method : methods) {
+			for (Class<?> apiClass : methodsToMatch.keySet()) {
+				if (apiClass.isAssignableFrom(clazz)) {
+					for (MethodSignature apiMethodSignature : methodsToMatch.get(apiClass)) {
+						if (method.getName().equals(apiMethodSignature.getMethodName())
+								&& Arrays.equals(method.getParameterTypes(), apiMethodSignature.getParameters())) {
+							scopeEntities.add(new FlatScopeEntity(clazz, Utils.getMethodSignature(method, true)));
+						}
+					}
+				}
+			}
+
 			for (Class<Annotation> annotationClass : methodAnnotationsToMatch) {
 				if (method.getAnnotation(annotationClass) != null) {
 					scopeEntities.add(new FlatScopeEntity(clazz, Utils.getMethodSignature(method, true)));
