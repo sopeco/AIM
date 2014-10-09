@@ -140,6 +140,8 @@ public final class Core {
 				Unmarshaller um = context.createUnmarshaller();
 				RawInstrumentationEntity entity = (RawInstrumentationEntity) um.unmarshal(new FileReader(inFile));
 
+				entity.initNullFields();
+
 				addRawInstrumentationEntity(entity);
 			} catch (JAXBException e) {
 				throw new RuntimeException(e);
@@ -157,7 +159,7 @@ public final class Core {
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setApproveButtonText("Download");
 		int returnVal = chooser.showOpenDialog(MainView.instance());
-		
+
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File targetDir = chooser.getSelectedFile();
 			ClientManager.instance().downloadDataset(targetDir);

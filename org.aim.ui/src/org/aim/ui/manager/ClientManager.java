@@ -149,24 +149,26 @@ public final class ClientManager {
 	 *            target directory of the file
 	 */
 	public void downloadDataset(final File targetDirectory) {
-		Main.getThreadPool().execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					PipedOutputStream outPipe = new PipedOutputStream();
-					PipedInputStream inPipe = new PipedInputStream(outPipe);
-					client.pipeToOutputStream(outPipe);
 
-					RecordCSVWriter.getInstance().pipeDataToDatasetFiles(inPipe, targetDirectory.getAbsolutePath(),
-							new HashSet<Parameter>());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (MeasurementException e) {
-					e.printStackTrace();
+		try {
+			final PipedOutputStream outPipe = new PipedOutputStream();
+			PipedInputStream inPipe = new PipedInputStream(outPipe);
+
+			Main.getThreadPool().execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						client.pipeToOutputStream(outPipe);
+					} catch (MeasurementException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
-
+			});
+			RecordCSVWriter.getInstance().pipeDataToDatasetFiles(inPipe, targetDirectory.getAbsolutePath(),
+					new HashSet<Parameter>());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	/**
@@ -187,6 +189,15 @@ public final class ClientManager {
 	 */
 	public List<String> getCustomScopes() {
 		return client.getSupportedExtensions().getCustomScopeExtensions();
+	}
+
+	/**
+	 * Returns whether monitoring is enabled.
+	 * 
+	 * @return monitoring state
+	 */
+	public boolean isMonitoringEnabled() {
+		return client.isMonitoringEnabled();
 	}
 
 	/**

@@ -24,6 +24,8 @@ public class SamplerPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private JButton btnAddSampler;
 
+	private static final int INSET_VALUE = 5;
+
 	private JPanel panel;
 	private JPanel panelSamplerWrapper;
 	private List<SamplerComponent> samplerList = new ArrayList<>();
@@ -45,7 +47,7 @@ public class SamplerPanel extends JPanel implements ActionListener {
 
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbcScrollPane = new GridBagConstraints();
-		gbcScrollPane.insets = new Insets(0, 0, 5, 0);
+		gbcScrollPane.insets = new Insets(0, 0, INSET_VALUE, 0);
 		gbcScrollPane.fill = GridBagConstraints.BOTH;
 		gbcScrollPane.gridx = 0;
 		gbcScrollPane.gridy = 0;
@@ -62,7 +64,7 @@ public class SamplerPanel extends JPanel implements ActionListener {
 
 		panelSamplerWrapper = new JPanel();
 		GridBagConstraints gbcPanelSamplerWrapper = new GridBagConstraints();
-		gbcPanelSamplerWrapper.insets = new Insets(5, 5, 5, 5);
+		gbcPanelSamplerWrapper.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
 		gbcPanelSamplerWrapper.anchor = GridBagConstraints.NORTH;
 		gbcPanelSamplerWrapper.fill = GridBagConstraints.HORIZONTAL;
 		gbcPanelSamplerWrapper.gridx = 0;
@@ -70,7 +72,7 @@ public class SamplerPanel extends JPanel implements ActionListener {
 		panel.add(panelSamplerWrapper, gbcPanelSamplerWrapper);
 		GridBagConstraints gbcBtnAddSampler = new GridBagConstraints();
 		gbcBtnAddSampler.anchor = GridBagConstraints.EAST;
-		gbcBtnAddSampler.insets = new Insets(0, 0, 5, 5);
+		gbcBtnAddSampler.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
 		gbcBtnAddSampler.gridx = 0;
 		gbcBtnAddSampler.gridy = 1;
 		add(btnAddSampler, gbcBtnAddSampler);
@@ -123,6 +125,5 @@ public class SamplerPanel extends JPanel implements ActionListener {
 	public JButton getBtnAddSampler() {
 		return btnAddSampler;
 	}
-	
-	
+
 }

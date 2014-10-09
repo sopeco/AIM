@@ -38,6 +38,7 @@ import org.aim.mainagent.service.GetStateServlet;
 import org.aim.mainagent.service.GetSupportedExtensionsServlet;
 import org.aim.mainagent.service.InstrumentServlet;
 import org.aim.mainagent.service.MeasureOverheadServlet;
+import org.aim.mainagent.service.MeasurementStateServlet;
 import org.aim.mainagent.service.Service;
 import org.aim.mainagent.service.TestConnectionServlet;
 import org.aim.mainagent.service.UninstrumentServlet;
@@ -179,6 +180,7 @@ public final class InstrumentationAgent {
 			addServlet(server, new GetDataServlet(), URL_PATH_MEASUREMENT + "/getdata");
 			addServlet(server, new CurrentTimeServlet(), URL_PATH_MEASUREMENT + "/currentTime");
 			addServlet(server, new MeasureOverheadServlet(), URL_PATH_MEASUREMENT + "/measureOverhead");
+			addServlet(server, new MeasurementStateServlet(), URL_PATH_MEASUREMENT + "/monitoringState");
 			server.start();
 			getLogger().info("Started Instrumentation Agent Server: {}.", getAddress());
 

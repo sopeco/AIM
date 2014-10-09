@@ -23,7 +23,7 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 	/**  */
 	private static final long serialVersionUID = 1L;
 	private static final int INSET_VALUE = 5;
-	
+
 	private JButton btnSave;
 	private ProbePanel probePanel;
 	private RawInstrumentationEntity rawEntity;

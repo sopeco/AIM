@@ -23,6 +23,33 @@ public class RawInstrumentationEntity {
 	private String[] scopeSettings;
 
 	/**
+	 * Initialize all NULL fields.
+	 */
+	public void initNullFields() {
+		if (excludedModifiers == null) {
+			excludedModifiers = new int[0];
+		}
+		if (excludedPackages == null) {
+			excludedPackages = new String[0];
+		}
+		if (includedModifiers == null) {
+			includedModifiers = new int[0];
+		}
+		if (includedPackages == null) {
+			includedPackages = new String[0];
+		}
+		if (probes == null) {
+			probes = new String[0];
+		}
+		if (scope == null) {
+			scope = "";
+		}
+		if (scopeSettings == null) {
+			scopeSettings = new String[0];
+		}
+	}
+
+	/**
 	 * @return the excludedModifiers
 	 */
 	public int[] getExcludedModifiers() {

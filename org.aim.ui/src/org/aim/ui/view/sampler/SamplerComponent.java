@@ -28,6 +28,7 @@ import org.aim.ui.manager.ClientManager;
 public class SamplerComponent extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	private static final int INSET_VALUE = 5;
 	private JButton btnRemove;
 	private JTextField inputDelay;
 	private JComboBox<String> inputSampler;
@@ -35,6 +36,9 @@ public class SamplerComponent extends JPanel implements ActionListener {
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param parentPanel
+	 *            the parent {@link SamplerPanel}
 	 */
 	public SamplerComponent(SamplerPanel parentPanel) {
 		this.parentPanel = parentPanel;
@@ -49,7 +53,7 @@ public class SamplerComponent extends JPanel implements ActionListener {
 		JLabel lblSampler = new JLabel("Sampler");
 		GridBagConstraints gbcLblSampler = new GridBagConstraints();
 		gbcLblSampler.anchor = GridBagConstraints.WEST;
-		gbcLblSampler.insets = new Insets(5, 5, 0, 5);
+		gbcLblSampler.insets = new Insets(INSET_VALUE, INSET_VALUE, 0, INSET_VALUE);
 		gbcLblSampler.gridx = 0;
 		gbcLblSampler.gridy = 0;
 		add(lblSampler, gbcLblSampler);
@@ -57,7 +61,7 @@ public class SamplerComponent extends JPanel implements ActionListener {
 		JLabel lblDelay = new JLabel("Delay");
 		GridBagConstraints gbcLblDelay = new GridBagConstraints();
 		gbcLblDelay.anchor = GridBagConstraints.WEST;
-		gbcLblDelay.insets = new Insets(5, 0, 0, 5);
+		gbcLblDelay.insets = new Insets(INSET_VALUE, 0, 0, INSET_VALUE);
 		gbcLblDelay.gridx = 1;
 		gbcLblDelay.gridy = 0;
 		add(lblDelay, gbcLblDelay);
@@ -66,7 +70,7 @@ public class SamplerComponent extends JPanel implements ActionListener {
 		inputSampler.setEditable(true);
 		GridBagConstraints gbcInputSampler = new GridBagConstraints();
 		gbcInputSampler.weightx = 1.0;
-		gbcInputSampler.insets = new Insets(0, 5, 5, 5);
+		gbcInputSampler.insets = new Insets(0, INSET_VALUE, INSET_VALUE, INSET_VALUE);
 		gbcInputSampler.fill = GridBagConstraints.HORIZONTAL;
 		gbcInputSampler.gridx = 0;
 		gbcInputSampler.gridy = 1;
@@ -75,19 +79,23 @@ public class SamplerComponent extends JPanel implements ActionListener {
 		inputDelay = new JTextField();
 		inputDelay.setText("500");
 		GridBagConstraints gbcInputDelay = new GridBagConstraints();
+		// CHECKSTYLE:OFF
 		gbcInputDelay.weightx = 0.5;
-		gbcInputDelay.insets = new Insets(0, 0, 5, 5);
+		// CHECKSTYLE:ON
+		gbcInputDelay.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
 		gbcInputDelay.fill = GridBagConstraints.HORIZONTAL;
 		gbcInputDelay.gridx = 1;
 		gbcInputDelay.gridy = 1;
 		add(inputDelay, gbcInputDelay);
+		// CHECKSTYLE:OFF
 		inputDelay.setColumns(10);
+		// CHECKSTYLE:ON
 
 		btnRemove = new JButton("");
 		btnRemove.addActionListener(this);
 		btnRemove.setIcon(new ImageIcon(SamplerComponent.class.getResource("/icons/cross.png")));
 		GridBagConstraints gbcBtnRemove = new GridBagConstraints();
-		gbcBtnRemove.insets = new Insets(0, 0, 5, 5);
+		gbcBtnRemove.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
 		gbcBtnRemove.gridx = 2;
 		gbcBtnRemove.gridy = 1;
 		add(btnRemove, gbcBtnRemove);
