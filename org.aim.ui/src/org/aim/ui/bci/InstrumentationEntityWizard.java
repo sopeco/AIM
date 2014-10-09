@@ -42,7 +42,7 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
 
-		scpPanel = new ScopePanel();
+		scpPanel = new ScopePanel(this);
 		GridBagConstraints gbcPanel = new GridBagConstraints();
 		gbcPanel.gridwidth = 2;
 		gbcPanel.insets = new Insets(0, 0, INSET_VALUE, 0);
@@ -145,5 +145,13 @@ public class InstrumentationEntityWizard extends JDialog implements ActionListen
 		restrictionPanel.setIncludedPackages(entity.getIncludedPackages());
 		restrictionPanel.setExcludedModifiers(entity.getExcludedModifiers());
 		restrictionPanel.setIncludedModifiers(entity.getIncludedModifiers());
+	}
+
+	/**
+	 * Filters the list of probes thereby only probes consistent with the
+	 * selected scope are shown.
+	 */
+	public void filterProbes() {
+		probePanel.filterProbes(scpPanel.getSelectedScope(), scpPanel.isTraceScope());
 	}
 }

@@ -44,11 +44,17 @@ public class ScopePanel extends JPanel implements ActionListener {
 	private ItemListPanel lpScopeSettings;
 
 	private Map<String, String> scopeMapping = new HashMap<String, String>();
+	private InstrumentationEntityWizard wizard;
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param wizard
+	 *            parent
 	 */
-	public ScopePanel() {
+	public ScopePanel(InstrumentationEntityWizard wizard) {
+		this.wizard = wizard;
+
 		setBorder(new TitledBorder(null, "Scope", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
@@ -155,8 +161,10 @@ public class ScopePanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		lpScopeSettings.removeItems();
-		String scp = (String) comboBox.getSelectedItem();
 
+		wizard.filterProbes();
+
+		String scp = (String) comboBox.getSelectedItem();
 		if (scp != null && (scp.equals(METHOD_SCOPE) || scp.equals(CONSTRUCTOR_SCOPE) || scp.equals(ALLOCATION_SCOPE))) {
 			showSettings();
 

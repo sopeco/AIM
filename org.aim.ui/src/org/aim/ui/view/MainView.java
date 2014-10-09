@@ -11,6 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -78,15 +86,15 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	private JPanel bciPanel;
 	private JButton btnAddIE;
 	private JButton btnConnect;
+	private JButton btnDownloadDataset;
 	private JButton btnImportInstrumentationEntity;
 	private JButton btnInstrument;
 	private JButton btnMonitoring;
 	private JComboBox<String> inputHost;
 	private JTextField inputPort;
 	private RestrictionPanel panelGlobalRestrictions;
-	private SamplerPanel samplerPanel;
 
-	private JButton btnDownloadDataset;
+	private SamplerPanel samplerPanel;
 
 	private MainView() {
 		ClientManager.instance().addConnectionStateListener(this);
@@ -227,9 +235,22 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 
 		setSize(MAIN_WINDOW_SIZE);
 
+		init();
+	}
+
+	private void init() {
 		loadHosts();
 
 		onDisconnection();
+
+		List<String> connectionHistory = getConnectionHistory();
+		for (String s : connectionHistory) {
+			String host = s.split(":")[0];
+			if (host.equals("localhost")) {
+				continue;
+			}
+			inputHost.addItem(host);
+		}
 	}
 
 	@Override
@@ -303,6 +324,26 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		return samplerPanel.getAllSamplerComponents();
 	}
 
+	private List<String> getConnectionHistory() {
+		List<String> list = new ArrayList<String>();
+		File historyFile = new File("history.txt");
+		if (historyFile.exists()) {
+			try {
+				BufferedReader r = new BufferedReader(new FileReader(historyFile));
+				String in;
+				while ((in = r.readLine()) != null) {
+					list.add(in);
+				}
+				r.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
 	/**
 	 * Returns the global restriction settings.
 	 * 
@@ -352,6 +393,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 
 	@Override
 	public void onConnection() {
+		pushConnectionHistory(inputHost.getSelectedItem() + ":" + inputPort.getText());
+
 		btnAddIE.setEnabled(true);
 
 		if (ClientManager.instance().isMonitoringEnabled()) {
@@ -368,6 +411,23 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		btnAddIE.setEnabled(false);
 
 		setClientSettingsState(ClientSettingsState.DEFAULT);
+	}
+
+	private void pushConnectionHistory(String newItem) {
+		List<String> history = getConnectionHistory();
+		if (!history.contains(newItem)) {
+			try {
+				BufferedWriter w = new BufferedWriter(new FileWriter("history.txt"));
+				for (String s : history) {
+					w.write(s);
+					w.write(System.getProperty("line.separator"));
+				}
+				w.write(newItem);
+				w.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

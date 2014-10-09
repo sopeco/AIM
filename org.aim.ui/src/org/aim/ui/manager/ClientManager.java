@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.exceptions.MeasurementException;
@@ -207,8 +209,19 @@ public final class ClientManager {
 	 * @return probes supported by the connected agent
 	 */
 	public List<String> getProbes() {
-		List<String> probes = client.getSupportedExtensions().getEnclosingProbeExtensions();
+		List<String> probes = new ArrayList<String>(client.getSupportedExtensions().getProbeExtensions());
 		return probes;
+	}
+
+	/**
+	 * Returns the a list of probes (classes) and the corresponding scopes which
+	 * are supported by the connected agent.
+	 * 
+	 * @return probes supported by the connected agent
+	 */
+	public Map<String, Set<String>> getProbeMapping() {
+		Map<String, Set<String>> probeExtensionsMapping = client.getSupportedExtensions().getProbeExtensionsMapping();
+		return probeExtensionsMapping;
 	}
 
 	/**
