@@ -1,11 +1,11 @@
 package org.aim.artifacts.events.probes;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.aim.api.events.AbstractEventProbe;
-import org.lpe.common.config.ConfigParameterDescription;
-import org.lpe.common.extension.IExtension;
+import org.aim.api.events.AbstractEventProbeExtension;
+import org.aim.description.scopes.SynchronizedScope;
 
 /**
  * Event probe for gathering the waiting times on monitor(synchronization)
@@ -14,22 +14,23 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public class MonitorWaitingTimeProbeExtension implements IExtension<AbstractEventProbe> {
-
-	@Override
-	public String getName() {
-		return MonitorWaitingTimeProbe.MODEL_PROBE.getName();
-	}
+public class MonitorWaitingTimeProbeExtension extends AbstractEventProbeExtension {
 
 	@Override
 	public AbstractEventProbe createExtensionArtifact() {
 		return new MonitorWaitingTimeProbe(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
+	public Class<? extends AbstractEventProbe> getProbeClass() {
+		return MonitorWaitingTimeProbe.class;
+	}
+
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		Set<Class<?>> supportedScopes = new HashSet<>();
+		supportedScopes.add(SynchronizedScope.class);
+		return supportedScopes;
 	}
 
 }

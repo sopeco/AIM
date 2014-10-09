@@ -15,6 +15,8 @@
  */
 package org.aim.mainagent.probes.builder;
 
+import java.util.Set;
+
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 
@@ -28,6 +30,12 @@ public class AnotherDummyProbeExtension extends AbstractEnclosingProbeExtension 
 	@Override
 	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
 		return AnotherDummyProbe.class;
+	}
+
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

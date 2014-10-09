@@ -15,6 +15,7 @@
  */
 package org.aim.api.instrumentation;
 
+import org.aim.description.scopes.Scope;
 import org.lpe.common.extension.AbstractExtensionArtifact;
 import org.lpe.common.extension.IExtension;
 
@@ -24,7 +25,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractCustomScope extends AbstractExtensionArtifact implements IScopeAnalyzer {
+public abstract class AbstractCustomScope extends AbstractExtensionArtifact implements IScopeAnalyzer, Scope {
 
 	/**
 	 * Constructor.

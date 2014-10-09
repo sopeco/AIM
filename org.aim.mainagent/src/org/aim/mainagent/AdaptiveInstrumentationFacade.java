@@ -15,6 +15,12 @@
  */
 package org.aim.mainagent;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.aim.api.events.AbstractEventProbeExtension;
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.exceptions.MeasurementException;
 import org.aim.api.instrumentation.AbstractCustomScopeExtension;
@@ -27,6 +33,13 @@ import org.aim.api.instrumentation.entities.FlatInstrumentationState;
 import org.aim.api.instrumentation.entities.SupportedExtensions;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
 import org.aim.description.InstrumentationDescription;
+import org.aim.description.scopes.AllocationScope;
+import org.aim.description.scopes.ConstructorScope;
+import org.aim.description.scopes.MemoryScope;
+import org.aim.description.scopes.MethodScope;
+import org.aim.description.scopes.SynchronizedScope;
+import org.aim.description.scopes.TraceScope;
+import org.aim.mainagent.probes.IncrementalProbeExtension;
 import org.aim.mainagent.sampling.Sampling;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
@@ -139,16 +152,49 @@ public final class AdaptiveInstrumentationFacade {
 		if (extensions == null) {
 			extensions = new SupportedExtensions();
 
+			Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
+			knownConcreteScopeClasses.add(AllocationScope.class);
+			knownConcreteScopeClasses.add(ConstructorScope.class);
+			knownConcreteScopeClasses.add(MemoryScope.class);
+			knownConcreteScopeClasses.add(MethodScope.class);
+			knownConcreteScopeClasses.add(SynchronizedScope.class);
+			knownConcreteScopeClasses.add(TraceScope.class);
+
+			Map<String, Set<Class<?>>> tempProbeScopeMapping = new HashMap<>();
+
 			for (IExtension<?> extension : ExtensionRegistry.getSingleton().getExtensions()) {
 				if (extension instanceof AbstractCustomScopeExtension) {
 					extensions.getCustomScopeExtensions().add(extension.getName());
+					knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
 				} else if (extension instanceof AbstractEnclosingProbeExtension) {
-					extensions.getEnclosingProbeExtensions().add(extension.getName());
+					if (extension instanceof IncrementalProbeExtension) {
+						continue;
+					}
+					tempProbeScopeMapping.put(extension.getName(),
+							((AbstractEnclosingProbeExtension) extension).getScopeDependencies());
+				} else if (extension instanceof AbstractEventProbeExtension) {
+					tempProbeScopeMapping.put(extension.getName(),
+							((AbstractEventProbeExtension) extension).getScopeDependencies());
 				} else if (extension instanceof AbstractInstApiScopeExtension) {
 					extensions.getApiScopeExtensions().add(extension.getName());
+					knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
 				} else if (extension instanceof AbstractSamplerExtension) {
 					extensions.getSamplerExtensions().add(extension.getName());
 				}
+			}
+
+			for (String probeName : tempProbeScopeMapping.keySet()) {
+				Set<String> scopes = new HashSet<>();
+				for (Class<?> concreteScope : knownConcreteScopeClasses) {
+					supportedScopeLoop: for (Class<?> supportedScope : tempProbeScopeMapping.get(probeName)) {
+						if (supportedScope.isAssignableFrom(concreteScope)) {
+							scopes.add(concreteScope.getName());
+							break supportedScopeLoop;
+						}
+					}
+				}
+
+				extensions.addProbeExtension(probeName, scopes);
 			}
 		}
 

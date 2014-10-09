@@ -42,4 +42,9 @@ public class JmsScope extends AbstractInstAPIScope {
 		addMethod("javax.jms.MessageListener", "onMessage(javax.jms.Message)");
 	}
 
+	@Override
+	public long getId() {
+		return 0;
+	}
+
 }
