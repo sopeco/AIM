@@ -6,9 +6,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.ImageIcon;
 
 /**
  * Component to provide an input with multiple textfields or comboboxes.
@@ -20,7 +20,7 @@ public class ItemListPanel extends JPanel implements ActionListener {
 
 	/**  */
 	private static final long serialVersionUID = 1L;
-	
+
 	private JButton addButton;
 	private boolean isEditable = true;
 	private List<ItemListEntity> items = new ArrayList<ItemListEntity>();

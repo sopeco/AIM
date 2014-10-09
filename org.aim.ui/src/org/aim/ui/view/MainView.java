@@ -382,7 +382,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputHost.setEnabled(false);
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(true);
-			//btnConnect.setText("Disconnect");
+			// btnConnect.setText("Disconnect");
 			btnConnect.setIcon(new ImageIcon(MainView.class.getResource("/icons/plug-connect.png")));
 			btnDownloadDataset.setEnabled(true);
 			btnInstrument.setText("Instrument");
@@ -396,7 +396,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputPort.setEnabled(false);
 			btnConnect.setEnabled(false);
 			btnDownloadDataset.setEnabled(false);
-			//btnConnect.setText("Connecting..");
+			// btnConnect.setText("Connecting..");
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);
 			btnImportInstrumentationEntity.setEnabled(false);
@@ -408,7 +408,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 			inputPort.setEnabled(true);
 			btnConnect.setEnabled(true);
 			btnDownloadDataset.setEnabled(false);
-			//btnConnect.setText("Connect");
+			// btnConnect.setText("Connect");
 			btnConnect.setIcon(new ImageIcon(MainView.class.getResource("/icons/plug-disconnect.png")));
 			btnInstrument.setEnabled(false);
 			btnMonitoring.setEnabled(false);

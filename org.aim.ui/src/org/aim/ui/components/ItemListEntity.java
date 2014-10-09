@@ -10,12 +10,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.ImageIcon;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class ItemListEntity extends JPanel implements ActionListener, KeyListene
 
 	/**  */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final int INSET_VALUE = 5;
 	private static final Color WARNING_BG_COLOR = new Color(255, 200, 200);
 

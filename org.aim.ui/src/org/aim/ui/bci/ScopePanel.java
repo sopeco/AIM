@@ -44,7 +44,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 	private ItemListPanel lpScopeSettings;
 
 	private Map<String, String> scopeMapping = new HashMap<String, String>();
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -122,7 +122,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		scopeMapping.put(ALLOCATION_SCOPE, ALLOCATION_SCOPE);
 		scopeMapping.put(MEMORY_SCOPE, MEMORY_SCOPE);
 		scopeMapping.put(SYNCHRONIZED_SCOPE, SYNCHRONIZED_SCOPE);
-		
+
 		if (ClientManager.instance().isConnected()) {
 			List<String> apiScopes = ClientManager.instance().getApiScopes();
 			if (!apiScopes.isEmpty()) {
