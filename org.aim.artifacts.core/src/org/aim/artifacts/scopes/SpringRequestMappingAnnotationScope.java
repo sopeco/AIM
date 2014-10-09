@@ -40,5 +40,10 @@ public class SpringRequestMappingAnnotationScope extends AbstractInstAPIScope {
 	protected void init() {
 		addMethodAnnotationToMatch("org.springframework.web.bind.annotation.RequestMapping");
 	}
+	
+	@Override
+	public long getId() {
+		return 0;
+	}
 
 }

@@ -30,4 +30,9 @@ public class TestAPIScope extends AbstractInstAPIScope {
 		addMethod("org.test.sut.InterfaceA", "ifMethodB()");
 	}
 
+	@Override
+	public long getId() {
+		return 0;
+	}
+
 }

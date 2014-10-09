@@ -58,5 +58,10 @@ public class EntryPointScope extends AbstractInstAPIScope {
 				"service(javax.servlet.ServletRequest,javax.servlet.ServletResponse)");
 		addMethodAnnotationToMatch("javax.ws.rs.Path");
 	}
+	
+	@Override
+	public long getId() {
+		return 0;
+	}
 
 }

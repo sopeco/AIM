@@ -15,6 +15,8 @@
  */
 package org.aim.mainagent.probes;
 
+import java.util.Set;
+
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 
@@ -34,6 +36,11 @@ public class IncrementalProbeExtension extends AbstractEnclosingProbeExtension {
 	@Override
 	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
 		return IncrementalInstrumentationProbe.class;
+	}
+
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		return null;
 	}
 
 }

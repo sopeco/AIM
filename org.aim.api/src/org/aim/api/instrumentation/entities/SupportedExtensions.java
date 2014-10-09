@@ -16,9 +16,14 @@
 package org.aim.api.instrumentation.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Container for the information about supported extensions.
@@ -30,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SupportedExtensions {
 	private List<String> samplerExtensions;
 	private List<String> apiScopeExtensions;
-	private List<String> enclosingProbeExtensions;
+	private Map<String, Set<String>> probeExtensionsMapping;
 	private List<String> customScopeExtensions;
 
 	/**
@@ -72,19 +77,20 @@ public class SupportedExtensions {
 	/**
 	 * @return the enclosingProbeExtensions
 	 */
-	public List<String> getEnclosingProbeExtensions() {
-		if (enclosingProbeExtensions == null) {
-			enclosingProbeExtensions = new ArrayList<>();
-		}
-		return enclosingProbeExtensions;
+	@JsonIgnore
+	public Set<String> getProbeExtensions() {
+		return getProbeExtensionsMapping().keySet();
 	}
 
 	/**
-	 * @param enclosingProbeExtensions
-	 *            the enclosingProbeExtensions to set
+	 * @param probeExtension
+	 *            the enclosingProbeExtension to add
+	 * @param supportedScopes
+	 *            scopes which are supported by this probe
 	 */
-	public void setEnclosingProbeExtensions(List<String> enclosingProbeExtensions) {
-		this.enclosingProbeExtensions = enclosingProbeExtensions;
+	@JsonIgnore
+	public void addProbeExtension(String probeExtension, Set<String> supportedScopes) {
+		getProbeExtensionsMapping().put(probeExtension, supportedScopes);
 	}
 
 	/**
@@ -103,6 +109,24 @@ public class SupportedExtensions {
 	 */
 	public void setCustomScopeExtensions(List<String> customScopeExtensions) {
 		this.customScopeExtensions = customScopeExtensions;
+	}
+
+	/**
+	 * @return the probeExtensionsMapping
+	 */
+	public Map<String, Set<String>> getProbeExtensionsMapping() {
+		if (probeExtensionsMapping == null) {
+			probeExtensionsMapping = new HashMap<>();
+		}
+		return probeExtensionsMapping;
+	}
+
+	/**
+	 * @param probeExtensionsMapping
+	 *            the probeExtensionsMapping to set
+	 */
+	public void setProbeExtensionsMapping(Map<String, Set<String>> probeExtensionsMapping) {
+		this.probeExtensionsMapping = probeExtensionsMapping;
 	}
 
 }

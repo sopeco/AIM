@@ -15,8 +15,12 @@
  */
 package org.aim.artifacts.probes;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.artifacts.scopes.JmsScope;
 /**
  * Extension Provider for the JMS Message Size probe.
  * 
@@ -35,4 +39,10 @@ public class JmsMessageSizeProbeExtension extends AbstractEnclosingProbeExtensio
 		return JmsMessageSizeProbe.class;
 	}
 
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		Set<Class<?>> supportedScopes = new HashSet<>();
+		supportedScopes.add(JmsScope.class);
+		return supportedScopes;
+	}
 }

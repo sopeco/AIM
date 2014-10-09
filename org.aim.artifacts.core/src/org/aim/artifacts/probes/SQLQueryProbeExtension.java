@@ -15,8 +15,13 @@
  */
 package org.aim.artifacts.probes;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.artifacts.scopes.JDBCScope;
+
 /**
  * Extension Provider for the SQL Query probe.
  * 
@@ -33,6 +38,13 @@ public class SQLQueryProbeExtension extends AbstractEnclosingProbeExtension {
 	@Override
 	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
 		return SQLQueryProbe.class;
+	}
+
+	@Override
+	public Set<Class<?>> getScopeDependencies() {
+		Set<Class<?>> supportedScopes = new HashSet<>();
+		supportedScopes.add(JDBCScope.class);
+		return supportedScopes;
 	}
 
 }
