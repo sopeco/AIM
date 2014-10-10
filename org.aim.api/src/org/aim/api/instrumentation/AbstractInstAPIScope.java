@@ -22,9 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aim.description.scopes.MethodsEnclosingScope;
 import org.aim.description.scopes.Scope;
-import org.lpe.common.extension.AbstractExtensionArtifact;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * An instrumentation scope cheks whether a certain entity matches the specific
@@ -33,7 +34,11 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstAPIScope extends AbstractExtensionArtifact implements Scope {
+public abstract class AbstractInstAPIScope extends MethodsEnclosingScope implements IExtensionArtifact, Scope {
+	/**
+	 * Extension provider.
+	 */
+	private final IExtension<?> provider;
 
 	/**
 	 * Constructor.
@@ -42,8 +47,16 @@ public abstract class AbstractInstAPIScope extends AbstractExtensionArtifact imp
 	 *            extension provider.
 	 */
 	public AbstractInstAPIScope(IExtension<?> provider) {
-		super(provider);
+		super(0L);
+		this.provider = provider;
 		init();
+	}
+	
+	/**
+	 * @return returns the provider of this extension.
+	 */
+	public IExtension<?> getProvider() {
+		return this.provider;
 	}
 
 	private Map<String, List<String>> methodsToMatch;

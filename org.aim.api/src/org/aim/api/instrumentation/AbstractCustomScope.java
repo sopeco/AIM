@@ -15,9 +15,10 @@
  */
 package org.aim.api.instrumentation;
 
+import org.aim.description.scopes.MethodsEnclosingScope;
 import org.aim.description.scopes.Scope;
-import org.lpe.common.extension.AbstractExtensionArtifact;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Common class for all custom scopes.
@@ -25,7 +26,13 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractCustomScope extends AbstractExtensionArtifact implements IScopeAnalyzer, Scope {
+public abstract class AbstractCustomScope extends MethodsEnclosingScope implements IExtensionArtifact, IScopeAnalyzer,
+		Scope {
+
+	/**
+	 * Extension provider.
+	 */
+	private final IExtension<?> provider;
 
 	/**
 	 * Constructor.
@@ -34,7 +41,15 @@ public abstract class AbstractCustomScope extends AbstractExtensionArtifact impl
 	 *            extension provider
 	 */
 	public AbstractCustomScope(IExtension<?> provider) {
-		super(provider);
+		super(0);
+		this.provider = provider;
+	}
+
+	/**
+	 * @return returns the provider of this extension.
+	 */
+	public IExtension<?> getProvider() {
+		return this.provider;
 	}
 
 }

@@ -99,6 +99,7 @@ public final class BCInjector {
 							methodEntry.getKey(), methodEntry.getValue(), instrumentationRestriction);
 				}
 				ctClass.freeze();
+
 				if (!originalByteCodes.containsKey(clazz)) {
 					originalByteCodes.put(clazz, originalByteCode);
 				}
@@ -187,8 +188,8 @@ public final class BCInjector {
 						tempSnippet = tempSnippet.replace(IncrementalInstrumentationProbe.INST_DESCRIPTION,
 								String.valueOf(scopeId) + "L");
 
-						FullTraceMethodEditor ftmEditor = new FullTraceMethodEditor(tempSnippet,
-								instrumentationRestriction);
+						FullTraceMethodEditor ftmEditor = new FullTraceMethodEditor(ctBehaviour.getLongName(),
+								tempSnippet, instrumentationRestriction);
 						ctBehaviour.instrument(ftmEditor);
 					}
 				}
