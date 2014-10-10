@@ -47,6 +47,7 @@ import org.test.sut.ClassE;
 import org.test.sut.ClassF;
 import org.test.sut.ClassG;
 import org.test.sut.ClassH;
+import org.test.sut.ClassI;
 
 public class MethodInstrumentationTest {
 
@@ -187,10 +188,11 @@ public class MethodInstrumentationTest {
 		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
 				.setMethodSubScope(ClassF.class.getName() + ".methodF1()").addProbe(ResponsetimeProbe.MODEL_PROBE)
 				.entityDone().build();
-
+		
+		ClassF f = new ClassF();
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 
-		ClassF f = new ClassF();
+		
 
 		f.methodF1();
 
@@ -211,6 +213,40 @@ public class MethodInstrumentationTest {
 		enableMeasurement();
 		f = new ClassF();
 		f.methodF1();
+		disableMeasurement();
+		data = getData();
+		Assert.assertTrue(data.getRecords().isEmpty());
+	}
+	
+	@Test
+	public void testFullTraceScopeWithStaticMethodsInstrumentation() throws InstrumentationException, MeasurementException {
+		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
+		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
+				.setMethodSubScope(ClassI.class.getName() + ".methodI1()").addProbe(ResponsetimeProbe.MODEL_PROBE)
+				.entityDone().build();
+
+		
+
+		ClassI i = new ClassI();
+
+		i.methodI1();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		
+		enableMeasurement();
+		i = new ClassI();
+		i.methodI1();
+		disableMeasurement();
+		MeasurementData data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(2, data.getRecords(ResponseTimeRecord.class).size());
+
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
+
+		
+		enableMeasurement();
+		i.methodI1();
 		disableMeasurement();
 		data = getData();
 		Assert.assertTrue(data.getRecords().isEmpty());

@@ -16,6 +16,7 @@
 package org.aim.mainagent.instrumentor;
 
 import javassist.CannotCompileException;
+import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
@@ -31,17 +32,22 @@ import org.aim.description.restrictions.Restriction;
  */
 public class FullTraceMethodEditor extends ExprEditor {
 	private String incrementalSnippet;
+	private String callingMethodName;
 	private Restriction instrumentationRestriction;
 
 	/**
 	 * Constructor.
 	 * 
+	 * @param callingMethodName
+	 *            name of the method doing the call
 	 * @param incrementalSnippet
 	 *            instrumentation statement snippet to inject.
 	 * @param instrumentationRestriction
 	 *            instrumentation restriction
 	 */
-	public FullTraceMethodEditor(String incrementalSnippet, Restriction instrumentationRestriction) {
+	public FullTraceMethodEditor(String callingMethodName, String incrementalSnippet,
+			Restriction instrumentationRestriction) {
+		this.callingMethodName = callingMethodName;
 		this.incrementalSnippet = incrementalSnippet;
 		this.instrumentationRestriction = instrumentationRestriction;
 	}
@@ -50,7 +56,9 @@ public class FullTraceMethodEditor extends ExprEditor {
 	public void edit(MethodCall m) throws CannotCompileException {
 
 		try {
-			if (instrumentationRestriction.isExcluded(m.getClassName())) {
+			// ignore calls to excluded methods and directly recursive calls
+			if (instrumentationRestriction.isExcluded(m.getClassName())
+					|| m.getMethod().getLongName().equals(callingMethodName)) {
 				return;
 			}
 
@@ -60,11 +68,15 @@ public class FullTraceMethodEditor extends ExprEditor {
 			String tempSnippet = incrementalSnippet.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\""
 					+ methodName + "\"");
 
+			// static methods are a special case
+			if (Modifier.isStatic(m.getMethod().getModifiers())) {
+				tempSnippet = tempSnippet.replace("$0.getClass()", "$class");
+			}
+
 			m.replace("{" + tempSnippet + " $_ = $proceed($$);}");
 		} catch (NotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-
 }
