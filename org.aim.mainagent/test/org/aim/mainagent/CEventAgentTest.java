@@ -32,6 +32,8 @@ public class CEventAgentTest {
 
 	private DummyJVMTIFacade jvmti;
 	private IDataCollector collector;
+	
+	private static final Thread TEST_THREAD = new Thread();
 
 	@BeforeClass
 	public static void prepareCollector() {
@@ -89,7 +91,7 @@ public class CEventAgentTest {
 		Assert.assertEquals(2, data.getRecords(EventTimeStampRecord.class).size());
 
 		for (int i = 0; i < 100; i++) {
-			jvmti.newMonitorWaitEvent(null, this, i);
+			jvmti.newMonitorWaitEvent(TEST_THREAD, this, i);
 			jvmti.newMonitorEnteredEvent(thread, getClass(), i);
 		}
 
@@ -98,8 +100,8 @@ public class CEventAgentTest {
 		data = getData();
 		Assert.assertEquals(102, data.getRecords(EventTimeStampRecord.class).size());
 
-		jvmti.newMonitorEnteredEvent(null, null, -1);
-		jvmti.newMonitorWaitEvent(null, null, -1);
+		jvmti.newMonitorEnteredEvent(TEST_THREAD, null, -1);
+		jvmti.newMonitorWaitEvent(TEST_THREAD, null, -1);
 		data = getData();
 		Assert.assertEquals(104, data.getRecords(EventTimeStampRecord.class).size());
 
