@@ -90,6 +90,19 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 		restriction.addModifierExclude(modifier);
 		return this;
 	}
+	
+	/**
+	 * Sets the granularity of this {@code Restriction}. Note is has
+	 * to be between 0 to 1.
+	 * 
+	 * @param granularity
+	 *            granularity to be set
+	 * @return this builder
+	 */
+	public RestrictionBuilder<B> setGranularity(double granularity) {
+		restriction.setGranularity(granularity);
+		return this;
+	}
 
 	/**
 	 * Finishes building of this restriction and returns to the parent builder.

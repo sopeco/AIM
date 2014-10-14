@@ -61,8 +61,8 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 	}
 
 	/**
-	 * Adds a new probe to the entity. We assume, that the specified probe can
-	 * be used with the given scope. Thus, the type of the probe is set to the
+	 * Adds a new probe to the entity. We assume that the specified probe can be
+	 * used with the given scope. Thus, the type of the probe is set to the
 	 * given scope. (e.g. if this scope is a {@code MethodScope}, the probe type
 	 * is set to {@code MethodScope}).
 	 * 

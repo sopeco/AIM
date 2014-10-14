@@ -19,6 +19,7 @@ import org.aim.description.restrictions.Restriction;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.MonitorEventListener;
+import org.lpe.common.util.LpeNumericUtils;
 
 /**
  * Adapter for the JVMTI Event Agent. To use this agent, the CEventAgent has to
@@ -39,11 +40,15 @@ public final class CEventAgentAdapter {
 	private static final String PACKAGE_JAVA = "java.";
 	private static final String CLASS_NAME = "java.lang.Class";
 
+	private static final int GRANULARITY_PRECISION = 10;
+
 	private static MonitorEventListener monitorListener;
 	private static Restriction restriction;
 
 	private static boolean initialized = false;
 	private static boolean activated = false;
+
+	private static int[] granularity = { 1, 1 };
 
 	private CEventAgentAdapter() {
 	}
@@ -68,6 +73,10 @@ public final class CEventAgentAdapter {
 	public static void onMonitorWait(Thread thread, Object monitor, long waitTime) {
 		if (monitorListener == null) {
 			throw new IllegalStateException("No AIMEventListener specified!");
+		}
+
+		if ((thread.getId() & (granularity[1] - 1)) >= granularity[0]) {
+			return;
 		}
 
 		String className = monitor == null ? "null" : monitor.getClass().getName();
@@ -96,6 +105,10 @@ public final class CEventAgentAdapter {
 	public static void onMonitorEntered(Thread thread, Object monitor, long enteredTime) {
 		if (monitorListener == null) {
 			throw new IllegalStateException("No AIMEventListener specified!");
+		}
+
+		if ((thread.getId() & (granularity[1] - 1)) >= granularity[0]) {
+			return;
 		}
 
 		String className = monitor == null ? "null" : monitor.getClass().getName();
@@ -168,6 +181,16 @@ public final class CEventAgentAdapter {
 			activateMonitorEvents();
 			activated = true;
 		}
+	}
+
+	/**
+	 * Sets the granularity for monitor events.
+	 * 
+	 * @param dGran
+	 *            granularity for monitor events
+	 */
+	public static void setMonitorGranularity(double dGran) {
+		granularity = LpeNumericUtils.getFractionFromDouble(dGran, 2, GRANULARITY_PRECISION);
 	}
 
 	private static native void activateMonitorEvents();
