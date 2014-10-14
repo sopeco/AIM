@@ -71,7 +71,7 @@ public final class EventInstrumentor implements IInstrumentor {
 			CEventAgentAdapter.setMonitorListener(MonitorEventListener.getInstance());
 			for (MeasurementProbe<? super SynchronizedScope> mProbe : entitiy.getProbes()) {
 				LOGGER.info("Enabling event listening with SynchronizedBlocksWaitingTimeProbe");
-				LOGGER.warn("Choosing the event listeing description from the instrumentation description is not implemented yet.");
+				LOGGER.warn("Choosing the event listening description from the instrumentation description is not implemented yet.");
 
 				IExtension<?> ext = ExtensionRegistry.getSingleton().getExtension(mProbe.getName());
 				if (ext == null) {
@@ -82,7 +82,9 @@ public final class EventInstrumentor implements IInstrumentor {
 				if (eventProbe instanceof IMonitorEventProbe) {
 					IMonitorEventProbe monitorProbe = (IMonitorEventProbe) eventProbe;
 					EventProbeRegistry.getInstance().addProbe(MonitorEventListener.class, monitorProbe.getClass());
+					CEventAgentAdapter.setMonitorGranularity(entitiy.getLocalRestriction().getGranularity());
 					activated = true;
+					break;
 				}
 
 			}

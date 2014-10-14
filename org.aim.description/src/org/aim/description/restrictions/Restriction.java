@@ -39,6 +39,8 @@ public class Restriction {
 	private final Set<Integer> modifierIncludes;
 	private final Set<Integer> modifierExcludes;
 
+	private double granularity = 1.0;
+
 	/**
 	 * Constructor. Sets all sets to empty ones.
 	 */
@@ -116,6 +118,27 @@ public class Restriction {
 	 */
 	public Set<Integer> getModifierExcludes() {
 		return modifierExcludes;
+	}
+
+	/**
+	 * Sets the granularity. Note is has to be between 0 to 1.
+	 * 
+	 * @param granularity
+	 *            granularity to be set
+	 */
+	public void setGranularity(double granularity) {
+		if (granularity > 1 || granularity < 0) {
+			throw new IllegalArgumentException("The granularity has to be between 0 to 1!");
+		}
+
+		this.granularity = granularity;
+	}
+
+	/**
+	 * @return the granularity
+	 */
+	public double getGranularity() {
+		return granularity;
 	}
 
 	/**
@@ -257,6 +280,29 @@ public class Restriction {
 	 */
 	public boolean hasModifierRestrictions() {
 		return !getModifierIncludes().isEmpty() || !getModifierExcludes().isEmpty();
+	}
+
+	/**
+	 * Returns the merge of this restriction and the specified one. The
+	 * granularity is not overwritten.
+	 * 
+	 * @param other
+	 *            Restriction to be merged with
+	 * @return merge of this restriction and {@code other}
+	 */
+	public Restriction mergeWith(Restriction other) {
+		Restriction result = new Restriction();
+		result.getModifierExcludes().addAll(this.getModifierExcludes());
+		result.getModifierExcludes().addAll(other.getModifierExcludes());
+		result.getModifierIncludes().addAll(this.getModifierIncludes());
+		result.getModifierIncludes().addAll(other.getModifierIncludes());
+		result.getPackageExcludes().addAll(this.getPackageExcludes());
+		result.getPackageExcludes().addAll(other.getPackageExcludes());
+		result.getPackageIncludes().addAll(this.getPackageIncludes());
+		result.getPackageIncludes().addAll(other.getPackageIncludes());
+		result.setGranularity(this.getGranularity());
+
+		return result;
 	}
 
 	@Override

@@ -154,7 +154,7 @@ public class InstrumentationEntity<S extends Scope> {
 		if (obj == null) {
 			return false;
 		}
-		
+
 		if (!obj.getClass().equals(this.getClass())) {
 			return false;
 		}
@@ -163,7 +163,7 @@ public class InstrumentationEntity<S extends Scope> {
 		return this.getScope().equals(other.getScope()) && this.getProbes().equals(other.getProbes())
 				&& this.getLocalRestriction().equals(other.getLocalRestriction());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int hash = 1;
