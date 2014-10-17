@@ -98,13 +98,7 @@
 									</excludes>
 								</filter>
 								<filter>
-									<artifact>com.sun.jersey:jersey-json</artifact>
-									<excludes>
-										<exclude>**</exclude>
-									</excludes>
-								</filter>
-								<filter>
-									<artifact>com.sun.jersey:jersey-client</artifact>
+									<artifact>com.sun.jersey:*</artifact>
 									<excludes>
 										<exclude>**</exclude>
 									</excludes>
