@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- Mikrodaten-Markup hinzugefügt von Google Strukturierte Daten: Markup-Hilfe -->
+<html><head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+	<meta name="keywords" content="AIM, Instrumentation, Monitoring, Measurement, Performance, Adaptive Instrumentation"/>
+	<meta name="description" content="AIM is a tool for adaptable instrumentation and monitoring for Java applications"/>
+    <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print"/>
+	<link rel="icon" type="image/png" href="ico_32.png"/>
+    <!-- [if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif] -->
+
+    <title>IDM: Instrumentation Description Model</title>
+  </head>
+
+  <body>
+    
+<span itemscope itemtype="http://schema.org/SoftwareApplication"><header>
+      <div class="inner">
+	  <a href="index.html">
+        <img itemprop="image" src="images/logo.png" style="margin-bottom: 8px;" height="110"/>
+	  </a>
+        <h2>Adaptable Instrumentation and Monitoring</h2>
+        <a href="https://github.com/sopeco/AIM" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>IDM</h3>
+In general, IDM can be partitioned along two dimensions: (I) We distinguish between
+<i>sampling</i> and <i>instrumentation</i>.
+Sampling is the process of periodically retrieving information from a certain resource (e.g. CPU utilization, Disk
+I/O, etc.) while instrumentation is used to retrieve measurement data (e.g. response times) from the control flow of the
+AUT. (II) In both cases we distinguish between <i>scopes</i> and <i>probes</i>. 
+While scopes describe which resource to monitor, respectively where in the code to instrument, probes define what (which metric) should be measured. 
+
+<p><img src="images/idm-overview.png" alt="idm"/></p>
+
+The <i>Instrumentation and Monitoring (IaM) Description</i> is the root element of IDM, constituting a container for
+<i>Sampling</i> and <i>Instrumentation Entities</i> which are explained in the following.
+
+<h4>Sampling</h4>
+A <i>Sampling Entity</i> is specified by a delay (in ms) determining the sampling frequency, exactly one sampling
+scope (e.g. CPU, Memory, Disk or Network), and a set of sampling probes (e.g. Utilization and Capacity). The
+<i>Capacity</i> probe stands for the absolute capacity of the corresponding resource, e.g. the absolute GHz power of a
+CPU, the network bandwidth or total memory. The Sampling Scope can be further restricted to a set of operating
+system processes (<i>Process Spec</i>) specified by a host name and a process id. In this way one could monitor for
+instance the CPU utilization of a single process instead of the overall CPU utilization.
+
+<h4>Instrumentation</h4>
+An <i>Instrumentation Entity</i> comprises an <i>Instrumentation Scope</i>, a set of <i>Measurement Probes</i>
+(i.e. <i>what</i> to measure), and an optional local <i>Restriction</i>. We distinguish different types of scopes,
+both for system-specific specification as well as generic specification of the scope:
+<h5>Synchronization Scope</h5>
+This scope covers all points in the AUT, where synchronization of threads occurs due to a lock on a passive resource. 
+<h5>Method Enclosing Scope</h5> The <i>Method Enclosing Scope</i> is an abstract scope providing a common parent
+element for all sub-scopes which cover a set of individual methods or method calls. 
+<h5>Method Scope</h5> The Method Scope is the most direct way to specify a set of methods to be
+ instrumented. Hereby, a method (or a set of methods) is identified by a set of <i>method patterns</i> (method names
+ with potential wild-cards).
+ A Method Scope covers all methods whose full qualified names match a specified pattern.
+<h5>Allocation Scope</h5> Covers all code statements where an object of the target classes is allocated. Analogously to
+the method patterns the target classes are specified by class name patterns. 
+<h5>Constructor Scope</h5> Covers the instrumentation of all constructors of the target classes.
+<h5>Modifier Scope</h5> The Modifier Scope allows to specify a set of modifiers to describe a scope of all methods whose
+modifiers match all specified modifiers of the scope.
+<h5>API Scope</h5> Conceptually, an <i>API Scope</i> covers all methods of an <i>abstract API</i> whose implementing
+methods shall be instrumented. An <i>abstract API</i> represents a conceptual interface for which concrete APIs consist
+in most modern, managed programming languages (e.g. Java, .NET, etc.). 
+Here, we listed the following API scopes: The <i>Entry Point API</i> covers all entry points into a server
+application (e.g. in the case of Java this would be Servlets, HTTP handlers, etc.). The <i>Messaging API</i> covers all
+ways of the target context to do remote communication (e.g. in Java: JMS, RMI, etc.). The <i>Database API</i> and the
+<i>OR Mapping API</i> need to be mapped to the concrete standard API of the target context for managing a database
+connection (e.g. JDBC in Java), respectively concrete API for realizing an object-relation mapping (e.g. JPA in Java).
+Finally, the <i>Logging API</i> covers standard interfaces for logging (e.g. log4j or slf4j in Java).
+<h5>Trace Scope</h5> Finally, the <i>Trace Scope</i> allows to instrument the whole dynamic trace (i.e. call tree)
+originating from the methods covered by the sub-scope. 
+
+While the <i>Method</i>, <i>Allocation</i> and <i>Constructor Scope</i> provide a
+system-specific way of specifying the scope with a name pattern, the remaining scopes are generic and, thus,
+system-independent.
+
+<p>
+Orthogonally to the <i>Instrumentation Scope</i>, an <i>Instrumentation Entity</i> comprises a set of
+<i>Measurement Probes</i> specifying the data to be retrieved from the corresponding scope.
+Although the probes are orthogonal to the scopes, not all probes are reasonably applicable with all scopes. Therefore,
+we define some restrictions (expressed as OCL statements) limiting the
+applicability of certain probes to corresponding sub-sets of scopes. In particular, <i>Response Time</i>,
+<i>Memory Footprint</i>, <i>Trace ID</i> and <i>CPU Time</i> can be measured from all <i>Method Enclosing
+Scopes</i>. <i>Waiting Time</i> and <i>Queue Length</i> can be retrieved from the <i>Synchronization Scope</i>.
+Finally, the SQL statement of an executed database query (<i>DB Query</i>) can be retrieved from a <i>Database
+API</i> scope.
+</p>
+
+
+
+        </section>
+
+        <aside id="sidebar">
+		  <div class="disclaimer">
+			  <p class="big">Disclaimer</p>
+			  <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+			  <p>This site uses Google Analytics. More details are available on the <a href="privacy_statement.html">privacy statement page</a>.</p>
+		  </div>
+        </aside>
+      </div>
+    </div></span>
+         <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+		  <script>
+			// Set to the same value as the web property used on the site
+			var gaProperty = 'UA-52849629-2';
+
+			// Disable tracking if the opt-out cookie exists.
+			var disableStr = 'ga-disable-' + gaProperty;
+			if (document.cookie.indexOf(disableStr + '=true') > -1) {
+			  window[disableStr] = true;
+			}
+
+			// Opt-out function
+			function gaOptout() {
+			  document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+			  window[disableStr] = true;
+			}
+		  </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-52849629-2");
+			  _gat._anonymizeIp();
+			  pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  
+</body></html>
