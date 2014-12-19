@@ -45,7 +45,7 @@ public class SnippetProviderTest {
 	public static final String INVALID_DUMMY_SNIPPET_CONTROL_SEQUENCE_1 = "System.out.println(testVariable);";
 	public static final String INVALID_DUMMY_SNIPPET_CONTROL_SEQUENCE_2 = "System.out.println(_InvalidDummyProbe_testVariable_2);";
 
-	public static final int GENERIC_SNIPPET_NUM_VARIABLES = 3;
+	public static final int GENERIC_SNIPPET_NUM_VARIABLES = 4;
 	public static final int DUMMY_SNIPPET_NUM_VARIABLES = 3;
 	public static final int INVALID_DUMMY_SNIPPET_NUM_VARIABLES = 2;
 

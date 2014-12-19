@@ -34,6 +34,9 @@ public class GenericProbe {
 
 	@ProbeVariable
 	public IDataCollector _GenericProbe_collector;
+	
+	@ProbeVariable
+	public long _GenericProbe_threadId;
 
 	/**
 	 * Code for common before part.

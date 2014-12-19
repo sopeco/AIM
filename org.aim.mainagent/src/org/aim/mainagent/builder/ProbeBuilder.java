@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
+import org.lpe.common.util.LpeNumericUtils;
 
 /**
  * Builder for creating a combined probe snippet.
@@ -28,6 +29,12 @@ import org.aim.api.instrumentation.AbstractEnclosingProbe;
  * 
  */
 public class ProbeBuilder {
+
+	private static final String GRANULARITY_INIT_PART = "_GenericProbe_threadId=java.lang.Thread.currentThread().getId();\n";
+	private final String GRANULARITY_BEFORE_PART;
+	private static final String GRANULARITY_AFTER_PART = "}";
+
+	private final boolean useGranularity;
 
 	private String methodSignature;
 
@@ -40,9 +47,18 @@ public class ProbeBuilder {
 	 * @param methodSignature
 	 *            target method to instrument
 	 */
-	public ProbeBuilder(String methodSignature) {
+	public ProbeBuilder(String methodSignature, double granularity) {
 		this.methodSignature = methodSignature;
 		injectedProbeTypes = new HashSet<>();
+
+		int[] granNumDenom = LpeNumericUtils.getFractionFromDouble(granularity);
+		GRANULARITY_BEFORE_PART = "if(_GenericProbe_threadId%" + granNumDenom[1] + "<" + granNumDenom[0] + ") {\n";
+
+		if (granNumDenom[0] < granNumDenom[1]) {
+			useGranularity = true;
+		} else {
+			useGranularity = false;
+		}
 	}
 
 	/**
@@ -79,13 +95,19 @@ public class ProbeBuilder {
 	 *             if snippet cannot be built
 	 */
 	public Snippet build() throws InstrumentationException {
-
+		
 		MultiSnippet mSnippet = SnippetProvider.getInstance().getGenericSnippet();
 		Snippet resultSnippet = new Snippet();
 		String beforePart = mSnippet.getBeforePart(methodSignature) + currentSnippet.getBeforePart();
+		if (useGranularity) {
+			beforePart = GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart + GRANULARITY_AFTER_PART;
+		}
 		beforePart = beforePart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
 				+ "\"");
 		String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
+		if (useGranularity) {
+			afterPart = GRANULARITY_BEFORE_PART + afterPart + GRANULARITY_AFTER_PART;
+		}
 		afterPart = afterPart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
 				+ "\"");
 		resultSnippet.setBeforePart(beforePart);
