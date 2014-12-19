@@ -21,6 +21,7 @@ import java.util.Set;
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.lpe.common.util.LpeNumericUtils;
+import org.lpe.common.util.LpeStringUtils;
 
 /**
  * Builder for creating a combined probe snippet.
@@ -30,9 +31,10 @@ import org.lpe.common.util.LpeNumericUtils;
  */
 public class ProbeBuilder {
 
-	private static final String GRANULARITY_INIT_PART = "_GenericProbe_threadId=java.lang.Thread.currentThread().getId();\n";
+	private static final String GRANULARITY_INIT_PART = "\n_GenericProbe_threadId=java.lang.Thread.currentThread().getId();";
+	private static final String GENERIC_PROBE_INIT_PART = "\n_GenericProbe_startTime=0;\n_GenericProbe_callId=0;\n_GenericProbe_collector=null;";
 	private final String GRANULARITY_BEFORE_PART;
-	private static final String GRANULARITY_AFTER_PART = "}";
+	private static final String GRANULARITY_AFTER_PART = "}\n";
 
 	private final boolean useGranularity;
 
@@ -52,7 +54,7 @@ public class ProbeBuilder {
 		injectedProbeTypes = new HashSet<>();
 
 		int[] granNumDenom = LpeNumericUtils.getFractionFromDouble(granularity);
-		GRANULARITY_BEFORE_PART = "if(_GenericProbe_threadId%" + granNumDenom[1] + "<" + granNumDenom[0] + ") {\n";
+		GRANULARITY_BEFORE_PART = "\nif(_GenericProbe_threadId % " + granNumDenom[1] + " < " + granNumDenom[0] + ") {";
 
 		if (granNumDenom[0] < granNumDenom[1]) {
 			useGranularity = true;
@@ -95,21 +97,25 @@ public class ProbeBuilder {
 	 *             if snippet cannot be built
 	 */
 	public Snippet build() throws InstrumentationException {
-		
+
 		MultiSnippet mSnippet = SnippetProvider.getInstance().getGenericSnippet();
 		Snippet resultSnippet = new Snippet();
 		String beforePart = mSnippet.getBeforePart(methodSignature) + currentSnippet.getBeforePart();
-		if (useGranularity) {
-			beforePart = GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart + GRANULARITY_AFTER_PART;
-		}
-		beforePart = beforePart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
-				+ "\"");
 		String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
+
 		if (useGranularity) {
+			// TODO: add initialization of all variables of all probes being
+			// accessed in the afterPart
+			beforePart = GENERIC_PROBE_INIT_PART + GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart
+					+ GRANULARITY_AFTER_PART;
 			afterPart = GRANULARITY_BEFORE_PART + afterPart + GRANULARITY_AFTER_PART;
 		}
+
+		beforePart = beforePart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
+				+ "\"");
 		afterPart = afterPart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
 				+ "\"");
+
 		resultSnippet.setBeforePart(beforePart);
 		resultSnippet.setAfterPart(afterPart);
 		resultSnippet.setIncrementalPart(currentSnippet.getIncrementalPart());
