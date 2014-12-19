@@ -32,8 +32,13 @@ public class SQLQueryRecord extends AbstractRecord {
 
 	public static final String PAR_QUERY_STRING = "queryString";
 
+	public static final String PAR_OPERATION = "operation";
+
 	@RecordValue(metric = true, name = PAR_QUERY_STRING)
 	String queryString;
+
+	@RecordValue(name = PAR_OPERATION)
+	String operation;
 
 	/**
 	 * Constructor.
@@ -55,6 +60,24 @@ public class SQLQueryRecord extends AbstractRecord {
 	 */
 	public void setQueryString(String queryString) {
 		this.queryString = queryString;
+	}
+
+	/**
+	 * 
+	 * @return full name of the monitored operation
+	 */
+	public String getOperation() {
+		return operation;
+	}
+
+	/**
+	 * Sets the full name of the monitored operation.
+	 * 
+	 * @param operation
+	 *            full name of the operation
+	 */
+	public void setOperation(String operation) {
+		this.operation = operation;
 	}
 
 }

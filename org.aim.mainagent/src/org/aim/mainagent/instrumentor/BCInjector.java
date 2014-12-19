@@ -171,7 +171,7 @@ public final class BCInjector {
 			String behaviourSignature, Set<Long> scopeIds, Restriction instrumentationRestriction)
 			throws InstrumentationException {
 		try {
-			ProbeBuilder pBuilder = new ProbeBuilder(behaviourSignature);
+			ProbeBuilder pBuilder = new ProbeBuilder(behaviourSignature, instrumentationRestriction.getGranularity());
 			for (Class<? extends AbstractEnclosingProbe> probeType : probeTypes) {
 				pBuilder.inject(probeType);
 			}

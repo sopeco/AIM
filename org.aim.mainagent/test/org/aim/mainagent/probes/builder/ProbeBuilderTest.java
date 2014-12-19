@@ -39,13 +39,13 @@ public class ProbeBuilderTest {
 	public static final String ANOTHER_DUMMY_SNIPPET_CONTROL_SEQUENCE_2 = "_AnotherDummyProbe_record = new "
 			+ ResponseTimeRecord.class.getName() + "()";
 	public static final String ANOTHER_DUMMY_SNIPPET_CONTROL_SEQUENCE_3 = "System.out.println(\"AnotherAfterControlSequence\");";
-	public static final int GENERIC_SNIPPET_NUM_VARIABLES = 3;
+	public static final int GENERIC_SNIPPET_NUM_VARIABLES = 4;
 	public static final int DUMMY_SNIPPET_NUM_VARIABLES = 3;
 	public static final int ANOTHER_DUMMY_SNIPPET_NUM_VARIABLES = 2;
 
 	@Test
 	public void testProbeBuilder() throws InstrumentationException {
-		ProbeBuilder pBuilder = new ProbeBuilder(TEST_METHOD_SIGNATURE);
+		ProbeBuilder pBuilder = new ProbeBuilder(TEST_METHOD_SIGNATURE, 1.0);
 		pBuilder.inject(DummyProbe.class);
 		Snippet snippet_1 = pBuilder.build();
 

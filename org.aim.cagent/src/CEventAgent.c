@@ -36,6 +36,9 @@ static jclass agentClass;
 static jmethodID onMonitorWait;
 static jmethodID onMonitorEntered;
 
+static jint granNum = 1;
+static jint granDenom = 1;
+
 void JNICALL jvmti_wait_for_monitor_enter(jvmtiEnv *jvmti_env, JNIEnv* jni_env,
 		jthread thread, jobject object) {
 	jlong nanos_ptr;
@@ -76,6 +79,12 @@ JNIEXPORT void JNICALL Java_org_aim_mainagent_CEventAgentAdapter_init(JNIEnv* jn
 	if (onMonitorWait == NULL) {
 		printf("WARN CEventAgent: onMonitorEntered jmethodID is NULL");
 	}
+}
+
+JNIEXPORT void JNICALL Java_org_aim_mainagent_CEventAgentAdapter_setMonitorGranularity0(JNIEnv* jni_env,
+		jclass aClass, jint num, jint denom) {
+	granNum = num;
+	granDenom = denom;
 }
 
 JNIEXPORT void JNICALL Java_org_aim_mainagent_CEventAgentAdapter_activateMonitorEvents(JNIEnv* jni_env,
