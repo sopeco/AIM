@@ -63,6 +63,7 @@ public class SQLQueryProbe extends AbstractEnclosingProbe {
 		_SQLQueryProbe_record.setTimeStamp(_GenericProbe_startTime);
 		_SQLQueryProbe_record.setCallId(_GenericProbe_callId);
 		_SQLQueryProbe_record.setQueryString((String) __parameter[1]);
+		_SQLQueryProbe_record.setOperation(__methodSignature);
 		_GenericProbe_collector.newRecord(_SQLQueryProbe_record);
 	}
 
@@ -76,6 +77,7 @@ public class SQLQueryProbe extends AbstractEnclosingProbe {
 		_SQLQueryProbe_record.setCallId(_GenericProbe_callId);
 		_SQLQueryProbe_record.setQueryString(SQLPreparedStatementCache.getInstance().getQuery(
 				(PreparedStatement) __parameter[0]));
+		_SQLQueryProbe_record.setOperation(__methodSignature);
 		_GenericProbe_collector.newRecord(_SQLQueryProbe_record);
 	}
 
