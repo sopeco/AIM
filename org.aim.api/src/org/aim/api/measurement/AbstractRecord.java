@@ -116,6 +116,9 @@ public abstract class AbstractRecord implements Serializable {
 		String[] strArray = new String[list.size()];
 		int i = 0;
 		for (Object o : list) {
+			if (o instanceof String) {
+				o = ((String) o).replace(";", "#sc#");
+			}
 			strArray[i] = o.toString();
 			i++;
 		}
@@ -456,7 +459,11 @@ public abstract class AbstractRecord implements Serializable {
 		StringBuilder builder = new StringBuilder();
 		try {
 			for (Field field : getAllParameterFields()) {
-				builder.append((field.get(this) != null) ? (field.get(this).toString()) : (""));
+				if (field.getType().equals(String.class)) {
+					builder.append((field.get(this) != null) ? (field.get(this).toString().replace(";", "#sc#")) : (""));
+				} else {
+					builder.append((field.get(this) != null) ? (field.get(this).toString()) : (""));
+				}
 				builder.append(';');
 			}
 
@@ -477,7 +484,6 @@ public abstract class AbstractRecord implements Serializable {
 	 */
 	public static AbstractRecord fromString(String stringRep) {
 		try {
-
 			String className = stringRep.substring(stringRep.lastIndexOf(';') + 1, stringRep.length());
 			String[] values = stringRep.substring(0, stringRep.lastIndexOf(';')).split(";");
 			AbstractRecord record = (AbstractRecord) Class.forName(className).newInstance();
@@ -535,7 +541,7 @@ public abstract class AbstractRecord implements Serializable {
 			} else if (typeName.equalsIgnoreCase("double")) {
 				return Double.parseDouble(str);
 			} else if (typeName.equalsIgnoreCase("string")) {
-				return str;
+				return str.replace("#sc#", ";");
 			} else if (typeName.equalsIgnoreCase("boolean")) {
 				return Boolean.parseBoolean(str);
 			}
