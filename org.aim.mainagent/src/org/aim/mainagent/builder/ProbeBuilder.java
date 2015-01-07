@@ -21,7 +21,7 @@ import java.util.Set;
 import org.aim.api.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.lpe.common.util.LpeNumericUtils;
-import org.lpe.common.util.LpeStringUtils;
+import org.lpe.common.util.LpeSupportedTypes;
 
 /**
  * Builder for creating a combined probe snippet.
@@ -32,7 +32,6 @@ import org.lpe.common.util.LpeStringUtils;
 public class ProbeBuilder {
 
 	private static final String GRANULARITY_INIT_PART = "\n_GenericProbe_threadId=java.lang.Thread.currentThread().getId();";
-	private static final String GENERIC_PROBE_INIT_PART = "\n_GenericProbe_startTime=0;\n_GenericProbe_callId=0;\n_GenericProbe_collector=null;";
 	private final String GRANULARITY_BEFORE_PART;
 	private static final String GRANULARITY_AFTER_PART = "}\n";
 
@@ -104,9 +103,33 @@ public class ProbeBuilder {
 		String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
 
 		if (useGranularity) {
-			// TODO: add initialization of all variables of all probes being
-			// accessed in the afterPart
-			beforePart = GENERIC_PROBE_INIT_PART + GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart
+			StringBuilder initPartBuilder = new StringBuilder();
+			for (String var : mSnippet.getVariables().keySet()) {
+				initPartBuilder.append("\n");
+				initPartBuilder.append(var);
+				initPartBuilder.append("=");
+				LpeSupportedTypes lst = LpeSupportedTypes.get(mSnippet.getVariables().get(var));
+				if (lst == null || lst == LpeSupportedTypes.String) {
+					initPartBuilder.append("null");
+				} else {
+					initPartBuilder.append(LpeSupportedTypes.getValueOfType("0", lst));
+				}
+				initPartBuilder.append(";");
+			}
+			for (String var : currentSnippet.getVariables().keySet()) {
+				initPartBuilder.append("\n");
+				initPartBuilder.append(var);
+				initPartBuilder.append("=");
+				LpeSupportedTypes lst = LpeSupportedTypes.get(currentSnippet.getVariables().get(var));
+				if (lst == null || lst == LpeSupportedTypes.String) {
+					initPartBuilder.append("null");
+				} else {
+					initPartBuilder.append(LpeSupportedTypes.getValueOfType("0", lst));
+				}
+				initPartBuilder.append(";");
+			}
+			
+			beforePart = initPartBuilder.toString() + GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart
 					+ GRANULARITY_AFTER_PART;
 			afterPart = GRANULARITY_BEFORE_PART + afterPart + GRANULARITY_AFTER_PART;
 		}
