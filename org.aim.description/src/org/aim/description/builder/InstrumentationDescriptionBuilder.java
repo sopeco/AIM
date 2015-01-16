@@ -291,13 +291,16 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 
 	/**
 	 * Appends the passed instrumentation description to the current
-	 * instrumentation description represented by this builder.
+	 * instrumentation description represented by this builder. Does nothing if
+	 * passed instrumentation description is null.
 	 * 
 	 * @param instDescription
 	 *            instrumentation description to append
 	 */
 	public void appendOtherDescription(InstrumentationDescription instDescription) {
-
+		if (instDescription == null) {
+			return;
+		}
 		Restriction globalRestriction = instDescription.getGlobalRestriction();
 		RestrictionBuilder<?> globalRestrictionBuilder = newGlobalRestriction();
 		for (String inc : globalRestriction.getPackageIncludes()) {
@@ -323,5 +326,4 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 		}
 
 	}
-
 }
