@@ -149,7 +149,7 @@
 				<artifactId>maven-license-plugin</artifactId>
 				<version>1.9.0</version>
 				<configuration>
-					<header>${basedir}/../org.lpe.common.parent/license.txt</header>
+					<header>${basedir}/../org.aim.parent/license.txt</header>
 					<mapping>
 						<conf>SCRIPT_STYLE</conf>
 						<xml>XML_STYLE</xml>

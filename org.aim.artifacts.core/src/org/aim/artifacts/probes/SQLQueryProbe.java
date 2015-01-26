@@ -84,7 +84,7 @@ public class SQLQueryProbe extends AbstractEnclosingProbe {
 	/**
 	 * After part for JDBC prepareStatement methods.
 	 */
-	@ProbeAfterPart(requiredMethodName = "prepareStatement(java.lang.String)")
+	@ProbeAfterPart(requiredMethodName = "prepareStatement(java.lang.String")
 	public void afterPartForPrepareStatement() {
 		SQLPreparedStatementCache.getInstance().register((PreparedStatement) __returnObject, (String) __parameter[1]);
 	}

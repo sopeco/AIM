@@ -68,6 +68,11 @@ public class JDBCScope extends AbstractInstAPIScope {
 		addMethod("java.sql.Connection", "commit()");
 		addMethod("java.sql.Connection", "close()");
 		addMethod("java.sql.Connection", "prepareStatement(java.lang.String)");
+		addMethod("java.sql.Connection", "prepareStatement(java.lang.String,int)");
+		addMethod("java.sql.Connection", "prepareStatement(java.lang.String,int[])");
+		addMethod("java.sql.Connection", "prepareStatement(java.lang.String,int,int)");
+		addMethod("java.sql.Connection", "prepareStatement(java.lang.String,int,int,int)");
+		addMethod("java.sql.Connection", "prepareStatement(java.lang.String,java.lang.String[])");
 
 		// javax.sql entities
 		addMethod("javax.sql.ConnectionPoolDataSource", "getPooledConnection()");
