@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +97,7 @@ public final class RecordCSVWriter {
 	}
 
 	/**
-	 * Writers records to file.
+	 * Writes records to file.
 	 * 
 	 * @param records
 	 *            records to store
@@ -155,19 +156,7 @@ public final class RecordCSVWriter {
 			String line = bReader.readLine();
 			while (line != null) {
 				AbstractRecord record = AbstractRecord.fromString(line);
-				if (record != null) {
-					CSVWriter csvWriter = null;
-					int structureHash = getStructureHash(record, parameters);
-					if (!csvWriters.containsKey(structureHash)) {
-						String fileName = targetDir + getFileName(targetDir, record) + CSV_FILE_EXTENSION;
-						FileWriter fWriter = new FileWriter(fileName);
-						csvWriter = new CSVWriter(fWriter, VALUE_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER);
-						csvWriter.writeNext(DatasetRow.getHeader(record, parameters));
-						csvWriter.writeNext(DatasetRow.getTypes(record, parameters));
-						csvWriters.put(structureHash, csvWriter);
-					}
-					csvWriters.get(structureHash).writeNext(DatasetRow.getValueArray(record, parameters));
-				}
+				writeRecordToFile(targetDir, parameters, csvWriters, record);
 
 				line = bReader.readLine();
 			}
@@ -177,6 +166,52 @@ public final class RecordCSVWriter {
 					csvWriter.close();
 				}
 			}
+		}
+	}
+
+	/**
+	 * Writes data to the target directory with attached parameters.
+	 * 
+	 * @param records
+	 *            records to write
+	 * @param targetDir
+	 *            target directory where to write the dataset files
+	 * @param parameters
+	 *            additional parameters
+	 * @throws IOException
+	 *             if something goes wrong
+	 */
+	public void writeDataToDatasetFiles(Collection<AbstractRecord> records, String targetDir, Set<Parameter> parameters)
+			throws IOException {
+		targetDir = preProcessTargetDir(targetDir, false);
+		Map<Integer, CSVWriter> csvWriters = new HashMap<Integer, CSVWriter>();
+		try {
+			for (AbstractRecord record : records) {
+				writeRecordToFile(targetDir, parameters, csvWriters, record);
+			}
+		} finally {
+			for (CSVWriter csvWriter : csvWriters.values()) {
+				if (csvWriter != null) {
+					csvWriter.close();
+				}
+			}
+		}
+	}
+
+	private void writeRecordToFile(String targetDir, Set<Parameter> parameters, Map<Integer, CSVWriter> csvWriters,
+			AbstractRecord record) throws IOException {
+		if (record != null) {
+			CSVWriter csvWriter = null;
+			int structureHash = getStructureHash(record, parameters);
+			if (!csvWriters.containsKey(structureHash)) {
+				String fileName = targetDir + getFileName(targetDir, record) + CSV_FILE_EXTENSION;
+				FileWriter fWriter = new FileWriter(fileName);
+				csvWriter = new CSVWriter(fWriter, VALUE_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER);
+				csvWriter.writeNext(DatasetRow.getHeader(record, parameters));
+				csvWriter.writeNext(DatasetRow.getTypes(record, parameters));
+				csvWriters.put(structureHash, csvWriter);
+			}
+			csvWriters.get(structureHash).writeNext(DatasetRow.getValueArray(record, parameters));
 		}
 	}
 
