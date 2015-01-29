@@ -15,6 +15,9 @@
  */
 package org.aim.artifacts.sampler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
 import org.aim.artifacts.records.NetworkInterfaceInfoRecord;
 import org.aim.artifacts.records.NetworkRecord;
@@ -39,7 +42,7 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(NetworkIOSampler.class);
 
-	private static String[] networkInterfaces = null;
+	private static List<String> networkInterfaces = null;
 
 	/**
 	 * Constructor.
@@ -49,6 +52,7 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 	 */
 	public NetworkIOSampler(IExtension<?> provider) {
 		super(provider);
+		networkInterfaces = null;
 	}
 
 	/**
@@ -61,12 +65,16 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 		synchronized (this) {
 			if (networkInterfaces == null) {
 				try {
-					networkInterfaces = getSigar().getNetInterfaceList();
-					for (String networkInterface : networkInterfaces) {
-						NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
-						getDataCollector().newRecord(
-								new NetworkInterfaceInfoRecord(System.currentTimeMillis(), networkInterface, netStat
-										.getSpeed()));
+					networkInterfaces = new ArrayList<>();
+					for (String networkInterface : getSigar().getNetInterfaceList()) {
+						if (!getSigar().getNetInterfaceConfig(networkInterface).getAddress().equals("0.0.0.0")) {
+							NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
+							getDataCollector().newRecord(
+									new NetworkInterfaceInfoRecord(System.currentTimeMillis(), networkInterface,
+											netStat.getSpeed()));
+							networkInterfaces.add(networkInterface);
+						}
+
 					}
 				} catch (SigarException e) {
 					LOGGER.warn("Sigar Exception: {}", e);
