@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.artifacts.events.probes;
-
+package org.aim.artifacts.probes;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aim.api.events.AbstractEventProbe;
-import org.aim.api.events.AbstractEventProbeExtension;
-import org.aim.description.scopes.SynchronizedScope;
+import org.aim.api.instrumentation.AbstractEnclosingProbe;
+import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.description.scopes.MethodsEnclosingScope;
 
 /**
- * Event probe for gathering the waiting times on monitor(synchronization)
- * requests.
+ * Extension provider for the {@link StackTraceProbe}.
  * 
- * @author Alexander Wert
+ * @author Henning Schulz
  * 
  */
-public class MonitorWaitingTimeProbeExtension extends AbstractEventProbeExtension {
+public class StackTraceProbeExtension extends AbstractEnclosingProbeExtension {
 
 	@Override
-	public AbstractEventProbe createExtensionArtifact() {
-		return new MonitorWaitingTimeProbe(this);
+	public AbstractEnclosingProbe createExtensionArtifact() {
+		return new StackTraceProbe(this);
 	}
 
 	@Override
-	public Class<? extends AbstractEventProbe> getProbeClass() {
-		return MonitorWaitingTimeProbe.class;
+	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
+		return StackTraceProbe.class;
 	}
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
 		Set<Class<?>> supportedScopes = new HashSet<>();
-		supportedScopes.add(SynchronizedScope.class);
+		supportedScopes.add(MethodsEnclosingScope.class);
 		return supportedScopes;
 	}
 
