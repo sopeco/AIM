@@ -45,6 +45,8 @@ public class JmsServerRecord extends AbstractRecord {
 
 	public static final String PAR_QUEUE_SIZE = "queueSize";
 
+	public static final String PAR_AVG_MESSAGE_SIZE = "avgMessageSize";
+
 	private static final String PAR_CPU_UTIL = "cpuUtil";
 
 	/**
@@ -77,6 +79,9 @@ public class JmsServerRecord extends AbstractRecord {
 
 	@RecordValue(metric = true, name = PAR_QUEUE_SIZE)
 	long queueSize;
+
+	@RecordValue(metric = true, name = PAR_AVG_MESSAGE_SIZE)
+	double avgMessageSize;
 
 	@RecordValue(metric = true, name = PAR_CPU_UTIL)
 	double cpuUtil;
@@ -214,6 +219,21 @@ public class JmsServerRecord extends AbstractRecord {
 	 */
 	public void setMemoryPercentUsage(int memoryPercentUsage) {
 		this.memoryPercentUsage = memoryPercentUsage;
+	}
+
+	/**
+	 * @return the avgMessageSize
+	 */
+	public double getAvgMessageSize() {
+		return avgMessageSize;
+	}
+
+	/**
+	 * @param avgMessageSize
+	 *            the avgMessageSize to set
+	 */
+	public void setAvgMessageSize(double avgMessageSize) {
+		this.avgMessageSize = avgMessageSize;
 	}
 
 }

@@ -43,6 +43,8 @@ public class StackTraceProbe extends AbstractEnclosingProbe {
 
 	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
 			StackTraceProbe.class.getName());
+	public static final String DELIM_STACK_TRACE_ELEMENT = " | ";
+	public static final String REGEX_DELIM_STACK_TRACE_ELEMENT = " \\| ";
 
 	@ProbeVariable
 	public StackTraceRecord _StackTraceProbe_record;
@@ -69,7 +71,7 @@ public class StackTraceProbe extends AbstractEnclosingProbe {
 			if (_StackTraceProbe_first) {
 				_StackTraceProbe_first = false;
 			} else {
-				_StackTraceProbe_builder.append(" | ");
+				_StackTraceProbe_builder.append(DELIM_STACK_TRACE_ELEMENT);
 			}
 			_StackTraceProbe_builder.append(_StackTraceProbe_stackTraceElem.getClassName());
 			_StackTraceProbe_builder.append(".");

@@ -73,13 +73,13 @@ public class JmsRecord extends AbstractRecord {
 	String stackTrace;
 
 	@RecordValue(metric = true, name = PAR_WAS_SENT)
-	byte wasSent;
+	boolean wasSent;
 
 	/**
 	 * 
 	 * @return Sent = 1 / Receied = 0
 	 */
-	public byte wasSent() {
+	public boolean wasSent() {
 		return wasSent;
 	}
 
@@ -88,7 +88,7 @@ public class JmsRecord extends AbstractRecord {
 	 * @param wasSent
 	 *            wasSent
 	 */
-	public void setWasSent(byte wasSent) {
+	public void setWasSent(boolean wasSent) {
 		this.wasSent = wasSent;
 	}
 

@@ -75,8 +75,14 @@ public final class Sampling {
 	 */
 	public void addMonitoringJob(Set<SamplingDescription> samplingDescriptions) throws MeasurementException {
 
-		for (SamplingDescription samplingDescr : samplingDescriptions) {
+		samplingEntityLoop: for (SamplingDescription samplingDescr : samplingDescriptions) {
 			String resourceName = samplingDescr.getResourceName();
+			for (String specSampler : SamplingDescription.getSpecificSampler()) {
+				if (specSampler.equals(resourceName)) {
+					continue samplingEntityLoop;
+				}
+			}
+
 			Long delay = samplingDescr.getDelay();
 			AbstractSampler sampler = ExtensionRegistry.getSingleton().getExtensionArtifact(
 					AbstractSamplerExtension.class, resourceName);
