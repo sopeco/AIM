@@ -49,6 +49,12 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 	}
 
 	@ProbeVariable
+	public Object _JmsMessageSizeProbe_instrumentationObject;
+
+	@ProbeVariable
+	public Instrumentation _JmsMessageSizeProbe_instrumentation;
+
+	@ProbeVariable
 	public JmsMessageSizeRecord _JmsMessageSizeProbe_record;
 
 	@ProbeVariable
@@ -64,14 +70,14 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 	public void onMessageBeforePart() {
 		try {
 			if (((Message) __parameter[1]).propertyExists(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE)) {
-
+				_JmsMessageSizeProbe_instrumentationObject = System.getProperties().get(J_INSTRUMENTATION_KEY);
 				_JmsMessageSizeProbe_record = new JmsMessageSizeRecord();
 				_JmsMessageSizeProbe_record.setTimeStamp(_GenericProbe_startTime);
 				_JmsMessageSizeProbe_record.setCallId(_GenericProbe_callId);
-				_JmsMessageSizeProbe_record.setSize(((Instrumentation) System.getProperties()
-						.get(J_INSTRUMENTATION_KEY)).getObjectSize(__parameter[1]));
-				_JmsMessageSizeProbe_record.setBodySize(((Instrumentation) System.getProperties().get(
-						J_INSTRUMENTATION_KEY)).getObjectSize(((Message) __parameter[1]).getBody(Object.class)));
+				_JmsMessageSizeProbe_instrumentation = (Instrumentation) _JmsMessageSizeProbe_instrumentationObject;
+				_JmsMessageSizeProbe_record.setSize(_JmsMessageSizeProbe_instrumentation.getObjectSize(__parameter[1]));
+				_JmsMessageSizeProbe_record.setBodySize(_JmsMessageSizeProbe_instrumentation
+						.getObjectSize(((Message) __parameter[1]).getBody(Object.class)));
 				((Message) __parameter[1]).getBody(Object.class);
 				_JmsMessageSizeProbe_correlationValue = ((Message) __parameter[1])
 						.getStringProperty(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE);
@@ -92,14 +98,14 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 	public void receiveAfterPart() {
 		try {
 			if (((Message) __returnObject).propertyExists(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE)) {
-
+				_JmsMessageSizeProbe_instrumentationObject = System.getProperties().get(J_INSTRUMENTATION_KEY);
 				_JmsMessageSizeProbe_record = new JmsMessageSizeRecord();
 				_JmsMessageSizeProbe_record.setTimeStamp(_GenericProbe_startTime);
 				_JmsMessageSizeProbe_record.setCallId(_GenericProbe_callId);
-				_JmsMessageSizeProbe_record.setSize(((Instrumentation) System.getProperties()
-						.get(J_INSTRUMENTATION_KEY)).getObjectSize(__returnObject));
-				_JmsMessageSizeProbe_record.setBodySize(((Instrumentation) System.getProperties().get(
-						J_INSTRUMENTATION_KEY)).getObjectSize(((Message) __returnObject).getBody(Object.class)));
+				_JmsMessageSizeProbe_instrumentation = (Instrumentation) _JmsMessageSizeProbe_instrumentationObject;
+				_JmsMessageSizeProbe_record.setSize(_JmsMessageSizeProbe_instrumentation.getObjectSize(__returnObject));
+				_JmsMessageSizeProbe_record.setBodySize(_JmsMessageSizeProbe_instrumentation
+						.getObjectSize(((Message) __returnObject).getBody(Object.class)));
 				((Message) __returnObject).getBody(Object.class);
 				_JmsMessageSizeProbe_correlationValue = ((Message) __returnObject)
 						.getStringProperty(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE);
