@@ -128,7 +128,7 @@ public class ProbeBuilder {
 				}
 				initPartBuilder.append(";");
 			}
-			
+
 			beforePart = initPartBuilder.toString() + GRANULARITY_INIT_PART + GRANULARITY_BEFORE_PART + beforePart
 					+ GRANULARITY_AFTER_PART;
 			afterPart = GRANULARITY_BEFORE_PART + afterPart + GRANULARITY_AFTER_PART;
@@ -136,8 +136,11 @@ public class ProbeBuilder {
 
 		beforePart = beforePart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
 				+ "\"");
+		beforePart = beforePart.replace("((java.util.Hashtable<K, Object>) System.getProperties())", "System.getProperties()");
+	
 		afterPart = afterPart.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\"" + methodSignature
 				+ "\"");
+		afterPart = afterPart.replace("((java.util.Hashtable<K, Object>) System.getProperties())", "System.getProperties()");
 
 		resultSnippet.setBeforePart(beforePart);
 		resultSnippet.setAfterPart(afterPart);
@@ -147,5 +150,6 @@ public class ProbeBuilder {
 
 		return resultSnippet;
 	}
+
 
 }

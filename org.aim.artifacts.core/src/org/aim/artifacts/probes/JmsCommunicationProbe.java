@@ -69,7 +69,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 		_JmsCommunicationProbe_record.setTimeStamp(_GenericProbe_startTime);
 
 		_JmsCommunicationProbe_record.setClientId(ManagementFactory.getRuntimeMXBean().getName());
-		_JmsCommunicationProbe_record.setWasSent((byte) 1);
+		_JmsCommunicationProbe_record.setWasSent(true);
 		_JmsCommunicationProbe_correlationValue = String.valueOf(System.nanoTime()
 				+ (int) (1000 * java.lang.Math.random()));
 
@@ -95,7 +95,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 		_JmsCommunicationProbe_record.setTimeStamp(_GenericProbe_startTime);
 
 		_JmsCommunicationProbe_record.setClientId(ManagementFactory.getRuntimeMXBean().getName());
-		_JmsCommunicationProbe_record.setWasSent((byte) 0);
+		_JmsCommunicationProbe_record.setWasSent(false);
 		_JmsCommunicationProbe_correlationValue = String.valueOf(System.nanoTime()
 				+ (int) (1000 * java.lang.Math.random()));
 
@@ -124,7 +124,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 		_JmsCommunicationProbe_record.setTimeStamp(_GenericProbe_startTime);
 
 		_JmsCommunicationProbe_record.setClientId(ManagementFactory.getRuntimeMXBean().getName());
-		_JmsCommunicationProbe_record.setWasSent((byte) 0);
+		_JmsCommunicationProbe_record.setWasSent(false);
 		_JmsCommunicationProbe_correlationValue = String.valueOf(System.nanoTime()
 				+ (int) (1000 * java.lang.Math.random()));
 

@@ -45,7 +45,7 @@ public class JmsServerRecord extends AbstractRecord {
 
 	public static final String PAR_QUEUE_SIZE = "queueSize";
 
-	public static final String PAR_AVG_MESSAGE_SIZE = "queueSize";
+	public static final String PAR_AVG_MESSAGE_SIZE = "avgMessageSize";
 
 	private static final String PAR_CPU_UTIL = "cpuUtil";
 

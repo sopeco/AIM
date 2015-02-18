@@ -27,6 +27,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class SamplingDescription {
 	public static final String SAMPLER_MESSAGING_STATISTICS = "SAMPLER_MESSAGING_STATISTICS";
 	public static final String SAMPLER_DATABASE_STATISTICS = "SAMPLER_DATABASE_STATISTICS";
+
+	private static final String[] specificSampler = { SAMPLER_MESSAGING_STATISTICS, SAMPLER_DATABASE_STATISTICS };
+
+	public static String[] getSpecificSampler() {
+		return specificSampler;
+	}
+
 	private static final int HASH_PRIME = 31;
 
 	private final long delay;
