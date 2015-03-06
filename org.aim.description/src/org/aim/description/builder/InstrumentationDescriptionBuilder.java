@@ -315,6 +315,7 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 		for (int modifier : globalRestriction.getModifierExcludes()) {
 			globalRestrictionBuilder.excludeModifier(modifier);
 		}
+		globalRestrictionBuilder.setGranularity(globalRestriction.getGranularity());
 		globalRestrictionBuilder.restrictionDone();
 
 		for (InstrumentationEntity<?> entity : instDescription.getInstrumentationEntities()) {
