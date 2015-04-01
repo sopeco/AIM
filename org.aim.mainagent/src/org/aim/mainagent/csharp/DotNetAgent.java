@@ -14,18 +14,19 @@ import org.aim.logging.AIMLoggerFactory;
 import org.aim.logging.AIMLoggingConfig;
 import org.aim.logging.LoggingLevel;
 import org.aim.mainagent.CEventAgentAdapter;
+import org.aim.mainagent.csharp.services.CsInstrumentServlet;
+import org.aim.mainagent.csharp.services.CsServiceHandler;
+import org.aim.mainagent.csharp.services.CsUninstrumentServlet;
 import org.aim.mainagent.service.CurrentTimeServlet;
 import org.aim.mainagent.service.DisableMeasurementServlet;
 import org.aim.mainagent.service.EnableMeasurementServlet;
 import org.aim.mainagent.service.GetDataServlet;
 import org.aim.mainagent.service.GetStateServlet;
 import org.aim.mainagent.service.GetSupportedExtensionsServlet;
-import org.aim.mainagent.service.InstrumentServlet;
 import org.aim.mainagent.service.MeasureOverheadServlet;
 import org.aim.mainagent.service.MeasurementStateServlet;
 import org.aim.mainagent.service.Service;
 import org.aim.mainagent.service.TestConnectionServlet;
-import org.aim.mainagent.service.UninstrumentServlet;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.Request;
@@ -68,13 +69,30 @@ public final class DotNetAgent {
 	private static final Properties properties = new Properties();
 	private static String port = "8888";
 
+	private static CsServiceHandler serviceHandler;
+
+	/**
+	 * @param instrumentListener
+	 *            the instrumentListener to set
+	 */
+	public static void setServiceHandler(CsServiceHandler instrumentListener) {
+		DotNetAgent.serviceHandler = instrumentListener;
+	}
+
+	/**
+	 * @return the instrumentListener
+	 */
+	public static CsServiceHandler getServiceHandler() {
+		return serviceHandler;
+	}
+
 	public static void start(String agentConfig) {
 		synchronized (isInitialized) {
 			if (isInitialized) {
-				logger.debug("C# agent already started");
+				getLogger().debug("C# agent already started");
 				return;
 			} else {
-				logger.debug("Starting C# agent.");
+				getLogger().debug("Starting C# agent.");
 				isInitialized = true;
 			}
 		}
@@ -124,8 +142,8 @@ public final class DotNetAgent {
 
 			addServlet(server, new TestConnectionServlet(), "testConnection");
 
-			addServlet(server, new InstrumentServlet(), URL_PATH_INSTRUMENTATION + "/instrument");
-			addServlet(server, new UninstrumentServlet(), URL_PATH_INSTRUMENTATION + "/uninstrument");
+			addServlet(server, new CsInstrumentServlet(), URL_PATH_INSTRUMENTATION + "/instrument");
+			addServlet(server, new CsUninstrumentServlet(), URL_PATH_INSTRUMENTATION + "/uninstrument");
 			addServlet(server, new GetStateServlet(), URL_PATH_INSTRUMENTATION + "/getState");
 			addServlet(server, new GetSupportedExtensionsServlet(), URL_PATH_INSTRUMENTATION
 					+ "/getSupportedExtensions");
@@ -216,97 +234,4 @@ public final class DotNetAgent {
 			}
 		}
 	}
-
-	/*
-	 * public static void startAIM() throws InstantiationException,
-	 * IllegalAccessException, IllegalArgumentException,
-	 * InvocationTargetException, NoSuchMethodException, SecurityException,
-	 * NoSuchFieldException, MeasurementException { if (initialized) {
-	 * System.out.println("Aim already started"); return; } initialized = true;
-	 * 
-	 * System.out.println("Start AIM");
-	 * 
-	 * // InstrumentationAgent.premain("F:\\Dropbox\\HiWi\\aim.config", null);
-	 * 
-	 * Constructor<InstrumentationAgent> cnstr =
-	 * (Constructor<InstrumentationAgent>) InstrumentationAgent.class
-	 * .getDeclaredConstructors()[0]; cnstr.setAccessible(true);
-	 * 
-	 * InstrumentationAgent agent = cnstr.newInstance();
-	 * 
-	 * // Emulate agentmain(..)
-	 * 
-	 * invokeMethod(agent, "parseArgs", "F:\\Dropbox\\HiWi\\aim.config");
-	 * 
-	 * AIMLoggingConfig aimLoggingConfig = (AIMLoggingConfig) getField(agent,
-	 * "aimLoggingConfig"); AIMLoggerFactory.initialize(aimLoggingConfig);
-	 * 
-	 * boolean cAgentInitializedSuccessfully = CEventAgentAdapter.initialize();
-	 * if (!cAgentInitializedSuccessfully) { getLogger().warn(
-	 * "The C event agent could not be initialized and will not be used therefore."
-	 * ); }
-	 * 
-	 * invokeMethod(agent, "initializeGlobalConfig");
-	 * 
-	 * LpeSystemUtils.loadNativeLibraries();
-	 * 
-	 * // JInstrumentation.getInstance().setjInstrumentation(inst);
-	 * invokeMethod(agent, "initDataCollector"); invokeMethod(agent,
-	 * "startServer");
-	 * 
-	 * // Field aimLoggingConfigField = //
-	 * InstrumentationAgent.class.getDeclaredField("aimLoggingConfig"); //
-	 * aimLoggingConfigField.setAccessible(true); // AIMLoggingConfig
-	 * aimLoggingConfig = (AIMLoggingConfig) //
-	 * aimLoggingConfigField.get(agent);
-	 * 
-	 * // Field propertiesField = //
-	 * InstrumentationAgent.class.getDeclaredField("properties"); //
-	 * propertiesField.setAccessible(true); // Properties properties =
-	 * (Properties) propertiesField.get(agent); // Properties properties =
-	 * (Properties) getField(agent, "properties");
-	 * 
-	 * // AbstractDataSource defaultDataSource = //
-	 * AbstractDataSource.getDefaultDataSource();
-	 * 
-	 * // System.out.println(">> Enable measurement"); // IDataCollector
-	 * collector = AbstractDataSource.getDefaultDataSource(); // //
-	 * collector.enable(); // Sampling.getInstance().start(); //
-	 * MeasurementStateServlet.setMeasurementState(true);
-	 * 
-	 * System.out.println(); }
-	 * 
-	 * private static Object getField(Object obj, String fieldName) throws
-	 * NoSuchFieldException, SecurityException, IllegalArgumentException,
-	 * IllegalAccessException { Field propertiesField =
-	 * obj.getClass().getDeclaredField(fieldName);
-	 * propertiesField.setAccessible(true); return propertiesField.get(obj); }
-	 * 
-	 * private static void invokeMethod(Object obj, String name, Object... args)
-	 * throws NoSuchMethodException, SecurityException, IllegalAccessException,
-	 * IllegalArgumentException, InvocationTargetException { Class<?>[] classes
-	 * = new Class<?>[args.length]; for (int i = 0; i < args.length; i++) {
-	 * classes[i] = args[i].getClass(); } Method initDataCollector =
-	 * InstrumentationAgent.class.getDeclaredMethod(name, classes);
-	 * initDataCollector.setAccessible(true); initDataCollector.invoke(obj,
-	 * args); }
-	 * 
-	 * private void i() { try { // parseArgs(agentArgs); //
-	 * AIMLoggerFactory.initialize(aimLoggingConfig); // // boolean
-	 * cAgentInitializedSuccessfully = // CEventAgentAdapter.initialize(); // if
-	 * (!cAgentInitializedSuccessfully) { // getLogger().warn(
-	 * "The C event agent could not be initialized and will not be used therefore."
-	 * ); // // TODO: handle this case // }
-	 * 
-	 * // if (!inst.isRedefineClassesSupported()) { // throw new
-	 * IllegalStateException( //
-	 * "Redefining classes not supported, InstrumentationAgent cannot work properly!"
-	 * ); // }
-	 * 
-	 * // initializeGlobalConfig(); // LpeSystemUtils.loadNativeLibraries(); //
-	 * JInstrumentation.getInstance().setjInstrumentation(inst); //
-	 * initDataCollector(); // startServer(); } catch (Exception e) {
-	 * e.printStackTrace(); getLogger().error("Agent ERROR: {}", e); } }//
-	 */
-
 }
