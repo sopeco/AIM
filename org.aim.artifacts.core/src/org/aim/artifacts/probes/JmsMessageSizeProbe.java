@@ -18,6 +18,7 @@ package org.aim.artifacts.probes;
 import java.lang.instrument.Instrumentation;
 
 import javax.jms.Message;
+import javax.jms.TextMessage;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
@@ -77,8 +78,7 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 				_JmsMessageSizeProbe_instrumentation = (Instrumentation) _JmsMessageSizeProbe_instrumentationObject;
 				_JmsMessageSizeProbe_record.setSize(_JmsMessageSizeProbe_instrumentation.getObjectSize(__parameter[1]));
 				_JmsMessageSizeProbe_record.setBodySize(_JmsMessageSizeProbe_instrumentation
-						.getObjectSize(((Message) __parameter[1]).getBody(Object.class)));
-				((Message) __parameter[1]).getBody(Object.class);
+						.getObjectSize(((TextMessage) __parameter[1]).getText()));
 				_JmsMessageSizeProbe_correlationValue = ((Message) __parameter[1])
 						.getStringProperty(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE);
 				_JmsMessageSizeProbe_record.setMessageCorrelationHash(_JmsMessageSizeProbe_correlationValue);
@@ -105,8 +105,7 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 				_JmsMessageSizeProbe_instrumentation = (Instrumentation) _JmsMessageSizeProbe_instrumentationObject;
 				_JmsMessageSizeProbe_record.setSize(_JmsMessageSizeProbe_instrumentation.getObjectSize(__returnObject));
 				_JmsMessageSizeProbe_record.setBodySize(_JmsMessageSizeProbe_instrumentation
-						.getObjectSize(((Message) __returnObject).getBody(Object.class)));
-				((Message) __returnObject).getBody(Object.class);
+						.getObjectSize(((TextMessage) __returnObject).getText()));
 				_JmsMessageSizeProbe_correlationValue = ((Message) __returnObject)
 						.getStringProperty(JmsCommunicationProbe.MSG_CORRELATION_VARIABLE);
 				_JmsMessageSizeProbe_record.setMessageCorrelationHash(_JmsMessageSizeProbe_correlationValue);

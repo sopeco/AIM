@@ -79,11 +79,11 @@ public final class TraceInstrumentor implements IInstrumentor {
 	 *            instrumentation details
 	 */
 	public void instrumentIncrementally(String methodName, long jobID) {
-		LOGGER.info("Incrementally going to instrument method: {}", methodName);
+		
 		try {
 			String keyString = methodName + "__" + jobID;
 			if (!instrumentationFlags.contains(keyString)) {
-
+				LOGGER.info("Incrementally going to instrument method: {}", methodName);
 				InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
 				RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
 				for (String inc : incrementalInstrumentationRestrictions.get(jobID).getPackageIncludes()) {
