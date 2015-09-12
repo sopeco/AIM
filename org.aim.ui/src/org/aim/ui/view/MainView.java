@@ -83,18 +83,18 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		return instance;
 	}
 
-	private JPanel bciPanel;
-	private JButton btnAddIE;
-	private JButton btnConnect;
-	private JButton btnDownloadDataset;
-	private JButton btnImportInstrumentationEntity;
-	private JButton btnInstrument;
-	private JButton btnMonitoring;
-	private JComboBox<String> inputHost;
-	private JTextField inputPort;
-	private RestrictionPanel panelGlobalRestrictions;
+	private final JPanel bciPanel;
+	private final JButton btnAddIE;
+	private final JButton btnConnect;
+	private final JButton btnDownloadDataset;
+	private final JButton btnImportInstrumentationEntity;
+	private final JButton btnInstrument;
+	private final JButton btnMonitoring;
+	private final JComboBox<String> inputHost;
+	private final JTextField inputPort;
+	private final RestrictionPanel panelGlobalRestrictions;
 
-	private SamplerPanel samplerPanel;
+	private final SamplerPanel samplerPanel;
 
 	private MainView() {
 		ClientManager.instance().addConnectionStateListener(this);
@@ -102,44 +102,44 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		setTitle("AIM Control");
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				Main.exit();
 			}
 		});
 
-		JMenuBar menuBar = new JMenuBar();
+		final JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
-		JMenu mnFile = new JMenu("File");
+		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
-		JMenuItem mntmExit = new JMenuItem("Exit");
+		final JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				Main.exit();
 			}
 		});
 		mnFile.add(mntmExit);
 
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "InstrumentationClient", TitledBorder.LEADING, TitledBorder.TOP, null,
 				null));
 		getContentPane().add(panel, BorderLayout.NORTH);
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		final FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 
-		JLabel lblNewLabel = new JLabel("Host:");
+		final JLabel lblNewLabel = new JLabel("Host:");
 		panel.add(lblNewLabel);
 
 		inputHost = new JComboBox<String>();
 		// CHECKSTYLE:OFF
-		inputHost.setPreferredSize(new Dimension(200, 20));
+		// inputHost.setPreferredSize(new Dimension(200, 20));
 		// CHECKSTYLE:ON
 		inputHost.setEditable(true);
 		panel.add(inputHost);
 
-		JLabel lblNewLabel1 = new JLabel("Port:");
+		final JLabel lblNewLabel1 = new JLabel("Port:");
 		panel.add(lblNewLabel1);
 
 		inputPort = new JTextField();
@@ -154,39 +154,41 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		btnConnect.addActionListener(this);
 		panel.add(btnConnect);
 
-		JPanel panel7 = new JPanel();
-		FlowLayout flowLayout3 = (FlowLayout) panel7.getLayout();
-		flowLayout3.setAlignment(FlowLayout.RIGHT);
-		panel.add(panel7);
+		final JPanel panelb = new JPanel();
+		panelb.setBorder(
+				new TitledBorder(null, "Actions", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		getContentPane().add(panelb, BorderLayout.SOUTH);
+		final FlowLayout flowLayoutb = (FlowLayout) panelb.getLayout();
+		flowLayoutb.setAlignment(FlowLayout.LEFT);
 
 		btnInstrument = new JButton("Instrument");
 		btnInstrument.addActionListener(this);
 		btnInstrument.setEnabled(false);
-		panel7.add(btnInstrument);
+		panelb.add(btnInstrument);
 
 		btnMonitoring = new JButton("Start Monitoring");
 		btnMonitoring.addActionListener(this);
 		btnMonitoring.setEnabled(false);
-		panel7.add(btnMonitoring);
+		panelb.add(btnMonitoring);
 
 		btnDownloadDataset = new JButton("Data Download");
 		btnDownloadDataset.addActionListener(this);
 		btnDownloadDataset.setIcon(new ImageIcon(MainView.class.getResource("/icons/disk-arrow.png")));
-		panel7.add(btnDownloadDataset);
+		panelb.add(btnDownloadDataset);
 
-		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
+		final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-		JPanel panel1 = new JPanel();
+		final JPanel panel1 = new JPanel();
 		tabbedPane.addTab("Instrumentation Entities", null, panel1, null);
 		panel1.setLayout(new BorderLayout(0, 0));
 
-		JScrollPane bciScrollPane = new JScrollPane();
+		final JScrollPane bciScrollPane = new JScrollPane();
 		panel1.add(bciScrollPane);
 
-		JPanel panel3 = new JPanel();
+		final JPanel panel3 = new JPanel();
 		bciScrollPane.setViewportView(panel3);
-		GridBagLayout gblPanel3 = new GridBagLayout();
+		final GridBagLayout gblPanel3 = new GridBagLayout();
 		// CHECKSTYLE:OFF
 		gblPanel3.columnWidths = new int[] { 577, 0 };
 		gblPanel3.rowHeights = new int[] { 241, 0 };
@@ -196,7 +198,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		panel3.setLayout(gblPanel3);
 
 		bciPanel = new JPanel();
-		GridBagConstraints gbcBciPanel = new GridBagConstraints();
+		final GridBagConstraints gbcBciPanel = new GridBagConstraints();
 		gbcBciPanel.insets = new Insets(INSET_VALUE, INSET_VALUE, INSET_VALUE, INSET_VALUE);
 		gbcBciPanel.anchor = GridBagConstraints.NORTH;
 		gbcBciPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -207,8 +209,8 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		bciPanel.setLayout(new GridLayout(2, 1, 5, 5));
 		// CHECKSTYLE:ON
 
-		JPanel panel2 = new JPanel();
-		FlowLayout flowLayout2 = (FlowLayout) panel2.getLayout();
+		final JPanel panel2 = new JPanel();
+		final FlowLayout flowLayout2 = (FlowLayout) panel2.getLayout();
 		flowLayout2.setAlignment(FlowLayout.RIGHT);
 		panel1.add(panel2, BorderLayout.SOUTH);
 
@@ -227,7 +229,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		samplerPanel.getBtnAddSampler().setIcon(new ImageIcon(MainView.class.getResource("/icons/plus-circle.png")));
 		tabbedPane.addTab("Sampler", null, samplerPanel, null);
 
-		JScrollPane scrollPane = new JScrollPane();
+		final JScrollPane scrollPane = new JScrollPane();
 		tabbedPane.addTab("Global Restriction", null, scrollPane, null);
 
 		panelGlobalRestrictions = new RestrictionPanel();
@@ -243,9 +245,9 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 
 		onDisconnection();
 
-		List<String> connectionHistory = getConnectionHistory();
-		for (String s : connectionHistory) {
-			String host = s.split(":")[0];
+		final List<String> connectionHistory = getConnectionHistory();
+		for (final String s : connectionHistory) {
+			final String host = s.split(":")[0];
 			if (host.equals("localhost")) {
 				continue;
 			}
@@ -254,9 +256,9 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (e.getSource() == btnAddIE) {
-			InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
+			final InstrumentationEntityWizard dialog = new InstrumentationEntityWizard();
 			dialog.setSize(INSTRUMENTATION_WIZARD_SIZE);
 			dialog.setModal(true);
 			dialog.setLocationRelativeTo(MainView.this);
@@ -307,7 +309,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 * @param message
 	 *            - text to print
 	 */
-	public void addLogMessage(String message) {
+	public void addLogMessage(final String message) {
 		// SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
 		// textLog.setText(textLog.getText() + "\n" + format.format(new Date())
 		// +
@@ -325,19 +327,19 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	}
 
 	private List<String> getConnectionHistory() {
-		List<String> list = new ArrayList<String>();
-		File historyFile = new File("history.txt");
+		final List<String> list = new ArrayList<String>();
+		final File historyFile = new File("history.txt");
 		if (historyFile.exists()) {
 			try {
-				BufferedReader r = new BufferedReader(new FileReader(historyFile));
+				final BufferedReader r = new BufferedReader(new FileReader(historyFile));
 				String in;
 				while ((in = r.readLine()) != null) {
 					list.add(in);
 				}
 				r.close();
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -350,17 +352,17 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 * @return global restrictions
 	 */
 	public Restriction getGlobalRestriction() {
-		Restriction restriction = new Restriction();
-		for (int mod : panelGlobalRestrictions.getExcludedModifiers()) {
+		final Restriction restriction = new Restriction();
+		for (final int mod : panelGlobalRestrictions.getExcludedModifiers()) {
 			restriction.addModifierExclude(mod);
 		}
-		for (int mod : panelGlobalRestrictions.getIncludedModifiers()) {
+		for (final int mod : panelGlobalRestrictions.getIncludedModifiers()) {
 			restriction.addModifierInclude(mod);
 		}
-		for (String pge : panelGlobalRestrictions.getExcludedPackages()) {
+		for (final String pge : panelGlobalRestrictions.getExcludedPackages()) {
 			restriction.addPackageExclude(pge);
 		}
-		for (String pge : panelGlobalRestrictions.getIncludedPackages()) {
+		for (final String pge : panelGlobalRestrictions.getIncludedPackages()) {
 			restriction.addPackageInclude(pge);
 		}
 		return restriction;
@@ -413,18 +415,18 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 		setClientSettingsState(ClientSettingsState.DEFAULT);
 	}
 
-	private void pushConnectionHistory(String newItem) {
-		List<String> history = getConnectionHistory();
+	private void pushConnectionHistory(final String newItem) {
+		final List<String> history = getConnectionHistory();
 		if (!history.contains(newItem)) {
 			try {
-				BufferedWriter w = new BufferedWriter(new FileWriter("history.txt"));
-				for (String s : history) {
+				final BufferedWriter w = new BufferedWriter(new FileWriter("history.txt"));
+				for (final String s : history) {
 					w.write(s);
 					w.write(System.getProperty("line.separator"));
 				}
 				w.write(newItem);
 				w.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -436,7 +438,7 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 * @param state
 	 *            - new state
 	 */
-	public void setClientSettingsState(ClientSettingsState state) {
+	public void setClientSettingsState(final ClientSettingsState state) {
 		switch (state) {
 		case CONNECTED:
 			inputHost.setEnabled(false);
@@ -484,14 +486,14 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 * @param entities
 	 *            - set of entites to display
 	 */
-	public void updateInstrumentEntities(Collection<RawInstrumentationEntity> entities) {
+	public void updateInstrumentEntities(final Collection<RawInstrumentationEntity> entities) {
 		bciPanel.removeAll();
 		// CHECKSTYLE:OFF
 		bciPanel.setLayout(new GridLayout(entities.size(), 1, 5, 5));
 		// CHECKSTYLE:ON
 
-		for (RawInstrumentationEntity raw : entities) {
-			BCIComponent bci = new BCIComponent();
+		for (final RawInstrumentationEntity raw : entities) {
+			final BCIComponent bci = new BCIComponent();
 			bci.setRawEntity(raw);
 			bciPanel.add(bci);
 		}
