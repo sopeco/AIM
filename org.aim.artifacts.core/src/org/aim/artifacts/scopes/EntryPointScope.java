@@ -38,23 +38,14 @@ public class EntryPointScope extends AbstractInstAPIScope {
 
 	@Override
 	protected void init() {
-		addMethod("javax.servlet.http.HttpServlet",
-				"doDelete(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doHead(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doOptions(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doPut(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
-				"doTrace(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
+		final String httpServletClassName = "javax.servlet.http.HttpServlet";
+		for (String action : new String[]{"Delete","Get","Head","Options","Post","Put","Trace"}) {
+			addMethod(httpServletClassName,
+					"do" + action + "(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");			
+		}
+		addMethod(httpServletClassName,
 				"service(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");
-		addMethod("javax.servlet.http.HttpServlet",
+		addMethod(httpServletClassName,
 				"service(javax.servlet.ServletRequest,javax.servlet.ServletResponse)");
 		addMethodAnnotationToMatch("javax.ws.rs.Path");
 	}
