@@ -36,10 +36,15 @@ public class InstrumentServlet implements Service {
 	@Override
 	public void doService(Request req, Response resp) throws Exception {
 		LOGGER.info("Requested instrumentation ...");
-		ObjectMapper mapper = new ObjectMapper();
-		InstrumentationDescription description = mapper.readValue(req.getInputStream(),
-				InstrumentationDescription.class);
-		AdaptiveInstrumentationFacade.getInstance().instrument(description);
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			InstrumentationDescription description = mapper.readValue(req.getInputStream(),
+					InstrumentationDescription.class);
+			AdaptiveInstrumentationFacade.getInstance().instrument(description);
+		} catch(Exception e) {
+			LOGGER.error("Instrumentation failed with exception {}", e);
+			throw e;
+		}
 		LOGGER.info("Instrumentation finished!");
 
 	}

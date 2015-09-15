@@ -276,6 +276,11 @@ public final class Utils {
 		return className + methodName + "(" + parameterList + ")";
 	}
 
+
+	public static Class<?>[] getParameterTypes(String methodSignature) throws ClassNotFoundException {
+		return getParameterTypes(methodSignature, null);
+	}
+	
 	/**
 	 * Extracts the parameter types of the given method signature.
 	 * 
@@ -285,7 +290,7 @@ public final class Utils {
 	 * @throws ClassNotFoundException
 	 *             if a parameter type class cannot be found
 	 */
-	public static Class<?>[] getParameterTypes(String methodSignature)
+	public static Class<?>[] getParameterTypes(String methodSignature, ClassLoader classLoader)
 			throws ClassNotFoundException {
 		methodSignature = methodSignature.replaceAll("\\s", "");
 		String parameterList = methodSignature.substring(
@@ -313,16 +318,24 @@ public final class Utils {
 							.get(bcNotationWithDots);
 				} else if (bcNotationWithDots.startsWith("[")) {
 					// array type
-					parameterTypes[i] = Class
-							.forName(bcNotationWithDots);
+					parameterTypes[i] = loadClass(bcNotationWithDots,classLoader);
 				} else {
-					parameterTypes[i] = Class.forName(parameterType);
+					parameterTypes[i] = loadClass(parameterType,classLoader);
 				}
 
 			}
 
 			return parameterTypes;
 		}
+	}
+
+	private static Class<?> loadClass(String bcNotationWithDots, ClassLoader classLoader) throws ClassNotFoundException {
+		if (classLoader == null)
+			return Class
+				.forName(bcNotationWithDots);
+		else 
+			return Class
+					.forName(bcNotationWithDots, false, classLoader);
 	}
 
 }

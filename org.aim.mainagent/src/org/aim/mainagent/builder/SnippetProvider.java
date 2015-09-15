@@ -15,16 +15,8 @@
  */
 package org.aim.mainagent.builder;
 
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.ImportDeclaration;
-import japa.parser.ast.Node;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.body.TypeDeclaration;
-import japa.parser.ast.expr.AnnotationExpr;
-import japa.parser.ast.expr.MemberValuePair;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -41,11 +33,20 @@ import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeIncrementalInstrumentation;
 import org.aim.api.instrumentation.ProbeVariable;
-import org.apache.tools.ant.filters.StringInputStream;
 
 import com.strobel.decompiler.Decompiler;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
+
+import japa.parser.JavaParser;
+import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.ImportDeclaration;
+import japa.parser.ast.Node;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.TypeDeclaration;
+import japa.parser.ast.expr.AnnotationExpr;
+import japa.parser.ast.expr.MemberValuePair;
 
 /**
  * Provides single snippets for different probes.
@@ -87,12 +88,12 @@ public final class SnippetProvider {
 	 * @throws InstrumentationException
 	 *             if snippet cannot be retrieved
 	 */
-	public MultiSnippet getSnippet(Class<? extends AbstractEnclosingProbe> probeType) throws InstrumentationException {
+	public MultiSnippet getSnippet(final Class<? extends AbstractEnclosingProbe> probeType) throws InstrumentationException {
 		if (snippets.containsKey(probeType)) {
 
 			return snippets.get(probeType);
 		} else {
-			MultiSnippet snippet = createSnippet(probeType);
+			final MultiSnippet snippet = createSnippet(probeType);
 			snippets.put(probeType, snippet);
 			return snippet;
 		}
@@ -112,12 +113,12 @@ public final class SnippetProvider {
 		return genericSnippet;
 	}
 
-	private MultiSnippet createSnippet(Class<?> probeClass) throws InstrumentationException {
+	private MultiSnippet createSnippet(final Class<?> probeClass) throws InstrumentationException {
 
-		MultiSnippet snippet = new MultiSnippet();
+		final MultiSnippet snippet = new MultiSnippet();
 
 		setInjectionCode(probeClass, snippet);
-		for (Field field : probeClass.getFields()) {
+		for (final Field field : probeClass.getFields()) {
 			if (field.isAnnotationPresent(ProbeVariable.class)) {
 				snippet.getVariables().put(field.getName(), field.getType());
 			}
@@ -126,33 +127,33 @@ public final class SnippetProvider {
 		return snippet;
 	}
 
-	private void setInjectionCode(Class<?> probeClass, MultiSnippet snippet) throws InstrumentationException {
+	private void setInjectionCode(final Class<?> probeClass, final MultiSnippet snippet) throws InstrumentationException {
 		try {
-			DecompilerSettings dcSettings = new DecompilerSettings();
+			final DecompilerSettings dcSettings = new DecompilerSettings();
 			dcSettings.setForceExplicitImports(true);
-			PlainTextOutput pto = new PlainTextOutput();
+			final PlainTextOutput pto = new PlainTextOutput();
 			Decompiler.decompile(probeClass.getName(), pto, dcSettings);
 
-			StringInputStream sis = new StringInputStream(pto.toString());
-			CompilationUnit cu = JavaParser.parse(sis);
-			TypeDeclaration type = cu.getTypes().get(0);
+			final InputStream sis = new ByteArrayInputStream(pto.toString().getBytes("UTF-8"));
+			final CompilationUnit cu = JavaParser.parse(sis);
+			final TypeDeclaration type = cu.getTypes().get(0);
 
-			String packageName = cu.getPackage().getName().toString();
-			Map<String, String> imports = getImports(cu);
-			String className = type.getName();
-			Set<String> nonProbeMethods = getAllNonProbeMethods(probeClass);
+			final String packageName = cu.getPackage().getName().toString();
+			final Map<String, String> imports = getImports(cu);
+			final String className = type.getName();
+			final Set<String> nonProbeMethods = getAllNonProbeMethods(probeClass);
 
-			List<BodyDeclaration> members = type.getMembers();
-			for (BodyDeclaration member : members) {
-				boolean beforeMethod = hasAnnotation(member, ProbeBeforePart.class.getSimpleName());
-				boolean afterMethod = hasAnnotation(member, ProbeAfterPart.class.getSimpleName());
-				boolean incrementalInstrumentation = hasAnnotation(member,
+			final List<BodyDeclaration> members = type.getMembers();
+			for (final BodyDeclaration member : members) {
+				final boolean beforeMethod = hasAnnotation(member, ProbeBeforePart.class.getSimpleName());
+				final boolean afterMethod = hasAnnotation(member, ProbeAfterPart.class.getSimpleName());
+				final boolean incrementalInstrumentation = hasAnnotation(member,
 						ProbeIncrementalInstrumentation.class.getSimpleName());
 				if (member instanceof MethodDeclaration && (beforeMethod || afterMethod || incrementalInstrumentation)) {
-					MethodDeclaration method = (MethodDeclaration) member;
+					final MethodDeclaration method = (MethodDeclaration) member;
 
-					String body = correctCode(imports, className, packageName, method, nonProbeMethods);
-					Set<String> methodNameRequirements = getMethodNameRequirements(method);
+					final String body = correctCode(imports, className, packageName, method, nonProbeMethods);
+					final Set<String> methodNameRequirements = getMethodNameRequirements(method);
 
 					if (beforeMethod) {
 						snippet.getBeforePart().put(methodNameRequirements, body);
@@ -163,19 +164,19 @@ public final class SnippetProvider {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new InstrumentationException(
 					"Invalid Instrumentation Probe: Error in parsing instrumentation probe.", e);
 		}
 	}
 
-	private String correctCode(Map<String, String> imports, String className, String packageName,
-			MethodDeclaration method, Set<String> nonProbeMethods) {
-		String thisFullClassName = packageName + "." + className;
+	private String correctCode(final Map<String, String> imports, final String className, final String packageName,
+			final MethodDeclaration method, final Set<String> nonProbeMethods) {
+		final String thisFullClassName = packageName + "." + className;
 		String body = method.getBody().toString();
 		// remove enclosing braces
-		int fi = method.getBody().toString().indexOf("{");
-		int li = method.getBody().toString().lastIndexOf("}");
+		final int fi = method.getBody().toString().indexOf("{");
+		final int li = method.getBody().toString().lastIndexOf("}");
 		body = body.substring(fi + 1, li);
 		// replace all occurrences of "this." in front of a method (non-probe
 		// variables / methods)
@@ -185,12 +186,12 @@ public final class SnippetProvider {
 		body = body.replaceAll("this\\.", "");
 
 		// correct calls to non probe methods
-		for (String npm : nonProbeMethods) {
+		for (final String npm : nonProbeMethods) {
 			body = body.replaceAll("(\\s" + npm + "\\()", thisFullClassName + "." + "$1");
 		}
 
 		// complements package prefix to all classes
-		for (String classToReplace : imports.keySet()) {
+		for (final String classToReplace : imports.keySet()) {
 			body = body.replaceAll("([^\\.\\w])" + classToReplace, "$1" + imports.get(classToReplace));
 		}
 		body = body.replace(AbstractEnclosingProbe.RETURN_OBJECT_PLACE_HOLDER, "$_");
@@ -199,17 +200,17 @@ public final class SnippetProvider {
 		return body;
 	}
 
-	private Set<String> getAllNonProbeMethods(Class<?> probeClass) {
+	private Set<String> getAllNonProbeMethods(final Class<?> probeClass) {
 
-		Set<String> result = new HashSet<>();
+		final Set<String> result = new HashSet<>();
 
-		for (Method method : probeClass.getDeclaredMethods()) {
+		for (final Method method : probeClass.getDeclaredMethods()) {
 			if (!method.isAnnotationPresent(ProbeBeforePart.class) && !method.isAnnotationPresent(ProbeAfterPart.class)) {
 				result.add(method.getName());
 			}
 		}
 
-		for (Method method : probeClass.getMethods()) {
+		for (final Method method : probeClass.getMethods()) {
 			if (!method.isAnnotationPresent(ProbeBeforePart.class) && !method.isAnnotationPresent(ProbeAfterPart.class)) {
 				result.add(method.getName());
 			}
@@ -218,23 +219,23 @@ public final class SnippetProvider {
 		return result;
 	}
 
-	private Map<String, String> getImports(CompilationUnit cu) {
-		Map<String, String> imports = new HashMap<>();
-		for (ImportDeclaration imp : cu.getImports()) {
-			String value = imp.getName().toString();
-			int li = value.lastIndexOf(".");
-			String key = value.substring(li + 1);
+	private Map<String, String> getImports(final CompilationUnit cu) {
+		final Map<String, String> imports = new HashMap<>();
+		for (final ImportDeclaration imp : cu.getImports()) {
+			final String value = imp.getName().toString();
+			final int li = value.lastIndexOf(".");
+			final String key = value.substring(li + 1);
 
 			imports.put(key, value);
 		}
 		return imports;
 	}
 
-	private boolean hasAnnotation(BodyDeclaration member, String annotation) {
+	private boolean hasAnnotation(final BodyDeclaration member, final String annotation) {
 		if (member.getAnnotations() == null) {
 			return false;
 		}
-		for (AnnotationExpr annExpr : member.getAnnotations()) {
+		for (final AnnotationExpr annExpr : member.getAnnotations()) {
 			if (annExpr.getName().toString().contains(annotation)) {
 				return true;
 			}
@@ -243,22 +244,22 @@ public final class SnippetProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Set<String> getMethodNameRequirements(BodyDeclaration member) {
+	private Set<String> getMethodNameRequirements(final BodyDeclaration member) {
 
 		if (member.getAnnotations() == null) {
 			return Collections.EMPTY_SET;
 		}
-		HashSet<String> result = new HashSet<>();
-		for (AnnotationExpr annExpr : member.getAnnotations()) {
-			for (Node node : annExpr.getChildrenNodes()) {
+		final HashSet<String> result = new HashSet<>();
+		for (final AnnotationExpr annExpr : member.getAnnotations()) {
+			for (final Node node : annExpr.getChildrenNodes()) {
 				if (node instanceof MemberValuePair) {
-					MemberValuePair mvp = (MemberValuePair) node;
+					final MemberValuePair mvp = (MemberValuePair) node;
 					if (mvp.getName().equals(METHOD_NAME_REQUIREMENT_KEY)) {
 						String strValue = mvp.getValue().toString();
 						if (strValue.startsWith("{") && strValue.endsWith("}")) {
 							strValue = strValue.substring(1, strValue.length() - 1);
 						}
-						String[] values = strValue.split(",");
+						final String[] values = strValue.split(",");
 						for (String value : values) {
 							value = value.trim();
 							result.add(value.substring(1, value.length() - 1));
