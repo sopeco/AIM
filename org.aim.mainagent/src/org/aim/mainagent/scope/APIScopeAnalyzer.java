@@ -31,6 +31,7 @@ import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractScopeAnalyzer;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
 import org.aim.description.restrictions.Restriction;
+import org.aim.mainagent.instrumentor.JInstrumentation;
 import org.aim.mainagent.utils.MethodSignature;
 import org.aim.mainagent.utils.Utils;
 
@@ -42,8 +43,8 @@ import org.aim.mainagent.utils.Utils;
  */
 public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 
-	private Map<Class<?>, List<MethodSignature>> methodsToMatch;
-	private Set<Class<Annotation>> methodAnnotationsToMatch;
+	private final Map<Class<?>, List<MethodSignature>> methodsToMatch;
+	private final Set<Class<Annotation>> methodAnnotationsToMatch;
 	private Restriction restriction;
 
 	/**
@@ -58,48 +59,53 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	 *             if an API class or interface could not be found.
 	 */
 	@SuppressWarnings("rawtypes")
-	public APIScopeAnalyzer(AbstractInstAPIScope apiScope, List<Class> allLoadedClasses)
+	public APIScopeAnalyzer(final AbstractInstAPIScope apiScope, final List<Class> allLoadedClasses)
 			throws InstrumentationException {
 		methodsToMatch = new HashMap<>();
-		for (String containerName : apiScope.getMethodsToMatch().keySet()) {
+		for (final String containerName : apiScope.getMethodsToMatch().keySet()) {
 			try {
-				Class<?> containerClass = Class.forName(containerName);
-				List<MethodSignature> signatures = new ArrayList<>();
-				for (String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
-					String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
-					Class<?>[] paramTypes = Utils.getParameterTypes(apiMethod);
+				final List<Class<?>> classList = JInstrumentation.getInstance().getClassesByName(containerName);
+				if (classList.size() != 1) {
+					throw new InstrumentationException("Multiple classes found with name "+containerName);
+				}
+				final Class<?> containerClass = classList.get(0);
+				final List<MethodSignature> signatures = new ArrayList<>();
+				for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
+					final String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
+					final Class<?>[] paramTypes = Utils.getParameterTypes(apiMethod,containerClass.getClassLoader());
 					signatures.add(new MethodSignature(methodName, paramTypes));
 				}
 				methodsToMatch.put(containerClass, signatures);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new InstrumentationException("Failed determining scope " + apiScope.getClass().getName(), e);
 			}
 		}
 
 		methodAnnotationsToMatch = new HashSet<>();
-		for (String annotationName : apiScope.getMethodAnnotationsToMatch()) {
+		for (final String annotationName : apiScope.getMethodAnnotationsToMatch()) {
 			try {
-				Class<Annotation> annotationClass = findAnnotation(allLoadedClasses, annotationName);
+				final Class<Annotation> annotationClass = findAnnotation(allLoadedClasses, annotationName);
 				if (annotationClass != null) {
 					methodAnnotationsToMatch.add(annotationClass);
 				}
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new InstrumentationException("Failed determining scope " + apiScope.getClass().getName(), e);
 			}
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Class<Annotation> findAnnotation(List<Class> allLoadedClasses, String annotationName)
+	private Class<Annotation> findAnnotation(final List<Class> allLoadedClasses, final String annotationName)
 			throws ClassNotFoundException {
-		for (Class<?> clazz : allLoadedClasses) {
+		for (final Class<?> clazz : allLoadedClasses) {
 			try {
 				if (clazz.getName().equals(annotationName)) {
 					@SuppressWarnings("unchecked")
+					final
 					Class<Annotation> annotationClass = (Class<Annotation>) clazz;
 					return annotationClass;
 				}
-			} catch (Throwable t) {
+			} catch (final Throwable t) {
 				continue;
 			}
 		}
@@ -107,7 +113,7 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	}
 
 	@Override
-	public void visitClass(Class<?> clazz, Set<FlatScopeEntity> scopeEntities) {
+	public void visitClass(final Class<?> clazz, Set<FlatScopeEntity> scopeEntities) {
 		if (clazz == null || !Utils.isNormalClass(clazz)) {
 			return;
 		}
@@ -121,24 +127,24 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 			scopeEntities = new HashSet<>();
 		}
 
-		Set<Method> methods = new HashSet<>();
-		for (Method m : clazz.getMethods()) {
+		final Set<Method> methods = new HashSet<>();
+		for (final Method m : clazz.getMethods()) {
 			if (!Modifier.isAbstract(m.getModifiers()) && !Modifier.isNative(m.getModifiers())
 					&& m.getDeclaringClass().equals(clazz)) {
 				methods.add(m);
 			}
 		}
 
-		for (Method m : clazz.getDeclaredMethods()) {
+		for (final Method m : clazz.getDeclaredMethods()) {
 			if (!Modifier.isAbstract(m.getModifiers()) && !Modifier.isNative(m.getModifiers())) {
 				methods.add(m);
 			}
 		}
 
-		for (Method method : methods) {
-			for (Class<?> apiClass : methodsToMatch.keySet()) {
+		for (final Method method : methods) {
+			for (final Class<?> apiClass : methodsToMatch.keySet()) {
 				if (apiClass.isAssignableFrom(clazz)) {
-					for (MethodSignature apiMethodSignature : methodsToMatch.get(apiClass)) {
+					for (final MethodSignature apiMethodSignature : methodsToMatch.get(apiClass)) {
 						if (method.getName().equals(apiMethodSignature.getMethodName())
 								&& Arrays.equals(method.getParameterTypes(), apiMethodSignature.getParameters())) {
 							scopeEntities.add(new FlatScopeEntity(clazz, Utils.getMethodSignature(method, true)));
@@ -147,7 +153,7 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 				}
 			}
 
-			for (Class<Annotation> annotationClass : methodAnnotationsToMatch) {
+			for (final Class<Annotation> annotationClass : methodAnnotationsToMatch) {
 				if (method.getAnnotation(annotationClass) != null) {
 					scopeEntities.add(new FlatScopeEntity(clazz, Utils.getMethodSignature(method, true)));
 					break;
@@ -158,7 +164,7 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	}
 
 	@Override
-	public void setRestriction(Restriction restriction) {
+	public void setRestriction(final Restriction restriction) {
 		this.restriction = restriction;
 
 	}
