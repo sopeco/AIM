@@ -3,7 +3,9 @@ ifneq (, $(wildcard javahome/var))
 include javahome/var
 endif
 
-BUILDDIR=./target/
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
+BUILDDIR=$(ROOT_DIR)/../target/
 
 # Source lists
 LIBNAME=CEventAgent
