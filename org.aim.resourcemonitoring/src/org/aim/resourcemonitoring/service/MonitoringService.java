@@ -27,9 +27,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.sampling.SamplingDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.sampling.SamplingDescription;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.resourcemonitoring.SystemMonitor;
 
 import com.sun.jersey.spi.resource.Singleton;

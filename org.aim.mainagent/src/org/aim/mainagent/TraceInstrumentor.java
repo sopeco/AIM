@@ -20,13 +20,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.InstrumentationEntity;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
 import org.aim.description.builder.InstrumentationEntityBuilder;
 import org.aim.description.builder.RestrictionBuilder;
-import org.aim.description.restrictions.Restriction;
 import org.aim.description.scopes.APIScope;
 import org.aim.description.scopes.ConstructorScope;
 import org.aim.description.scopes.CustomScope;
@@ -78,43 +79,43 @@ public final class TraceInstrumentor implements IInstrumentor {
 	 *            incremental instrumentation job id identifying the
 	 *            instrumentation details
 	 */
-	public void instrumentIncrementally(String methodName, long jobID) {
+	public void instrumentIncrementally(final String methodName, final long jobID) {
 		
 		try {
-			String keyString = methodName + "__" + jobID;
+			final String keyString = methodName + "__" + jobID;
 			if (!instrumentationFlags.contains(keyString)) {
 				LOGGER.info("Incrementally going to instrument method: {}", methodName);
-				InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-				RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
-				for (String inc : incrementalInstrumentationRestrictions.get(jobID).getPackageIncludes()) {
+				final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+				final RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
+				for (final String inc : incrementalInstrumentationRestrictions.get(jobID).getPackageIncludes()) {
 					restrictionBuilder.includePackage(inc);
 				}
 
-				for (String exc : incrementalInstrumentationRestrictions.get(jobID).getPackageExcludes()) {
+				for (final String exc : incrementalInstrumentationRestrictions.get(jobID).getPackageExcludes()) {
 					restrictionBuilder.excludePackage(exc);
 				}
-				for (int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierIncludes()) {
+				for (final int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierIncludes()) {
 					restrictionBuilder.includeModifier(modifier);
 				}
 
-				for (int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierExcludes()) {
+				for (final int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierExcludes()) {
 					restrictionBuilder.excludeModifier(modifier);
 				}
 				restrictionBuilder.restrictionDone();
 
-				InstrumentationEntityBuilder<MethodScope> ieBuilder = idBuilder.newMethodScopeEntityWithId(jobID,
+				final InstrumentationEntityBuilder<MethodScope> ieBuilder = idBuilder.newMethodScopeEntityWithId(jobID,
 						methodName);
 
-				for (String probe : incrementalInstrumentationProbes.get(jobID)) {
+				for (final String probe : incrementalInstrumentationProbes.get(jobID)) {
 					ieBuilder.addProbe(probe);
 					ieBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
 				}
 				ieBuilder.entityDone();
-				InstrumentationDescription instDescr = idBuilder.build();
-				AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
+				final InstrumentationDescription instDescr = idBuilder.build();
+				//AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
 				instrumentationFlags.add(keyString);
 			}
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			// Catch all exceptions and errors since this code is executed
 			// directly from the target application
 			LOGGER.error("Error during incremental instrumentation: {}", e);
@@ -123,27 +124,27 @@ public final class TraceInstrumentor implements IInstrumentor {
 	}
 
 	@Override
-	public void instrument(InstrumentationDescription descr) throws InstrumentationException {
+	public void instrument(final InstrumentationDescription descr) throws InstrumentationException {
 		if (!descr.containsScopeType(TraceScope.class)) {
 			return;
 		}
 
-		for (InstrumentationEntity<TraceScope> instrumentationEntity : descr
+		for (final InstrumentationEntity<TraceScope> instrumentationEntity : descr
 				.getInstrumentationEntities(TraceScope.class)) {
-			TraceScope tScope = instrumentationEntity.getScope();
-			long scopeId = idCounter++;
+			final TraceScope tScope = instrumentationEntity.getScope();
+			final long scopeId = idCounter++;
 			incrementalInstrumentationProbes.put(scopeId, instrumentationEntity.getProbesAsStrings());
 
-			Restriction restriction = new Restriction();
+			final Restriction restriction = new Restriction();
 			restriction.getPackageExcludes().addAll(descr.getGlobalRestriction().getPackageExcludes());
 			restriction.getPackageIncludes().addAll(descr.getGlobalRestriction().getPackageIncludes());
 			restriction.getModifierExcludes().addAll(descr.getGlobalRestriction().getModifierExcludes());
 			restriction.getModifierIncludes().addAll(descr.getGlobalRestriction().getModifierIncludes());
 
 			incrementalInstrumentationRestrictions.put(scopeId, restriction);
-			InstrumentationDescription extendedDescr = getExtendedInstrumentationDescription(descr, tScope,
+			final InstrumentationDescription extendedDescr = getExtendedInstrumentationDescription(descr, tScope,
 					instrumentationEntity, scopeId);
-			AdaptiveInstrumentationFacade.getInstance().instrument(extendedDescr);
+			//AdaptiveInstrumentationFacade.getInstance().instrument(extendedDescr);
 		}
 
 	}
@@ -156,23 +157,23 @@ public final class TraceInstrumentor implements IInstrumentor {
 
 	}
 
-	private InstrumentationDescription getExtendedInstrumentationDescription(InstrumentationDescription descr,
-			TraceScope tScope, InstrumentationEntity<TraceScope> eiEntity, Long scopeId)
+	private InstrumentationDescription getExtendedInstrumentationDescription(final InstrumentationDescription descr,
+			final TraceScope tScope, final InstrumentationEntity eiEntity, final Long scopeId)
 			throws InstrumentationException {
 
-		MethodsEnclosingScope initialScopes = tScope.getSubScope();
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
-		for (String inc : descr.getGlobalRestriction().getPackageIncludes()) {
+		final Scope initialScopes = tScope.getSubScope();
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
+		for (final String inc : descr.getGlobalRestriction().getPackageIncludes()) {
 			restrictionBuilder.includePackage(inc);
 		}
-		for (String exc : descr.getGlobalRestriction().getPackageExcludes()) {
+		for (final String exc : descr.getGlobalRestriction().getPackageExcludes()) {
 			restrictionBuilder.excludePackage(exc);
 		}
-		for (int modifier : descr.getGlobalRestriction().getModifierIncludes()) {
+		for (final int modifier : descr.getGlobalRestriction().getModifierIncludes()) {
 			restrictionBuilder.includeModifier(modifier);
 		}
-		for (int modifier : descr.getGlobalRestriction().getModifierExcludes()) {
+		for (final int modifier : descr.getGlobalRestriction().getModifierExcludes()) {
 			restrictionBuilder.excludeModifier(modifier);
 		}
 		restrictionBuilder.restrictionDone();
@@ -193,27 +194,27 @@ public final class TraceInstrumentor implements IInstrumentor {
 		return idBuilder.build();
 	}
 
-	private void buildCustomInstEntity(InstrumentationEntity<TraceScope> eiEntity, Long scopeId,
-			InstrumentationDescriptionBuilder idBuilder, MethodsEnclosingScope iScope) {
-		CustomScope cScope = (CustomScope) iScope;
-		InstrumentationEntityBuilder<CustomScope> csBuilder = idBuilder.newCustomScopeEntityWithId(scopeId,
+	private void buildCustomInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
+			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
+		final CustomScope cScope = (CustomScope) iScope;
+		final InstrumentationEntityBuilder<CustomScope> csBuilder = idBuilder.newCustomScopeEntityWithId(scopeId,
 				cScope.getScopeName());
 
 		csBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
-		for (String probe : eiEntity.getProbesAsStrings()) {
+		for (final String probe : eiEntity.getProbesAsStrings()) {
 			csBuilder.addProbe(probe);
 		}
-		RestrictionBuilder<?> restrictionBuilder = csBuilder.newLocalRestriction();
-		for (String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
+		final RestrictionBuilder<?> restrictionBuilder = csBuilder.newLocalRestriction();
+		for (final String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
 			restrictionBuilder.excludePackage(exclusion);
 		}
-		for (String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
+		for (final String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
 			restrictionBuilder.includePackage(inclusion);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
 			restrictionBuilder.excludeModifier(modifier);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
 			restrictionBuilder.includeModifier(modifier);
 		}
 
@@ -222,26 +223,26 @@ public final class TraceInstrumentor implements IInstrumentor {
 		csBuilder.entityDone();
 	}
 
-	private void buildAPIInstEntity(InstrumentationEntity<TraceScope> eiEntity, Long scopeId,
-			InstrumentationDescriptionBuilder idBuilder, MethodsEnclosingScope iScope) {
-		APIScope apiScope = (APIScope) iScope;
-		InstrumentationEntityBuilder<APIScope> apisBuilder = idBuilder.newAPIScopeEntityWithId(scopeId,
+	private void buildAPIInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
+			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
+		final APIScope apiScope = (APIScope) iScope;
+		final InstrumentationEntityBuilder<APIScope> apisBuilder = idBuilder.newAPIScopeEntityWithId(scopeId,
 				apiScope.getApiName());
 		apisBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
-		for (String probe : eiEntity.getProbesAsStrings()) {
+		for (final String probe : eiEntity.getProbesAsStrings()) {
 			apisBuilder.addProbe(probe);
 		}
-		RestrictionBuilder<?> restrictionBuilder = apisBuilder.newLocalRestriction();
-		for (String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
+		final RestrictionBuilder<?> restrictionBuilder = apisBuilder.newLocalRestriction();
+		for (final String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
 			restrictionBuilder.excludePackage(exclusion);
 		}
-		for (String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
+		for (final String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
 			restrictionBuilder.includePackage(inclusion);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
 			restrictionBuilder.excludeModifier(modifier);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
 			restrictionBuilder.includeModifier(modifier);
 		}
 
@@ -250,28 +251,27 @@ public final class TraceInstrumentor implements IInstrumentor {
 		apisBuilder.entityDone();
 	}
 
-	private void buildConstructorInstEntity(InstrumentationEntity<TraceScope> eiEntity, Long scopeId,
-			InstrumentationDescriptionBuilder idBuilder, MethodsEnclosingScope iScope) {
-		ConstructorScope cScope = (ConstructorScope) iScope;
+	private void buildConstructorInstEntity(final InstrumentationEntity eiEntity, final Long scopeId,
+			final InstrumentationDescriptionBuilder idBuilder, final ConstructorScope cScope) {
 
-		InstrumentationEntityBuilder<ConstructorScope> csBuilder = idBuilder.newConstructorScopeEntityWithId(scopeId,
+		final InstrumentationEntityBuilder csBuilder = idBuilder.newConstructorScopeEntityWithId(scopeId,
 				cScope.getTargetClasses());
 		csBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
-		for (String probe : eiEntity.getProbesAsStrings()) {
+		for (final String probe : eiEntity.getProbesAsStrings()) {
 			csBuilder.addProbe(probe);
 		}
 
-		RestrictionBuilder<?> restrictionBuilder = csBuilder.newLocalRestriction();
-		for (String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
+		final RestrictionBuilder<?> restrictionBuilder = csBuilder.newLocalRestriction();
+		for (final String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
 			restrictionBuilder.excludePackage(exclusion);
 		}
-		for (String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
+		for (final String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
 			restrictionBuilder.includePackage(inclusion);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
 			restrictionBuilder.excludeModifier(modifier);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
 			restrictionBuilder.includeModifier(modifier);
 		}
 
@@ -280,27 +280,27 @@ public final class TraceInstrumentor implements IInstrumentor {
 		csBuilder.entityDone();
 	}
 
-	private void buildMethodInstEntity(InstrumentationEntity<TraceScope> eiEntity, Long scopeId,
-			InstrumentationDescriptionBuilder idBuilder, MethodsEnclosingScope iScope) {
-		MethodScope mScope = (MethodScope) iScope;
-		InstrumentationEntityBuilder<MethodScope> msBuilder = idBuilder.newMethodScopeEntityWithId(scopeId,
+	private void buildMethodInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
+			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
+		final MethodScope mScope = (MethodScope) iScope;
+		final InstrumentationEntityBuilder<MethodScope> msBuilder = idBuilder.newMethodScopeEntityWithId(scopeId,
 				mScope.getMethods());
 		msBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
-		for (String probe : eiEntity.getProbesAsStrings()) {
+		for (final String probe : eiEntity.getProbesAsStrings()) {
 			msBuilder.addProbe(probe);
 		}
 
-		RestrictionBuilder<?> restrictionBuilder = msBuilder.newLocalRestriction();
-		for (String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
+		final RestrictionBuilder<?> restrictionBuilder = msBuilder.newLocalRestriction();
+		for (final String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
 			restrictionBuilder.excludePackage(exclusion);
 		}
-		for (String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
+		for (final String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
 			restrictionBuilder.includePackage(inclusion);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
 			restrictionBuilder.excludeModifier(modifier);
 		}
-		for (int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
+		for (final int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
 			restrictionBuilder.includeModifier(modifier);
 		}
 

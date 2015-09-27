@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.GenericProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;

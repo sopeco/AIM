@@ -37,7 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.ui.Main;
 import org.aim.ui.bci.InstrumentationEntityWizard;
 import org.aim.ui.bci.RestrictionPanel;

@@ -15,6 +15,8 @@
  */
 package org.aim.description.scopes;
 
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
@@ -29,7 +31,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 public class TraceScope extends MethodsEnclosingScope {
 
 	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-	private final MethodsEnclosingScope subScope;
+	private final Scope subScope;
 
 	/**
 	 * Constructor.
@@ -41,8 +43,11 @@ public class TraceScope extends MethodsEnclosingScope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public TraceScope(@JsonProperty("subScope") MethodsEnclosingScope subScope, @JsonProperty("id") long id) {
+	public TraceScope(@JsonProperty("subScope") final Scope subScope, @JsonProperty("id") final long id) {
 		super(id);
+		if (subScope.getScopeType() != CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE) {
+			throw new IllegalArgumentException("The subscope of a trace scope has to be of type Method Enclosing Scope Type");
+		}
 		this.subScope = subScope;
 	}
 
@@ -52,7 +57,7 @@ public class TraceScope extends MethodsEnclosingScope {
 	 * @param subScope
 	 *            scope of root methods
 	 */
-	public TraceScope(MethodsEnclosingScope subScope) {
+	public TraceScope(final MethodsEnclosingScope subScope) {
 		this(subScope, System.nanoTime());
 	}
 
@@ -60,7 +65,7 @@ public class TraceScope extends MethodsEnclosingScope {
 	 * 
 	 * @return the sub scope
 	 */
-	public MethodsEnclosingScope getSubScope() {
+	public Scope getSubScope() {
 		return subScope;
 	}
 

@@ -18,7 +18,7 @@ package org.aim.mainagent.probes.builder;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.artifacts.records.NanoResponseTimeRecord;

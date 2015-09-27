@@ -15,12 +15,12 @@
  */
 package org.aim.mainagent;
 
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.events.AbstractEventProbe;
 import org.aim.api.events.IMonitorEventProbe;
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.InstrumentationEntity;
-import org.aim.description.probes.MeasurementProbe;
 import org.aim.description.scopes.SynchronizedScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;

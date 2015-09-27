@@ -15,12 +15,12 @@
  */
 package org.aim.artifacts.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.StackTraceRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -37,12 +37,12 @@ public class StackTraceProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider
 	 */
-	public StackTraceProbe(IExtension<?> provider) {
+	public StackTraceProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			StackTraceProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			StackTraceProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 	public static final String DELIM_STACK_TRACE_ELEMENT = " | ";
 	public static final String REGEX_DELIM_STACK_TRACE_ELEMENT = " \\| ";
 

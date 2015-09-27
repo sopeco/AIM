@@ -22,7 +22,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * This scope contains a given set of methods. These methods are to be specified
  * by method patterns.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
 public class MethodScope extends MethodsEnclosingScope {
@@ -38,7 +38,7 @@ public class MethodScope extends MethodsEnclosingScope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public MethodScope(@JsonProperty("methods") String[] methods, @JsonProperty("id") long id) {
+	public MethodScope(@JsonProperty("methods") final String[] methods, @JsonProperty("id") final long id) {
 		super(id);
 		this.methods = methods;
 	}
@@ -49,7 +49,7 @@ public class MethodScope extends MethodsEnclosingScope {
 	 * @param methods
 	 *            methods which are to be instrumented
 	 */
-	public MethodScope(String[] methods) {
+	public MethodScope(final String[] methods) {
 		this(methods, System.nanoTime());
 	}
 
@@ -62,12 +62,12 @@ public class MethodScope extends MethodsEnclosingScope {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		boolean trailingComma = false;
 
 		builder.append("Method Scope [");
 
-		for (String m : methods) {
+		for (final String m : methods) {
 			builder.append(m);
 			builder.append(", ");
 			trailingComma = true;

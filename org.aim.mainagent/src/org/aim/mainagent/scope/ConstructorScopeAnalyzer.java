@@ -18,9 +18,9 @@ package org.aim.mainagent.scope;
 import java.lang.reflect.Constructor;
 import java.util.Set;
 
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.api.instrumentation.AbstractScopeAnalyzer;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
-import org.aim.description.restrictions.Restriction;
 import org.aim.mainagent.utils.Utils;
 import org.lpe.common.util.LpeStringUtils;
 

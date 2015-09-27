@@ -17,8 +17,8 @@ package org.aim.mainagent.probes;
 
 import junit.framework.Assert;
 
+import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.measurement.MeasurementData;
 import org.aim.artifacts.probes.ThreadTracingProbe;
 import org.aim.artifacts.records.ThreadTracingRecord;
 

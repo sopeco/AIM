@@ -30,9 +30,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.AbstractRecord;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;

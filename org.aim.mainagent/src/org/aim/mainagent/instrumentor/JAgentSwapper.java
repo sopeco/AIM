@@ -18,7 +18,7 @@ package org.aim.mainagent.instrumentor;
 import java.lang.instrument.ClassDefinition;
 import java.util.Map;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 

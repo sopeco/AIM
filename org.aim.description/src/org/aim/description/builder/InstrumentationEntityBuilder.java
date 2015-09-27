@@ -15,23 +15,21 @@
  */
 package org.aim.description.builder;
 
-import org.aim.description.InstrumentationEntity;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.restrictions.Restriction;
-import org.aim.description.scopes.Scope;
+import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.aiminterface.description.scope.ScopeType;
 
 /**
  * Builder for an {@link InstrumentationEntity}.
  * 
- * @param <S>
- *            scope type
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
-public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestrictableBuilder {
+public class InstrumentationEntityBuilder extends AbstractRestrictableBuilder {
 
-	private final InstrumentationEntity<S> entity;
-
+	private final InstrumentationEntity entity;
 	private final InstrumentationDescriptionBuilder parentBuilder;
 
 	/**
@@ -42,8 +40,9 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 	 * @param parentBuilder
 	 *            builder which called this constructor
 	 */
-	public InstrumentationEntityBuilder(S scope, InstrumentationDescriptionBuilder parentBuilder) {
-		entity = new InstrumentationEntity<S>(scope);
+	public InstrumentationEntityBuilder(final Scope scope, final InstrumentationDescriptionBuilder parentBuilder) {
+		super();
+		entity = new InstrumentationEntity(scope);
 		this.parentBuilder = parentBuilder;
 	}
 
@@ -55,7 +54,7 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 	 * @return this builder
 	 * @see ProbePredefinitions
 	 */
-	public InstrumentationEntityBuilder<S> addProbe(MeasurementProbe<? super S> probe) {
+	public InstrumentationEntityBuilder addProbe(final MeasurementProbe probe) {
 		entity.addProbe(probe);
 		return this;
 	}
@@ -70,8 +69,8 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 	 *            name of the probe to be added
 	 * @return this builder
 	 */
-	public InstrumentationEntityBuilder<S> addProbe(String probeName) {
-		entity.addProbe(new MeasurementProbe<S>(probeName));
+	public InstrumentationEntityBuilder addProbe(final String probeName, final ScopeType scopeType) {
+		entity.addProbe(new MeasurementProbe(probeName,scopeType));
 		return this;
 	}
 
@@ -80,10 +79,15 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 	 * 
 	 * @return this builder
 	 */
-	public RestrictionBuilder<InstrumentationEntityBuilder<S>> newLocalRestriction() {
-		return new RestrictionBuilder<InstrumentationEntityBuilder<S>>(this, entity.getLocalRestriction());
+	public RestrictionBuilder<InstrumentationEntityBuilder> newLocalRestriction() {
+		return new RestrictionBuilder<>(this, entity.getLocalRestriction());
 	}
 
+	@Override
+	protected void setRestriction(final Restriction restriction) {
+		entity.setLocalRestriction(restriction);
+	}
+	
 	/**
 	 * Finishes entity building and returns to the parent builder.
 	 * 
@@ -94,9 +98,9 @@ public class InstrumentationEntityBuilder<S extends Scope> extends AbstractRestr
 		return parentBuilder;
 	}
 
-	@Override
-	protected void setRestriction(Restriction restriction) {
-		entity.setLocalRestriction(restriction);
+	public InstrumentationEntityBuilder addProbe(final String probeName) {
+		entity.addProbe(new MeasurementProbe(probeName));
+		return this;
 	}
 
 }

@@ -15,6 +15,8 @@
  */
 package org.aim.description.scopes;
 
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -22,16 +24,10 @@ import org.codehaus.jackson.annotate.JsonProperty;
 /**
  * This scope refers to tasks related to memory.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
-public class MemoryScope implements Scope {
-	private final long id;
-
-	@Override
-	public long getId() {
-		return id;
-	}
+public class MemoryScope extends Scope {
 
 	/**
 	 * Constructor.
@@ -40,8 +36,8 @@ public class MemoryScope implements Scope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public MemoryScope(@JsonProperty("id") long id) {
-		this.id = id;
+	public MemoryScope(@JsonProperty("id") final long id) {
+		super(id, CommonlyUsedScopeTypes.GLOBAL_SCOPE_TYPE);
 	}
 
 	/**
@@ -55,24 +51,4 @@ public class MemoryScope implements Scope {
 	public String toString() {
 		return "Memory Scope";
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		
-		if (!obj.getClass().equals(this.getClass())) {
-			return false;
-		}
-
-		MemoryScope other = (MemoryScope) obj;
-		return this.getId() == other.getId();
-	}
-
-	@Override
-	public int hashCode() {
-		return (int) id;
-	}
-
 }

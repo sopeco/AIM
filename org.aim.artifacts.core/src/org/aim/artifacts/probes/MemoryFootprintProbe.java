@@ -15,14 +15,14 @@
  */
 package org.aim.artifacts.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.probes.utils.MemoryMXBeanCache;
 import org.aim.artifacts.records.MemoryFootprintRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -33,8 +33,8 @@ import org.lpe.common.extension.IExtension;
  */
 public class MemoryFootprintProbe extends AbstractEnclosingProbe {
 
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			MemoryFootprintProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			MemoryFootprintProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 
 	/**
 	 * Constructor.
@@ -42,7 +42,7 @@ public class MemoryFootprintProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public MemoryFootprintProbe(IExtension<?> provider) {
+	public MemoryFootprintProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 

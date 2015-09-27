@@ -17,7 +17,7 @@ package org.aim.description.json;
 
 import java.io.IOException;
 
-import org.aim.description.InstrumentationEntity;
+import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
@@ -29,10 +29,10 @@ import org.codehaus.jackson.map.SerializerProvider;
  * @author Henning Schulz
  * 
  */
-public class InstrumentationEntitySerializer extends JsonSerializer<InstrumentationEntity<?>> {
+public class InstrumentationEntitySerializer extends JsonSerializer<InstrumentationEntity> {
 
 	@Override
-	public void serialize(InstrumentationEntity<?> entity, JsonGenerator generator, SerializerProvider provider)
+	public void serialize(final InstrumentationEntity entity, final JsonGenerator generator, final SerializerProvider provider)
 			throws IOException {
 		generator.writeStartObject();
 		generator.writeObjectField("localRestriction", entity.getLocalRestriction());

@@ -22,15 +22,15 @@ import org.aim.description.scopes.MethodScope;
 import org.aim.description.scopes.TraceScope;
 
 /**
- * Builder of an {@link org.aim.description.InstrumentationEntity} with a
+ * Builder of an {@link org.aim.aiminterface.description.instrumentation.InstrumentationEntity} with a
  * {@link TraceScope}. It is only responsible for setting the sub-scope and
  * delegates all further buildings to the {@link InstrumentationEntityBuilder}.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
 public class TraceEntityBuilder {
-	private long scopeId;
+	private final long scopeId;
 	private final InstrumentationDescriptionBuilder parentBuilder;
 
 	/**
@@ -39,7 +39,7 @@ public class TraceEntityBuilder {
 	 * @param parentBuilder
 	 *            builder which called this constructor
 	 */
-	public TraceEntityBuilder(InstrumentationDescriptionBuilder parentBuilder) {
+	public TraceEntityBuilder(final InstrumentationDescriptionBuilder parentBuilder) {
 		this(parentBuilder, System.nanoTime());
 	}
 
@@ -51,7 +51,8 @@ public class TraceEntityBuilder {
 	 * @param id
 	 *            scope id
 	 */
-	public TraceEntityBuilder(InstrumentationDescriptionBuilder parentBuilder, long id) {
+	public TraceEntityBuilder(final InstrumentationDescriptionBuilder parentBuilder, final long id) {
+		super();
 		this.parentBuilder = parentBuilder;
 		scopeId = id;
 	}
@@ -64,8 +65,8 @@ public class TraceEntityBuilder {
 	 *            method patterns of the sub-scope
 	 * @return an {@code InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<TraceScope> setMethodSubScope(String... patterns) {
-		return new InstrumentationEntityBuilder<>(new TraceScope(new MethodScope(patterns), scopeId), parentBuilder);
+	public InstrumentationEntityBuilder setMethodSubScope(final String... patterns) {
+		return new InstrumentationEntityBuilder(new TraceScope(new MethodScope(patterns), scopeId), parentBuilder);
 	}
 
 	/**
@@ -76,8 +77,8 @@ public class TraceEntityBuilder {
 	 *            classes to be considered in the sub-scope
 	 * @return an {@code InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<TraceScope> setConstructorSubScope(String... classes) {
-		return new InstrumentationEntityBuilder<>(new TraceScope(new ConstructorScope(classes), scopeId), parentBuilder);
+	public InstrumentationEntityBuilder setConstructorSubScope(final String... classes) {
+		return new InstrumentationEntityBuilder(new TraceScope(new ConstructorScope(classes), scopeId), parentBuilder);
 	}
 
 	/**
@@ -89,8 +90,8 @@ public class TraceEntityBuilder {
 	 * 
 	 * @return an {@code InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<TraceScope> setAPISubScope(String apiName) {
-		return new InstrumentationEntityBuilder<>(new TraceScope(new APIScope(apiName), scopeId), parentBuilder);
+	public InstrumentationEntityBuilder setAPISubScope(final String apiName) {
+		return new InstrumentationEntityBuilder(new TraceScope(new APIScope(apiName), scopeId), parentBuilder);
 	}
 
 	/**
@@ -102,8 +103,8 @@ public class TraceEntityBuilder {
 	 * 
 	 * @return an {@code InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<TraceScope> setCustomSubScope(String scopeName) {
-		return new InstrumentationEntityBuilder<>(new TraceScope(new CustomScope(scopeName), scopeId), parentBuilder);
+	public InstrumentationEntityBuilder setCustomSubScope(final String scopeName) {
+		return new InstrumentationEntityBuilder(new TraceScope(new CustomScope(scopeName), scopeId), parentBuilder);
 	}
 
 }

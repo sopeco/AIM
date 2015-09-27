@@ -15,7 +15,7 @@
  */
 package org.aim.mainagent;
 
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.MonitorEventListener;

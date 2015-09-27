@@ -18,7 +18,7 @@ package org.aim.api.measurement.dataset;
 import java.util.List;
 import java.util.Set;
 
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 
 /**
  * Wrappes a set of data records.

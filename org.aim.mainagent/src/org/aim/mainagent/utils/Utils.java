@@ -24,7 +24,7 @@ import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.lpe.common.util.LpeStringUtils;
 
 /**

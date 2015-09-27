@@ -15,6 +15,8 @@
  */
 package org.aim.description.scopes;
 
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -25,13 +27,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author Henning Schulz
  * 
  */
-public class SynchronizedScope implements Scope {
-	private final long id;
-
-	@Override
-	public long getId() {
-		return id;
-	}
+public class SynchronizedScope extends Scope {
 
 	/**
 	 * Constructor.
@@ -40,8 +36,8 @@ public class SynchronizedScope implements Scope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public SynchronizedScope(@JsonProperty("id") long id) {
-		this.id = id;
+	public SynchronizedScope(@JsonProperty("id") final long id) {
+		super(id, CommonlyUsedScopeTypes.GLOBAL_SCOPE_TYPE);
 	}
 
 	/**
@@ -54,25 +50,6 @@ public class SynchronizedScope implements Scope {
 	@Override
 	public String toString() {
 		return "Synchronized Scope";
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		
-		if (!obj.getClass().equals(this.getClass())) {
-			return false;
-		}
-
-		SynchronizedScope other = (SynchronizedScope) obj;
-		return this.getId() == other.getId();
-	}
-	
-	@Override
-	public int hashCode() {
-		return (int) id;
 	}
 
 }

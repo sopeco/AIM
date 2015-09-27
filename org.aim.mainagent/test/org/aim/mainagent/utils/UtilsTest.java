@@ -29,7 +29,7 @@ import javassist.NotFoundException;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.ResponseTimeRecord;
 

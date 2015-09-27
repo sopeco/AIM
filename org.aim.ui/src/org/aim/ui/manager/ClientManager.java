@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.exceptions.MeasurementException;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.Parameter;
 import org.aim.api.measurement.utils.RecordCSVWriter;
 import org.aim.artifacts.instrumentation.InstrumentationClient;
-import org.aim.description.InstrumentationDescription;
 import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;

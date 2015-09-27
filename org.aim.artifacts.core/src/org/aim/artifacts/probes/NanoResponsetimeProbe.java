@@ -15,13 +15,13 @@
  */
 package org.aim.artifacts.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.NanoResponseTimeRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -31,8 +31,8 @@ import org.lpe.common.extension.IExtension;
  * 
  */
 public class NanoResponsetimeProbe extends AbstractEnclosingProbe {
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			NanoResponsetimeProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			NanoResponsetimeProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 
 	/**
 	 * Constructor.
@@ -40,7 +40,7 @@ public class NanoResponsetimeProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public NanoResponsetimeProbe(IExtension<?> provider) {
+	public NanoResponsetimeProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 

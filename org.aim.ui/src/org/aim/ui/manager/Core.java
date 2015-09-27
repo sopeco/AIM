@@ -14,8 +14,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.ui.IDBuilder;
 import org.aim.ui.bci.InstrumentationEntityWizard;
 import org.aim.ui.entities.RawInstrumentationEntity;

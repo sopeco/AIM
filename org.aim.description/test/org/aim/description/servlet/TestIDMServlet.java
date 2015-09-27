@@ -15,7 +15,7 @@
  */
 package org.aim.description.servlet;
 
-import org.aim.description.InstrumentationDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;

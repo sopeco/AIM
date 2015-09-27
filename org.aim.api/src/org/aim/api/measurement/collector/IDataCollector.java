@@ -15,8 +15,8 @@
  */
 package org.aim.api.measurement.collector;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
+import org.aim.aiminterface.exceptions.MeasurementException;
 
 /**
  * The {@link IDataCollector} is an interface for all data collectors which are

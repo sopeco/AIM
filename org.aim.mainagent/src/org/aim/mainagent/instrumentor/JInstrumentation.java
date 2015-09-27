@@ -15,11 +15,14 @@
  */
 package org.aim.mainagent.instrumentor;
 
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 
 /**
  * Singleton wrapper around Java instrumentation instance.
@@ -65,9 +68,27 @@ public final class JInstrumentation {
 	 * @param jInstrumentation
 	 *            the jInstrumentation to set
 	 */
-	public void setjInstrumentation(Instrumentation jInstrumentation) {
+	public void setjInstrumentation(final Instrumentation jInstrumentation) {
 		this.jInstrumentation = jInstrumentation;
 		System.getProperties().put(J_INSTRUMENTATION_KEY, jInstrumentation);
+		jInstrumentation.addTransformer(new ClassFileTransformer() {
+			
+			@Override
+			public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,
+					final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
+				System.out.println(formatCL(loader) + " loaded/modified "+className.replace("/","."));
+				return null;
+			}
+
+			private String formatCL(ClassLoader loader) {
+				String result = "";
+				while (loader != null) {
+					result = loader.getClass().getSimpleName() + ":" + result;
+					loader = loader.getParent();
+				}
+				return "SystemLoader:" + result.substring(0, result.length()-1);
+			}
+		}, true);
 	}
 
 	/**
@@ -79,15 +100,15 @@ public final class JInstrumentation {
 	 * @throws InstrumentationException
 	 *             if the instrumentation agent is null
 	 */
-	public List<Class<?>> getClassesByName(String className) throws InstrumentationException {
+	public List<Class<?>> getClassesByName(final String className) throws InstrumentationException {
 		if (jInstrumentation == null) {
 			throw new InstrumentationException("Java instrumentation instance has not been set, yet!");
 		}
 
 		// TODO: maybe a cache is useful / reasonable to reduce instrumentation
 		// time???
-		List<Class<?>> classes = new ArrayList<>();
-		for (Class<?> clazz : jInstrumentation.getAllLoadedClasses()) {
+		final List<Class<?>> classes = new ArrayList<>();
+		for (final Class<?> clazz : jInstrumentation.getAllLoadedClasses()) {
 			if (clazz.getName().equals(className)) {
 				classes.add(clazz);
 			}

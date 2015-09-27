@@ -17,8 +17,8 @@ package org.aim.api.instrumentation;
 
 import java.util.Set;
 
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
-import org.aim.description.restrictions.Restriction;
 
 /**
  * A scope analyzer represents a certain scope and decides for a given class

@@ -15,8 +15,8 @@
  */
 package org.aim.artifacts.records;
 
-import org.aim.api.measurement.AbstractRecord;
-import org.aim.api.measurement.RecordValue;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.RecordValue;
 
 /**
  * Records for monitoring waiting times, like monitor waits.

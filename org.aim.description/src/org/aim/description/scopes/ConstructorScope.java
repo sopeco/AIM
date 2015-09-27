@@ -15,6 +15,7 @@
  */
 package org.aim.description.scopes;
 
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -24,9 +25,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author Henning Schulz
  * 
  */
-public class ConstructorScope extends MethodsEnclosingScope {
-
-	private final String[] targetClasses;
+public class ConstructorScope extends ClassScope {
 
 	/**
 	 * Constructor.
@@ -37,9 +36,8 @@ public class ConstructorScope extends MethodsEnclosingScope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public ConstructorScope(@JsonProperty("targetClasses") String[] targetClasses, @JsonProperty("id") long id) {
-		super(id);
-		this.targetClasses = targetClasses;
+	public ConstructorScope(@JsonProperty("targetClasses") final String[] targetClasses, @JsonProperty("id") final long id) {
+		super(targetClasses, id, CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 	}
 
 	/**
@@ -48,25 +46,18 @@ public class ConstructorScope extends MethodsEnclosingScope {
 	 * @param targetClasses
 	 *            classes which constructors are to be instrumented
 	 */
-	public ConstructorScope(String[] targetClasses) {
+	public ConstructorScope(final String[] targetClasses) {
 		this(targetClasses, System.nanoTime());
-	}
-
-	/**
-	 * @return the target classes
-	 */
-	public String[] getTargetClasses() {
-		return targetClasses;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		boolean trailingComma = false;
 
 		builder.append("Constructor Scope [");
 
-		for (String clazz : targetClasses) {
+		for (final String clazz : getTargetClasses()) {
 			builder.append(clazz);
 			builder.append(", ");
 			trailingComma = true;

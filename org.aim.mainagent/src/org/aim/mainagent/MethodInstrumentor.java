@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
 import org.aim.api.instrumentation.description.internal.InstrumentationSet;
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.restrictions.Restriction;
 import org.aim.description.scopes.MethodsEnclosingScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;

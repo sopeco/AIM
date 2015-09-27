@@ -18,7 +18,7 @@ package org.aim.mainagent.builder;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.lpe.common.util.LpeNumericUtils;
 import org.lpe.common.util.LpeSupportedTypes;

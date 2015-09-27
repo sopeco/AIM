@@ -15,13 +15,13 @@
  */
 package org.aim.artifacts.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.ThreadTracingRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -32,8 +32,8 @@ import org.lpe.common.extension.IExtension;
  */
 public class ThreadTracingProbe extends AbstractEnclosingProbe {
 
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			ThreadTracingProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			ThreadTracingProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 
 	/**
 	 * Constructor.
@@ -41,7 +41,7 @@ public class ThreadTracingProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public ThreadTracingProbe(IExtension<?> provider) {
+	public ThreadTracingProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 

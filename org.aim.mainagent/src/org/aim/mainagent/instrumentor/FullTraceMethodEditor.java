@@ -21,8 +21,8 @@ import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.description.restrictions.Restriction;
 
 /**
  * MEthod visitor for instrumentation, used for full trace instrumentation.

@@ -15,15 +15,13 @@
  */
 package org.aim.description.builder;
 
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.restriction.Restriction;
 
 /**
  * Builder for a {@link Restriction}.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
- * @param <B>
- *            {@link AbstractRestrictableBuilder} builder class which the caller is of.
  */
 public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 
@@ -38,7 +36,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            builder which called this constructor.
 	 * @param restriction 
 	 */
-	public RestrictionBuilder(B parentBuilder, Restriction restriction) {
+	public RestrictionBuilder(final B parentBuilder, final Restriction restriction) {
+		super();
 		this.parentBuilder = parentBuilder;
 		this.restriction = restriction;
 	}
@@ -50,7 +49,7 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            package to be included
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> includePackage(String packageName) {
+	public RestrictionBuilder<B> includePackage(final String packageName) {
 		restriction.addPackageInclude(packageName);
 		return this;
 	}
@@ -62,7 +61,7 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            package to be excluded
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> excludePackage(String packageName) {
+	public RestrictionBuilder<B> excludePackage(final String packageName) {
 		restriction.addPackageExclude(packageName);
 		return this;
 	}
@@ -74,7 +73,7 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            modifier of the methods to be included
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> includeModifier(int modifier) {
+	public RestrictionBuilder<B> includeModifier(final int modifier) {
 		restriction.addModifierInclude(modifier);
 		return this;
 	}
@@ -86,7 +85,7 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            modifier of the methods to be excluded
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> excludeModifier(int modifier) {
+	public RestrictionBuilder<B> excludeModifier(final int modifier) {
 		restriction.addModifierExclude(modifier);
 		return this;
 	}
@@ -99,7 +98,7 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            granularity to be set
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> setGranularity(double granularity) {
+	public RestrictionBuilder<B> setGranularity(final double granularity) {
 		restriction.setGranularity(granularity);
 		return this;
 	}

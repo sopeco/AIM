@@ -15,7 +15,7 @@
  */
 package org.aim.artifacts.records;
 
-import org.aim.api.measurement.RecordValue;
+import org.aim.aiminterface.entities.measurements.RecordValue;
 
 /**
  * The {@link NetworkRecord} is a record class for monitoring of operations

@@ -18,8 +18,8 @@ package org.lpe.common.resourcemonitoring;
 import java.lang.reflect.Field;
 import java.util.Properties;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.records.CPUUtilizationRecord;
 import org.aim.artifacts.sampler.CPUSampler;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;

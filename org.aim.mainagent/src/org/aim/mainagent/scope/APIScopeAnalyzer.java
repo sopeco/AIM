@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractScopeAnalyzer;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
-import org.aim.description.restrictions.Restriction;
 import org.aim.mainagent.instrumentor.JInstrumentation;
 import org.aim.mainagent.utils.MethodSignature;
 import org.aim.mainagent.utils.Utils;

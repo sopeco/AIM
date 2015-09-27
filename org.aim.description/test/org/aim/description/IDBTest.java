@@ -15,37 +15,30 @@
  */
 package org.aim.description;
 
+import static org.aim.description.extension.CommonlyUsedAPIs.DATABASE_API;
+import static org.aim.description.extension.CommonlyUsedProbes.MEMORY_FOOTPRINT_PROBE;
+import static org.aim.description.extension.CommonlyUsedProbes.RESPONSE_TIME_PROBE;
+import static org.aim.description.extension.CommonlyUsedProbes.TRACING_PROBE;
+import static org.aim.description.extension.CommonlyUsedResources.CPU;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Modifier;
 
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.AllocationScope;
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.description.scopes.Scope;
 import org.junit.Test;
 
 public class IDBTest {
 
-	private static final MeasurementProbe<AllocationScope> MEMORY_FOOTPRINT_PROBE = new MeasurementProbe<>("MemoryFootprintProbe");
-	private static final MeasurementProbe<Scope> RESPONSE_TIME_PROBE = new MeasurementProbe<>("ResponseTimeProbe");
-	private static final MeasurementProbe<MethodsEnclosingScope> TRACING_PROBE = new MeasurementProbe<>("TracingProbe");
-	private static final String CPU_RESOURCE = "CPU";
-	private static final String DATABASE_API = "Database API";
-
 	@Test
 	public void test() {
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		idBuilder.newSampling(CPU_RESOURCE, 0);
-		
-		InstrumentationDescription id = idBuilder.build();
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		InstrumentationDescription id = idBuilder.newSampling(CPU, 0).build();
 		assertEquals(id.getSamplingDescriptions().size(), 1);
 		assertTrue(id.toString().contains("Sampling Descriptions:\n\t\t* CPU +0"));
 		
-		idBuilder.newSampling("CustomResource", 1000);
-		id = idBuilder.build();
+		id = idBuilder.newSampling("CustomResource", 1000).build();
 		assertTrue(id.toString().contains("\n\t\t* CustomResource +1000"));
 		
 		idBuilder.newAllocationScopeEntity("my.package.*").addProbe(MEMORY_FOOTPRINT_PROBE).entityDone();

@@ -15,6 +15,7 @@
  */
 package org.aim.description.scopes;
 
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -25,16 +26,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author Henning Schulz
  * 
  */
-public class AllocationScope implements Scope {
-
-	private final String[] targetClasses;
-
-	private final long id;
-
-	@Override
-	public long getId() {
-		return id;
-	}
+public class AllocationScope extends ClassScope {
 
 	/**
 	 * Constructor.
@@ -45,9 +37,8 @@ public class AllocationScope implements Scope {
 	 *            scope id
 	 */
 	@JsonCreator
-	public AllocationScope(@JsonProperty("targetClasses") String[] targetClasses, @JsonProperty("id") long id) {
-		this.id = id;
-		this.targetClasses = targetClasses;
+	public AllocationScope(@JsonProperty("targetClasses") final String[] targetClasses, @JsonProperty("id") final long id) {
+		super(targetClasses, id, CommonlyUsedScopeTypes.CLASS_SCOPE_TYPE);
 	}
 
 	/**
@@ -56,25 +47,18 @@ public class AllocationScope implements Scope {
 	 * @param targetClasses
 	 *            classes to be considered
 	 */
-	public AllocationScope(String[] targetClasses) {
+	public AllocationScope(final String[] targetClasses) {
 		this(targetClasses, System.nanoTime());
-	}
-
-	/**
-	 * @return the target classes
-	 */
-	public String[] getTargetClasses() {
-		return targetClasses;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		boolean trailingComma = false;
 
 		builder.append("Allocation Scope [");
 
-		for (String clazz : targetClasses) {
+		for (final String clazz : getTargetClasses()) {
 			builder.append(clazz);
 			builder.append(", ");
 			trailingComma = true;
@@ -88,25 +72,6 @@ public class AllocationScope implements Scope {
 		builder.append("]");
 
 		return builder.toString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		
-		if (!obj.getClass().equals(this.getClass())) {
-			return false;
-		}
-
-		AllocationScope other = (AllocationScope) obj;
-		return this.getId() == other.getId();
-	}
-
-	@Override
-	public int hashCode() {
-		return (int) id;
 	}
 
 }

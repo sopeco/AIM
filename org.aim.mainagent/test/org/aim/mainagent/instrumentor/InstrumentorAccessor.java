@@ -22,9 +22,9 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.NotFoundException;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.description.restrictions.Restriction;
 
 public class InstrumentorAccessor {
 	public static void instrumentBehaviour(Set<Class<? extends AbstractEnclosingProbe>> probeTypes, CtClass ctClass,

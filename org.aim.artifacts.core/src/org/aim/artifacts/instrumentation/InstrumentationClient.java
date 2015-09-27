@@ -21,16 +21,16 @@ import java.net.HttpURLConnection;
 
 import javax.ws.rs.core.MediaType;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.instrumentation.entities.FlatInstrumentationState;
-import org.aim.api.instrumentation.entities.OverheadData;
-import org.aim.api.instrumentation.entities.SupportedExtensions;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.IAdaptiveInstrumentation;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.entities.results.FlatInstrumentationState;
+import org.aim.aiminterface.entities.results.OverheadData;
+import org.aim.aiminterface.entities.results.SupportedExtensions;
+import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
-import org.aim.description.InstrumentationDescription;
-import org.lpe.common.util.web.LpeWebUtils;
+import org.lpe.common.util.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 
@@ -40,7 +40,7 @@ import com.sun.jersey.api.client.WebResource;
  * @author Alexander Wert
  * 
  */
-public class InstrumentationClient {
+public class InstrumentationClient implements IAdaptiveInstrumentation {
 	public static final String URL_PATH_INSTRUMENTATION = "instrumentation";
 	public static final String URL_PATH_MEASUREMENT = "measurement";
 	public static final String PATH_PREFIX = "agent";
@@ -70,9 +70,9 @@ public class InstrumentationClient {
 			+ URL_PATH_MEASUREMENT + "/" + "monitoringState";
 
 	private final String baseUrl;
-	private String host;
-	private String port;
-	private WebResource webResource;
+	private final String host;
+	private final String port;
+	private final WebResource webResource;
 
 	/**
 	 * Constructor.
@@ -82,23 +82,18 @@ public class InstrumentationClient {
 	 * @param port
 	 *            port where to reach service
 	 */
-	public InstrumentationClient(String host, String port) {
+	public InstrumentationClient(final String host, final String port) {
 		this.host = host;
 		this.port = port;
 		this.baseUrl = "http://" + host + ":" + port;
-		webResource = LpeWebUtils.getWebClient().resource(baseUrl);
+		webResource = LpeHTTPUtils.getWebClient().resource(baseUrl);
 	}
 
-	/**
-	 * Instruments the code according to the passed
-	 * {@link InstrumentationDescription}.
-	 * 
-	 * @param description
-	 *            describes where and how to instrument the application code
-	 * @throws InstrumentationException
-	 *             thrown if exception occur during instrumentation
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#instrument(org.aim.description.InstrumentationDescription)
 	 */
-	public void instrument(InstrumentationDescription description)
+	@Override
+	public void instrument(final InstrumentationDescription description)
 			throws InstrumentationException {
 
 		webResource.path(INSTRUMENT).type(MediaType.APPLICATION_JSON)
@@ -106,89 +101,74 @@ public class InstrumentationClient {
 
 	}
 
-	/**
-	 * Reverts all previous instrumentation steps and resets the application
-	 * code to the original state.
-	 * 
-	 * false
-	 * 
-	 * @throws InstrumentationException
-	 *             thrown if exception occur during uninstrumentation
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#uninstrument()
 	 */
+	@Override
 	public void uninstrument() throws InstrumentationException {
 
 		webResource.path(UNINSTRUMENT).post();
 
 	}
 
-	/**
-	 * Enables monitoring or measurement data collection.
-	 * 
-	 * @throws MeasurementException
-	 *             thrown if monitoring fails
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#enableMonitoring()
 	 */
+	@Override
 	public void enableMonitoring() throws MeasurementException {
 		webResource.path(ENABLE).post();
 	}
 
-	/**
-	 * Disables monitoring or measurement data collection.
-	 * 
-	 * @throws MeasurementException
-	 *             thrown if monitoring fails
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#disableMonitoring()
 	 */
+	@Override
 	public void disableMonitoring() throws MeasurementException {
 		webResource.path(DISABLE).post();
 
 	}
 
-	/**
-	 * Retrieves the state whether monitoring is enabled.
-	 * 
-	 * @return boolean whether monitoring is enabled
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#isMonitoringEnabled()
 	 */
+	@Override
 	public boolean isMonitoringEnabled() {
 		return webResource.path(MONITORING_STATE)
 				.accept(MediaType.APPLICATION_JSON).get(Boolean.class);
 	}
 
-	/**
-	 * Retrieves the current instrumentation state.
-	 * 
-	 * @return a flat representation of the internal instrumentation state.
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#getInstrumentationState()
 	 */
+	@Override
 	public FlatInstrumentationState getInstrumentationState() {
 		return webResource.path(GET_STATE).accept(MediaType.APPLICATION_JSON)
 				.get(FlatInstrumentationState.class);
 	}
 
-	/**
-	 * Retrieves all supported extensions for the extension points of the
-	 * instrumentation description.
-	 * 
-	 * @return an object wrapping all supported extensions
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#getSupportedExtensions()
 	 */
+	@Override
 	public SupportedExtensions getSupportedExtensions() {
 		return webResource.path(GET_SUPPORTED_EXTENSIONS)
 				.accept(MediaType.APPLICATION_JSON)
 				.get(SupportedExtensions.class);
 	}
 
-	/**
-	 * 
-	 * @return collected measurement data
-	 * @throws MeasurementException
-	 *             thrown if data cannot be retrieved
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#getMeasurementData()
 	 */
+	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
 
 		HttpURLConnection connection = null;
 		try {
-			connection = LpeWebUtils.get(baseUrl + "/" + GET_DATA);
-			StreamReader reader = new StreamReader();
+			connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
+			final StreamReader reader = new StreamReader();
 			reader.setSource(connection.getInputStream());
 			return reader.read();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		} finally {
 			if (connection != null) {
@@ -198,16 +178,12 @@ public class InstrumentationClient {
 		}
 	}
 
-	/**
-	 * Measures the overhead of the given probe type.
-	 * 
-	 * @param probeType
-	 *            type of the probe
-	 * @return overhead information.
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#measureProbeOverhead(java.lang.Class)
 	 */
+	@Override
 	public OverheadData measureProbeOverhead(
-			Class<? extends AbstractEnclosingProbe> probeType) {
-		String probeClassName = probeType.getName();
+			final String probeClassName) {
 		return webResource.path(MEASURE_OVERHEAD)
 				.accept(MediaType.APPLICATION_JSON)
 				.type(MediaType.APPLICATION_JSON)
@@ -221,15 +197,15 @@ public class InstrumentationClient {
 	 * @throws MeasurementException
 	 *             thrown if data cannot be retrieved
 	 */
-	public void pipeToOutputStream(OutputStream oStream)
+	public void pipeToOutputStream(final OutputStream oStream)
 			throws MeasurementException {
 		HttpURLConnection connection = null;
 		try {
-			connection = LpeWebUtils.get(baseUrl + "/" + GET_DATA);
-			StreamReader reader = new StreamReader();
+			connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
+			final StreamReader reader = new StreamReader();
 			reader.setSource(connection.getInputStream());
 			reader.pipeToOutputStream(oStream);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		} finally {
 			if (connection != null) {
@@ -239,19 +215,19 @@ public class InstrumentationClient {
 		}
 	}
 
-	/**
-	 * 
-	 * @return the current local timestamp of the specific controller
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#getCurrentTime()
 	 */
+	@Override
 	public long getCurrentTime() {
 		return webResource.path(CURRENT_TIME)
 				.accept(MediaType.APPLICATION_JSON).get(Long.class);
 	}
 
-	/**
-	 * 
-	 * @return true if connecting to service possible
+	/* (non-Javadoc)
+	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#testConnection()
 	 */
+	@Override
 	public boolean testConnection() {
 		return testConnection(host, port);
 	}
@@ -265,8 +241,8 @@ public class InstrumentationClient {
 	 *            instrumentation port
 	 * @return true if connection could have been established
 	 */
-	public static boolean testConnection(String host, String port) {
-		String path = TEST_CONNECTION;
-		return LpeWebUtils.testConnection(host, port, path);
+	public static boolean testConnection(final String host, final String port) {
+		final String path = TEST_CONNECTION;
+		return LpeHTTPUtils.testConnection(host, port, path);
 	}
 }

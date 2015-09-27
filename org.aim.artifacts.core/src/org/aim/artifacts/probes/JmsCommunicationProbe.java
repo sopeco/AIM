@@ -19,13 +19,13 @@ import java.lang.management.ManagementFactory;
 
 import javax.jms.Message;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.JmsRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -35,8 +35,8 @@ import org.lpe.common.extension.IExtension;
  * 
  */
 public class JmsCommunicationProbe extends AbstractEnclosingProbe {
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			JmsCommunicationProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			JmsCommunicationProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 	public static final String MSG_CORRELATION_VARIABLE = "org_ppd_measurement_trace_msg_correlation";
 
 	/**
@@ -45,7 +45,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public JmsCommunicationProbe(IExtension<?> provider) {
+	public JmsCommunicationProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 
@@ -77,7 +77,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 			((Message) __parameter[1]).setStringProperty(MSG_CORRELATION_VARIABLE,
 					_JmsCommunicationProbe_correlationValue);
 			_JmsCommunicationProbe_record.setMessageCorrelationHash(_JmsCommunicationProbe_correlationValue);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			_JmsCommunicationProbe_record.setMessageCorrelationHash("-");
 		}
 
@@ -106,7 +106,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 				_JmsCommunicationProbe_record.setMessageCorrelationHash(_JmsCommunicationProbe_correlationValue);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			_JmsCommunicationProbe_record.setMessageCorrelationHash("-");
 		}
 
@@ -135,7 +135,7 @@ public class JmsCommunicationProbe extends AbstractEnclosingProbe {
 				_JmsCommunicationProbe_record.setMessageCorrelationHash(_JmsCommunicationProbe_correlationValue);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			_JmsCommunicationProbe_record.setMessageCorrelationHash("-");
 		}
 

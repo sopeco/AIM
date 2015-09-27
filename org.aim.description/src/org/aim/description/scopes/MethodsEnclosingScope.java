@@ -15,51 +15,20 @@
  */
 package org.aim.description.scopes;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.aim.aiminterface.description.scope.Scope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 
 /**
  * This is a common interface for all scopes referring to sets of method
  * enclosures.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
-public abstract class MethodsEnclosingScope implements Scope {
-	private final long id;
+public abstract class MethodsEnclosingScope extends Scope {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param id
-	 *            scope id
-	 */
-	@JsonCreator
-	public MethodsEnclosingScope(@JsonProperty("id") long id) {
-		this.id = id;
-	}
-
-	@Override
-	public long getId() {
-		return id;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		
-		if (!obj.getClass().equals(this.getClass())) {
-			return false;
-		}
-
-		MethodsEnclosingScope other = (MethodsEnclosingScope) obj;
-		return this.getId() == other.getId();
+	public MethodsEnclosingScope(final long id) {
+		super(id, CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 	}
 	
-	@Override
-	public int hashCode() {
-		return (int) id;
-	}
 }

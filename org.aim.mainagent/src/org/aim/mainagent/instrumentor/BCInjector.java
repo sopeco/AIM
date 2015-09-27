@@ -27,10 +27,10 @@ import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
 
-import org.aim.api.exceptions.InstrumentationException;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.description.internal.InstrumentationSet;
-import org.aim.description.restrictions.Restriction;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.builder.ProbeBuilder;

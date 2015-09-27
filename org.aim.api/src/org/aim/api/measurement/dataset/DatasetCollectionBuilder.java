@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 
 /**
  * Used to build a collection of datasets.

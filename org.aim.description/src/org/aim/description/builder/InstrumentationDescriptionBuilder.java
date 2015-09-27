@@ -15,10 +15,10 @@
  */
 package org.aim.description.builder;
 
-import org.aim.description.InstrumentationDescription;
-import org.aim.description.InstrumentationEntity;
-import org.aim.description.restrictions.Restriction;
-import org.aim.description.sampling.SamplingDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.aiminterface.description.sampling.SamplingDescription;
 import org.aim.description.scopes.APIScope;
 import org.aim.description.scopes.AllocationScope;
 import org.aim.description.scopes.ConstructorScope;
@@ -30,17 +30,18 @@ import org.aim.description.scopes.SynchronizedScope;
 /**
  * Builder for {@link InstrumentationDescription}s.
  * 
- * @author Henning Schulz
+ * @author Henning Schulz, Steffen Becker
  * 
  */
 public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuilder {
 
-	private InstrumentationDescription description;
+	private final InstrumentationDescription description;
 
 	/**
 	 * Constructor.
 	 */
 	public InstrumentationDescriptionBuilder() {
+		super();
 		this.description = new InstrumentationDescription();
 	}
 
@@ -50,7 +51,7 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * @param entity
 	 *            entity to add
 	 */
-	protected void addInstrumentationEntity(InstrumentationEntity<?> entity) {
+	protected void addInstrumentationEntity(final InstrumentationEntity entity) {
 		description.addInstrumentationEntity(entity);
 	}
 
@@ -60,11 +61,11 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * @return a {@link RestrictionBuilder}
 	 */
 	public RestrictionBuilder<InstrumentationDescriptionBuilder> newGlobalRestriction() {
-		return new RestrictionBuilder<InstrumentationDescriptionBuilder>(this, description.getGlobalRestriction());
+		return new RestrictionBuilder<>(this, description.getGlobalRestriction());
 	}
 
 	@Override
-	protected void setRestriction(Restriction restriction) {
+	protected void setRestriction(final Restriction restriction) {
 		description.setGlobalRestriction(restriction);
 	}
 
@@ -77,7 +78,7 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            sampling delay
 	 * @return this builder
 	 */
-	public InstrumentationDescriptionBuilder newSampling(String resource, long delay) {
+	public InstrumentationDescriptionBuilder newSampling(final String resource, final long delay) {
 		description.addSamplingDescription(new SamplingDescription(resource, delay));
 		return this;
 	}
@@ -99,8 +100,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            methods in the method scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<MethodScope> newMethodScopeEntity(String... patterns) {
-		return new InstrumentationEntityBuilder<>(new MethodScope(patterns), this);
+	public InstrumentationEntityBuilder newMethodScopeEntity(final String... patterns) {
+		return new InstrumentationEntityBuilder(new MethodScope(patterns),this);
 	}
 
 	/**
@@ -120,8 +121,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * 
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<MemoryScope> newMemoryScopeEntity() {
-		return new InstrumentationEntityBuilder<>(new MemoryScope(), this);
+	public InstrumentationEntityBuilder newMemoryScopeEntity() {
+		return new InstrumentationEntityBuilder(new MemoryScope(),this);
 	}
 
 	/**
@@ -132,8 +133,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            classes of the allocation scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<AllocationScope> newAllocationScopeEntity(String... classes) {
-		return new InstrumentationEntityBuilder<>(new AllocationScope(classes), this);
+	public InstrumentationEntityBuilder newAllocationScopeEntity(final String... classes) {
+		return new InstrumentationEntityBuilder(new AllocationScope(classes), this);
 	}
 
 	/**
@@ -144,8 +145,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            classes of the constructor scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<ConstructorScope> newConstructorScopeEntity(String... classes) {
-		return new InstrumentationEntityBuilder<>(new ConstructorScope(classes), this);
+	public InstrumentationEntityBuilder newConstructorScopeEntity(final String... classes) {
+		return new InstrumentationEntityBuilder(new ConstructorScope(classes), this);
 	}
 
 	/**
@@ -154,8 +155,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * 
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<SynchronizedScope> newSynchronizedScopeEntity() {
-		return new InstrumentationEntityBuilder<>(new SynchronizedScope(), this);
+	public InstrumentationEntityBuilder newSynchronizedScopeEntity() {
+		return new InstrumentationEntityBuilder(new SynchronizedScope(), this);
 	}
 
 	/**
@@ -166,8 +167,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            name of the API
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<APIScope> newAPIScopeEntity(String apiName) {
-		return new InstrumentationEntityBuilder<>(new APIScope(apiName), this);
+	public InstrumentationEntityBuilder newAPIScopeEntity(final String apiName) {
+		return new InstrumentationEntityBuilder(new APIScope(apiName), this);
 	}
 
 	/**
@@ -178,8 +179,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            name of the scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<CustomScope> newCustomScopeEntity(String scopeName) {
-		return new InstrumentationEntityBuilder<>(new CustomScope(scopeName), this);
+	public InstrumentationEntityBuilder newCustomScopeEntity(final String scopeName) {
+		return new InstrumentationEntityBuilder(new CustomScope(scopeName), this);
 	}
 
 	/**
@@ -192,8 +193,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            methods in the method scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<MethodScope> newMethodScopeEntityWithId(long id, String... patterns) {
-		return new InstrumentationEntityBuilder<>(new MethodScope(patterns, id), this);
+	public InstrumentationEntityBuilder newMethodScopeEntityWithId(final long id, final String... patterns) {
+		return new InstrumentationEntityBuilder(new MethodScope(patterns, id), this);
 	}
 
 	/**
@@ -205,7 +206,7 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            scope id
 	 * @return an {@link TraceEntityBuilder}
 	 */
-	public TraceEntityBuilder newTraceScopeEntityWithId(long id) {
+	public TraceEntityBuilder newTraceScopeEntityWithId(final long id) {
 		return new TraceEntityBuilder(this, id);
 	}
 
@@ -217,8 +218,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            scope id
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<MemoryScope> newMemoryScopeEntityWithId(long id) {
-		return new InstrumentationEntityBuilder<>(new MemoryScope(id), this);
+	public InstrumentationEntityBuilder newMemoryScopeEntityWithId(final long id) {
+		return new InstrumentationEntityBuilder(new MemoryScope(id), this);
 	}
 
 	/**
@@ -231,8 +232,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            classes of the allocation scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<AllocationScope> newAllocationScopeEntityWithId(long id, String... classes) {
-		return new InstrumentationEntityBuilder<>(new AllocationScope(classes, id), this);
+	public InstrumentationEntityBuilder newAllocationScopeEntityWithId(final long id, final String... classes) {
+		return new InstrumentationEntityBuilder(new AllocationScope(classes, id), this);
 	}
 
 	/**
@@ -245,8 +246,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            classes of the constructor scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<ConstructorScope> newConstructorScopeEntityWithId(long id, String... classes) {
-		return new InstrumentationEntityBuilder<>(new ConstructorScope(classes, id), this);
+	public InstrumentationEntityBuilder newConstructorScopeEntityWithId(final long id, final String... classes) {
+		return new InstrumentationEntityBuilder(new ConstructorScope(classes, id), this);
 	}
 
 	/**
@@ -257,8 +258,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            scope id
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<SynchronizedScope> newSynchronizedScopeEntityWithId(long id) {
-		return new InstrumentationEntityBuilder<>(new SynchronizedScope(id), this);
+	public InstrumentationEntityBuilder newSynchronizedScopeEntityWithId(final long id) {
+		return new InstrumentationEntityBuilder(new SynchronizedScope(id), this);
 	}
 
 	/**
@@ -271,8 +272,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            name of the API
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<APIScope> newAPIScopeEntityWithId(long id, String apiName) {
-		return new InstrumentationEntityBuilder<>(new APIScope(apiName, id), this);
+	public InstrumentationEntityBuilder newAPIScopeEntityWithId(final long id, final String apiName) {
+		return new InstrumentationEntityBuilder(new APIScope(apiName, id), this);
 	}
 
 	/**
@@ -285,8 +286,8 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 *            name of the scope
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
-	public InstrumentationEntityBuilder<CustomScope> newCustomScopeEntityWithId(long id, String scopeName) {
-		return new InstrumentationEntityBuilder<>(new CustomScope(scopeName, id), this);
+	public InstrumentationEntityBuilder newCustomScopeEntityWithId(final long id, final String scopeName) {
+		return new InstrumentationEntityBuilder(new CustomScope(scopeName, id), this);
 	}
 
 	/**
@@ -297,32 +298,32 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * @param instDescription
 	 *            instrumentation description to append
 	 */
-	public void appendOtherDescription(InstrumentationDescription instDescription) {
+	public void appendOtherDescription(final InstrumentationDescription instDescription) {
 		if (instDescription == null) {
 			return;
 		}
-		Restriction globalRestriction = instDescription.getGlobalRestriction();
-		RestrictionBuilder<?> globalRestrictionBuilder = newGlobalRestriction();
-		for (String inc : globalRestriction.getPackageIncludes()) {
+		final Restriction globalRestriction = instDescription.getGlobalRestriction();
+		final RestrictionBuilder<InstrumentationDescriptionBuilder> globalRestrictionBuilder = newGlobalRestriction();
+		for (final String inc : globalRestriction.getPackageIncludes()) {
 			globalRestrictionBuilder.includePackage(inc);
 		}
-		for (String exc : globalRestriction.getPackageExcludes()) {
+		for (final String exc : globalRestriction.getPackageExcludes()) {
 			globalRestrictionBuilder.excludePackage(exc);
 		}
-		for (int modifier : globalRestriction.getModifierIncludes()) {
+		for (final int modifier : globalRestriction.getModifierIncludes()) {
 			globalRestrictionBuilder.includeModifier(modifier);
 		}
-		for (int modifier : globalRestriction.getModifierExcludes()) {
+		for (final int modifier : globalRestriction.getModifierExcludes()) {
 			globalRestrictionBuilder.excludeModifier(modifier);
 		}
 		globalRestrictionBuilder.setGranularity(globalRestriction.getGranularity());
 		globalRestrictionBuilder.restrictionDone();
 
-		for (InstrumentationEntity<?> entity : instDescription.getInstrumentationEntities()) {
+		for (final InstrumentationEntity entity : instDescription.getInstrumentationEntities()) {
 			addInstrumentationEntity(entity);
 		}
 
-		for (SamplingDescription sDescr : instDescription.getSamplingDescriptions()) {
+		for (final SamplingDescription sDescr : instDescription.getSamplingDescriptions()) {
 			newSampling(sDescr.getResourceName(), sDescr.getDelay());
 		}
 

@@ -15,12 +15,12 @@
  */
 package org.aim.artifacts.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.ResponseTimeRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -36,12 +36,12 @@ public class ResponsetimeProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public ResponsetimeProbe(IExtension<?> provider) {
+	public ResponsetimeProbe(final IExtension<?> provider) {
 		super(provider);
 	}
 
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
-			ResponsetimeProbe.class.getName());
+	public static final MeasurementProbe MODEL_PROBE = new MeasurementProbe(
+			ResponsetimeProbe.class.getName(),CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
 
 	@ProbeVariable
 	public long _ResponsetimeProbe_stopTime;
