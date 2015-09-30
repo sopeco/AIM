@@ -15,6 +15,8 @@
  */
 package org.aim.aiminterface.description.sampling;
 
+import java.beans.ConstructorProperties;
+
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -48,8 +50,9 @@ public class SamplingDescription {
 	 * @param delay
 	 *            sampling delay
 	 */
+	@ConstructorProperties({"resourceName","delay"})
 	@JsonCreator
-	public SamplingDescription(@JsonProperty("resourceName") String resourceName, @JsonProperty("delay") long delay) {
+	public SamplingDescription(@JsonProperty("resourceName") final String resourceName, @JsonProperty("delay") final long delay) {
 		if (resourceName == null) {
 			this.resourceName = "";
 		} else {
@@ -78,7 +81,7 @@ public class SamplingDescription {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -87,7 +90,7 @@ public class SamplingDescription {
 			return false;
 		}
 
-		SamplingDescription other = (SamplingDescription) obj;
+		final SamplingDescription other = (SamplingDescription) obj;
 
 		return this.getResourceName().equals(other.getResourceName()) && this.getDelay() == other.getDelay();
 	}

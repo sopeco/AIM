@@ -15,30 +15,26 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.aiminterface.description.scope.ScopeDescription;
-import org.aim.api.instrumentation.Scope;
-import org.lpe.common.extension.IExtension;
-
+import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
- * This scope refers to tasks related to memory.
+ * Extension provider for entry point scope..
  * 
- * @author Henning Schulz, Steffen Becker
+ * @author Alexander Wert
  * 
  */
-public class MemoryScope extends Scope {
-
-	public MemoryScope(final IExtension provider, final ScopeDescription fromDescription) {
-		super(provider, fromDescription);
-	}
-	
-	MemoryScope(final IExtension provider) {
-		super(provider, 0);
-	}
-
+public class AllocationScopeExtension extends AbstractInstApiScopeExtension {
 
 	@Override
-	public String toString() {
-		return "Memory Scope";
+	public String getName() {
+		return AllocationScope.class.getName();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new AllocationScope(this, 0, patterns);
+	}
+
 }

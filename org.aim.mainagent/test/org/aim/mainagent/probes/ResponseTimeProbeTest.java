@@ -50,7 +50,7 @@ public class ResponseTimeProbeTest extends ProbeTest {
 	protected void checkPostCall(MeasurementData mData) {
 		Assert.assertFalse(mData.getRecords().isEmpty());
 		Assert.assertEquals(ResponseTimeRecord.class, mData.getRecords().get(0).getClass());
-		ResponseTimeRecord record = mData.getRecords(ResponseTimeRecord.class).get(0);
+		ResponseTimeRecord record = mData.selectRecords(ResponseTimeRecord.class).get(0);
 		Assert.assertEquals(INSTRUmENTED_METHOD, record.getOperation());
 	}
 

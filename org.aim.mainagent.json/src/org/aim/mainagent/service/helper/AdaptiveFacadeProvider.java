@@ -7,20 +7,19 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.aim.mainagent.AdaptiveInstrumentationFacadeMBean;
+import org.aim.mainagent.AdaptiveInstrumentationFacadeMXBean;
 
-@SuppressWarnings("restriction")
 public class AdaptiveFacadeProvider {
-	private static AdaptiveInstrumentationFacadeMBean proxy;
+	private static AdaptiveInstrumentationFacadeMXBean proxy;
 
 	static {
 		JMXServiceURL url;
 		try {
-			url =  new JMXServiceURL(sun.management.ConnectorAddressLink.importFrom(33274));
+			url =  new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:9010/jmxrmi");
 			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
 			final MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 			final ObjectName mbeanName = new ObjectName("org.aim:type=AdaptiveInstrumentationFacade");
-			proxy = JMX.newMBeanProxy(mbsc, mbeanName, AdaptiveInstrumentationFacadeMBean.class, true);
+			proxy = JMX.newMXBeanProxy(mbsc, mbeanName, AdaptiveInstrumentationFacadeMXBean.class, true);
 
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -28,7 +27,7 @@ public class AdaptiveFacadeProvider {
 		}
 	}
 
-	public static AdaptiveInstrumentationFacadeMBean getAdaptiveInstrumentation() {
+	public static AdaptiveInstrumentationFacadeMXBean getAdaptiveInstrumentation() {
 		return proxy;
 	}
 }

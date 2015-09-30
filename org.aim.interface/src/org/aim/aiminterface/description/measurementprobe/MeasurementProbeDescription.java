@@ -15,6 +15,8 @@
  */
 package org.aim.aiminterface.description.measurementprobe;
 
+import java.beans.ConstructorProperties;
+
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -24,7 +26,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-public class MeasurementProbeDescription {
+public final class MeasurementProbeDescription {
 
 	private final String name;
 	
@@ -34,6 +36,7 @@ public class MeasurementProbeDescription {
 	 * @param name
 	 *            name of this probe
 	 */
+	@ConstructorProperties("name")
 	@JsonCreator
 	public MeasurementProbeDescription(@JsonProperty("name") final String name) {
 		super();

@@ -111,7 +111,7 @@ public class ResourceMonitorinServerTest {
 			Assert.fail("Collecting data failed!");
 		}
 		Assert.assertNotNull(mData);
-		Assert.assertTrue(mData.getRecords(CPUUtilizationRecord.class).size() > 0);
+		Assert.assertTrue(mData.selectRecords(CPUUtilizationRecord.class).size() > 0);
 	}
 
 }

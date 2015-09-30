@@ -15,12 +15,16 @@
  */
 package org.aim.aiminterface.entities.results;
 
+import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Container for the information about supported extensions.
@@ -35,8 +39,13 @@ public class SupportedExtensions {
 	private final Map<String, Set<String>> probeExtensionsMapping;
 	private final List<String> customScopeExtensions;
 
-	public SupportedExtensions(final List<String> samplerExtensions, final List<String> apiScopeExtensions,
-			final Map<String, Set<String>> probeExtensionsMapping, final List<String> customScopeExtensions) {
+	@ConstructorProperties({"samplerExtensions","apiScopeExtensions","probeExtensionsMapping","customScopeExtensions"})
+	@JsonCreator
+	public SupportedExtensions(
+			@JsonProperty("samplerExtensions") final List<String> samplerExtensions, 
+			@JsonProperty("apiScopeExtensions") final List<String> apiScopeExtensions,
+			@JsonProperty("probeExtensionsMapping") final Map<String, Set<String>> probeExtensionsMapping, 
+			@JsonProperty("customScopeExtensions") final List<String> customScopeExtensions) {
 		super();
 		this.samplerExtensions = new ArrayList<>(samplerExtensions);
 		this.apiScopeExtensions = new ArrayList<>(apiScopeExtensions);

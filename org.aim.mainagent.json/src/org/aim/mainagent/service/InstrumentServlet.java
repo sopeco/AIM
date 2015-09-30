@@ -16,11 +16,9 @@
 package org.aim.mainagent.service;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
-import org.aim.aiminterface.exceptions.InstrumentationException;
-import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.aim.mainagent.sampling.Sampling;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
@@ -43,15 +41,7 @@ public class InstrumentServlet implements Service {
 			final ObjectMapper mapper = new ObjectMapper();
 			final InstrumentationDescription description = mapper.readValue(req.getInputStream(),
 					InstrumentationDescription.class);
-			//AdaptiveFacadeProvider.getAdaptiveInstrumentation().instrument(description);
-			if (!description.getSamplingDescriptions().isEmpty()) {
-				try {
-					Sampling.getInstance().addMonitoringJob(description.getSamplingDescriptions());
-				} catch (final MeasurementException e) {
-					throw new InstrumentationException(e);
-				}
-			}
-
+			AdaptiveFacadeProvider.getAdaptiveInstrumentation().instrument(description);
 		} catch(final Exception e) {
 			LOGGER.error("Instrumentation failed with exception {}", e);
 			throw e;

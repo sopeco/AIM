@@ -15,11 +15,13 @@
  */
 package org.aim.aiminterface.entities.results;
 
+import java.beans.ConstructorProperties;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Flat entity representing the instrumentation state.
@@ -27,37 +29,20 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Alexander Wert
  * 
  */
-@XmlRootElement
-public class FlatInstrumentationState {
-	private List<InstrumentationEntity> iEntities;
+public final class FlatInstrumentationState {
+	private final List<InstrumentationEntity> iEntities;
+	
+	@ConstructorProperties({"instrumentationEntities"})
+	@JsonCreator
+	public FlatInstrumentationState(@JsonProperty("instrumentationEntities") final List<InstrumentationEntity> iEntities) {
+		super();
+		this.iEntities = new ArrayList<>(iEntities);
+	}
 
 	/**
 	 * @return the iEntity
 	 */
-	public List<InstrumentationEntity> getiEntites() {
-		return iEntities;
+	public List<InstrumentationEntity> getInstrumentationEntities() {
+		return Collections.unmodifiableList(iEntities);
 	}
-
-	/**
-	 * @param iEntities
-	 *            the entities to set
-	 */
-	public void setiEntities(final List<InstrumentationEntity> iEntities) {
-		this.iEntities = iEntities;
-	}
-
-	/**
-	 * Adds an instrumentation entity tot the state.
-	 * 
-	 * @param method
-	 *            instrumented method
-	 * @param probe
-	 *            injected probe
-	 */
-	@JsonIgnore
-	public void addEntity(final String method, final String probe) {
-		final InstrumentationEntity ie = new InstrumentationEntity(method,probe);
-		iEntities.add(ie);
-	}
-
 }

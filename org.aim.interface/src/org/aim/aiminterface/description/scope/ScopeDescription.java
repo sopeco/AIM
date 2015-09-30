@@ -1,5 +1,6 @@
 package org.aim.aiminterface.description.scope;
 
+import java.beans.ConstructorProperties;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -10,6 +11,7 @@ public class ScopeDescription {
 	private final long id;
 	private final List<String> parameter;
 	
+	@ConstructorProperties({"name","id","parameter"})
 	@JsonCreator
 	public ScopeDescription(
 			@JsonProperty("name") final String name, 

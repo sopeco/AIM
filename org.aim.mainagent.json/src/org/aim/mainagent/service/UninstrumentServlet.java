@@ -17,7 +17,6 @@ package org.aim.mainagent.service;
 
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.aim.mainagent.sampling.Sampling;
 import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
@@ -37,7 +36,6 @@ public class UninstrumentServlet implements Service {
 	public void doService(final Request req, final Response resp) throws Exception {
 		LOGGER.info("Requested reversion of instrumentation ...");
 		AdaptiveFacadeProvider.getAdaptiveInstrumentation().undoInstrumentation();
-		Sampling.getInstance().clearMonitoringJobs();
 		LOGGER.info("Reversion of instrumentation completed!");
 	}
 }

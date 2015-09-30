@@ -17,18 +17,22 @@ package org.aim.aiminterface.entities.results;
 
 import java.beans.ConstructorProperties;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * Represents an entity of the instrumentation state.
  * 
  * @author Alexander Wert
  * 
  */
-public class InstrumentationEntity {
+public final class InstrumentationEntity {
 	private final String method;
 	private final String probe;
 
 	@ConstructorProperties({"method","probe"})
-	public InstrumentationEntity(final String method, final String probe) {
+	@JsonCreator
+	public InstrumentationEntity(@JsonProperty("method") final String method, @JsonProperty("probe") final String probe) {
 		super();
 		this.method = method;
 		this.probe = probe;

@@ -31,6 +31,12 @@ public class AllocationScope extends ClassScope {
 		super(provider, fromDescription);
 	}
 
+	AllocationScope(final IExtension provider, final long id, final String[] targetClasses) {
+		super(provider, id, targetClasses);
+	}
+
+
+
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();

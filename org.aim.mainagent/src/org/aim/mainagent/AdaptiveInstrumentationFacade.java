@@ -15,30 +15,31 @@
  */
 package org.aim.mainagent;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
+import org.aim.aiminterface.entities.results.InstrumentationEntity;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.events.AbstractEventProbeExtension;
 import org.aim.api.instrumentation.AbstractCustomScopeExtension;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
 import org.aim.api.instrumentation.InstrumentationUtilsController;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
+import org.aim.api.measurement.collector.AbstractDataSource;
+import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
-import org.aim.artifacts.scopes.AllocationScope;
-import org.aim.artifacts.scopes.ConstructorScope;
-import org.aim.artifacts.scopes.MemoryScope;
-import org.aim.artifacts.scopes.MethodScope;
-import org.aim.artifacts.scopes.SynchronizedScope;
-import org.aim.artifacts.scopes.TraceScope;
 import org.aim.mainagent.probes.IncrementalProbeExtension;
+import org.aim.mainagent.sampling.Sampling;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
 
@@ -48,7 +49,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFacadeMBean {
+public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFacadeMXBean {
 	private static AdaptiveInstrumentationFacade instance;
 
 	/**
@@ -56,7 +57,7 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	 * 
 	 * @return singleton instance
 	 */
-	public static synchronized AdaptiveInstrumentationFacadeMBean getInstance() {
+	public static synchronized AdaptiveInstrumentationFacadeMXBean getInstance() {
 		if (instance == null) {
 			instance = new AdaptiveInstrumentationFacade();
 		}
@@ -100,7 +101,13 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		eventInstrumentor.instrument(instrumentationDescription);
 
 		// TODO: add Statement Instrumentation
-
+		if (!instrumentationDescription.getSamplingDescriptions().isEmpty()) {
+			try {
+				Sampling.getInstance().addMonitoringJob(instrumentationDescription.getSamplingDescriptions());
+			} catch (final MeasurementException e) {
+				throw new InstrumentationException(e);
+			}
+		}
 	}
 
 	/*
@@ -120,6 +127,7 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		}
 
 		InstrumentationUtilsController.getInstance().clear();
+		Sampling.getInstance().clearMonitoringJobs();
 	}
 
 	/*
@@ -129,11 +137,11 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	 */
 	@Override
 	public synchronized FlatInstrumentationState getInstrumentationState() {
-		final FlatInstrumentationState fmInstrumentation = new FlatInstrumentationState();
+		final List<InstrumentationEntity> iEntities = new LinkedList<InstrumentationEntity>();
 		for (final FlatInstrumentationEntity fie : methodInstrumentor.getCurrentInstrumentationState()) {
-			fmInstrumentation.addEntity(fie.getMethodSignature(), fie.getProbeType().getName());
+			iEntities.add(new InstrumentationEntity(fie.getMethodSignature(), fie.getProbeType().getName()));
 		}
-		return fmInstrumentation;
+		return new FlatInstrumentationState(iEntities);
 	}
 
 	/*
@@ -149,12 +157,6 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 
 		
 		final Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
-		knownConcreteScopeClasses.add(AllocationScope.class);
-		knownConcreteScopeClasses.add(ConstructorScope.class);
-		knownConcreteScopeClasses.add(MemoryScope.class);
-		knownConcreteScopeClasses.add(MethodScope.class);
-		knownConcreteScopeClasses.add(SynchronizedScope.class);
-		knownConcreteScopeClasses.add(TraceScope.class);
 
 		final Map<String, Set<Class<?>>> probeToSupportedScopesMapping = new HashMap<>();
 		final LinkedList<String> customScopes = new LinkedList<>();
@@ -205,6 +207,29 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 			probeMap.put(probeName, scopes);
 		}
 		return probeMap;
+	}
+
+	@Override
+	public void enableMonitoring() throws MeasurementException {
+		final IDataCollector collector = AbstractDataSource.getDefaultDataSource();
+
+		collector.enable();
+		Sampling.getInstance().start();
+	}
+
+	@Override
+	public void disableMonitoring() throws MeasurementException {
+		final IDataCollector collector = AbstractDataSource.getDefaultDataSource();
+
+		collector.disable();
+		Sampling.getInstance().stop();
+	}
+
+	@Override
+	public byte[] getMeasurementData() throws MeasurementException {
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		AbstractDataSource.getDefaultDataSource().pipeToOutputStream(outputStream);
+		return outputStream.toByteArray();
 	}
 
 }

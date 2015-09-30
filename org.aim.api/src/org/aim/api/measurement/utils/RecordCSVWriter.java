@@ -88,10 +88,10 @@ public final class RecordCSVWriter {
 	public void writeDataToDir(MeasurementData data, String targetDir, boolean useTimestampAsSubdir) throws IOException {
 		targetDir = preProcessTargetDir(targetDir, useTimestampAsSubdir);
 
-		Set<Class<? extends AbstractRecord>> recordTypes = data.getDifferentRecordTypes();
+		Set<Class<? extends AbstractRecord>> recordTypes = data.queryDifferentRecordTypes();
 		for (Class<? extends AbstractRecord> recordType : recordTypes) {
 			String fileName = addRecordTypeInfo(recordType, targetDir + RECORD_TYPE_INFO_FILE + CSV_FILE_EXTENSION);
-			List<? extends AbstractRecord> recs = data.getRecords(recordType);
+			List<? extends AbstractRecord> recs = data.selectRecords(recordType);
 			writeRecordsToFile(recs, targetDir + fileName + CSV_FILE_EXTENSION);
 		}
 	}

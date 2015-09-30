@@ -4,8 +4,9 @@ import org.aim.aiminterface.description.instrumentation.InstrumentationDescripti
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 
-public interface AdaptiveInstrumentationFacadeMBean {
+public interface AdaptiveInstrumentationFacadeMXBean {
 
 	/**
 	 * Instruments the target application according to the passed
@@ -43,5 +44,28 @@ public interface AdaptiveInstrumentationFacadeMBean {
 	 *             thrown if extensions cannot be retrieved
 	 */
 	SupportedExtensions getSupportedExtensions() throws InstrumentationException;
+	
+	/**
+	 * Enables monitoring or measurement data collection.
+	 * 
+	 * @throws MeasurementException
+	 *             thrown if monitoring fails
+	 */
+	void enableMonitoring() throws MeasurementException;
 
+	/**
+	 * Disables monitoring or measurement data collection.
+	 * 
+	 * @throws MeasurementException
+	 *             thrown if monitoring fails
+	 */
+	void disableMonitoring() throws MeasurementException;
+	
+	/**
+	 * 
+	 * @return collected measurement data
+	 * @throws MeasurementException
+	 *             thrown if data cannot be retrieved
+	 */
+	byte[] getMeasurementData() throws MeasurementException;
 }

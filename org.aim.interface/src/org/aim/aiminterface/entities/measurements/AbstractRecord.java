@@ -15,7 +15,6 @@
  */
 package org.aim.aiminterface.entities.measurements;
 
-import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -27,9 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
@@ -43,12 +39,10 @@ import org.slf4j.LoggerFactory;
  * @author Alexander Wert
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
-public abstract class AbstractRecord implements Serializable {
+public abstract class AbstractRecord {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRecord.class);
 
-	private static final long serialVersionUID = -4324134213075474222L;
 	private static final Map<Class<? extends AbstractRecord>, Field[]> fields = new HashMap<Class<? extends AbstractRecord>, Field[]>();
 	public static final String PAR_TIMESTAMP = "timeStamp";
 	public static final String PAR_CALL_ID = "callId";

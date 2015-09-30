@@ -15,17 +15,16 @@
  */
 package org.aim.aiminterface.entities.measurements;
 
+import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * The {@link MeasurementData} is a wrapper for a list of records, to be used
@@ -34,8 +33,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Alexander Wert
  * 
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MeasurementData {
 	private List<AbstractRecord> records;
 
@@ -44,6 +41,13 @@ public class MeasurementData {
 	 */
 	public MeasurementData() {
 		records = new LinkedList<AbstractRecord>();
+	}
+	
+	@ConstructorProperties({"records"})
+	@JsonCreator
+	public MeasurementData(@JsonProperty("records") final List<AbstractRecord> records) {
+		super();
+		this.records = records;
 	}
 
 	/**
@@ -60,7 +64,7 @@ public class MeasurementData {
 	 * @param records
 	 *            new list of records
 	 */
-	public void setRecords(List<AbstractRecord> records) {
+	public void setRecords(final List<AbstractRecord> records) {
 		this.records = records;
 	}
 
@@ -75,9 +79,9 @@ public class MeasurementData {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractRecord> List<T> getRecords(Class<T> type) {
-		List<T> result = new ArrayList<T>();
-		for (AbstractRecord record : records) {
+	public <T extends AbstractRecord> List<T> selectRecords(final Class<T> type) {
+		final List<T> result = new ArrayList<T>();
+		for (final AbstractRecord record : records) {
 			if (record.getClass().equals(type)) {
 				result.add((T) record);
 			}
@@ -91,9 +95,9 @@ public class MeasurementData {
 	 *         in this measurement data collection
 	 */
 	@JsonIgnore
-	public Set<Class<? extends AbstractRecord>> getDifferentRecordTypes() {
-		Set<Class<? extends AbstractRecord>> recordClasses = new HashSet<Class<? extends AbstractRecord>>();
-		for (AbstractRecord record : records) {
+	public Set<Class<? extends AbstractRecord>> queryDifferentRecordTypes() {
+		final Set<Class<? extends AbstractRecord>> recordClasses = new HashSet<Class<? extends AbstractRecord>>();
+		for (final AbstractRecord record : records) {
 			if (!recordClasses.contains(record.getClass())) {
 				recordClasses.add(record.getClass());
 			}

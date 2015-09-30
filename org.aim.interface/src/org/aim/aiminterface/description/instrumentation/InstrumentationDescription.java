@@ -15,6 +15,7 @@
  */
 package org.aim.aiminterface.description.instrumentation;
 
+import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +43,7 @@ public class InstrumentationDescription {
 	 * Constructor. Initializes all sets with empty sets.
 	 */
 	@JsonCreator
+	@ConstructorProperties({"instrumentationEntities","samplingDescriptions","globalRestriction"})
 	public InstrumentationDescription(
 			@JsonProperty("instrumentationEntities") final Set<InstrumentationEntity> instrumentationEntities, 
 			@JsonProperty("samplingDescriptions") final Set<SamplingDescription> samplingDescriptions, 

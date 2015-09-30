@@ -16,11 +16,9 @@
 package org.aim.mainagent.service;
 
 import org.aim.aiminterface.exceptions.MeasurementException;
-import org.aim.api.measurement.collector.AbstractDataSource;
-import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.aim.mainagent.sampling.Sampling;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.lpe.common.util.web.Service;
@@ -38,10 +36,7 @@ public class EnableMeasurementServlet implements Service {
 	public void doService(final Request req, final Response resp) throws Exception {
 		try {
 			LOGGER.info("Enabling measurement ...");
-			final IDataCollector collector = AbstractDataSource.getDefaultDataSource();
-
-			collector.enable();
-			Sampling.getInstance().start();
+			AdaptiveFacadeProvider.getAdaptiveInstrumentation().enableMonitoring();
 			MeasurementStateServlet.setMeasurementState(true);
 			LOGGER.info("Measurement enabled!");
 		} catch (final MeasurementException e) {

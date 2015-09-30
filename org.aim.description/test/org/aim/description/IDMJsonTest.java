@@ -19,14 +19,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
-import org.aim.artifacts.scopes.GenericScopeExtension;
-import org.aim.artifacts.scopes.MethodScope;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
 import org.aim.description.servlet.TestIDMServlet;
 import org.glassfish.grizzly.http.server.HttpHandler;
@@ -36,8 +33,6 @@ import org.glassfish.grizzly.http.server.Response;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.lpe.common.config.GlobalConfiguration;
-import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.util.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
@@ -69,11 +64,6 @@ public class IDMJsonTest {
 			}
 		}, "/testDescription");
 		server.start();
-		
-		final Properties p = new Properties();
-		p.put(ExtensionRegistry.APP_ROOT_DIR_PROPERTY_KEY,".");
-		GlobalConfiguration.initialize(p);
-		ExtensionRegistry.getSingleton().addExtension(new GenericScopeExtension(MethodScope.class));
 	}
 
 	@Before

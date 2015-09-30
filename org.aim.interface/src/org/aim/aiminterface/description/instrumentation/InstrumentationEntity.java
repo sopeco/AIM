@@ -15,6 +15,7 @@
  */
 package org.aim.aiminterface.description.instrumentation;
 
+import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class InstrumentationEntity {
 	 *            scope to be set.
 	 */
 	@JsonCreator
+	@ConstructorProperties({"scopeDescription","probeDescriptions","localRestriction","traced"})
 	public InstrumentationEntity(
 			@JsonProperty("scopeDescription") final ScopeDescription scopeDescription,
 			@JsonProperty("probeDescriptions") final Set<MeasurementProbeDescription> probeDescriptions,

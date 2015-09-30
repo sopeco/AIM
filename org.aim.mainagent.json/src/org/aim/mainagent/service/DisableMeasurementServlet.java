@@ -15,11 +15,9 @@
  */
 package org.aim.mainagent.service;
 
-import org.aim.api.measurement.collector.AbstractDataSource;
-import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.aim.mainagent.sampling.Sampling;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.lpe.common.util.web.Service;
@@ -34,12 +32,9 @@ public class DisableMeasurementServlet implements Service {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(DisableMeasurementServlet.class);
 
 	@Override
-	public void doService(Request req, Response resp) throws Exception {
+	public void doService(final Request req, final Response resp) throws Exception {
 		LOGGER.info("Disabling measurement ...");
-		IDataCollector collector = AbstractDataSource.getDefaultDataSource();
-
-		collector.disable();
-		Sampling.getInstance().stop();
+		AdaptiveFacadeProvider.getAdaptiveInstrumentation().disableMonitoring();
 		MeasurementStateServlet.setMeasurementState(false);
 		LOGGER.info("Measurement disabled!");
 	}

@@ -30,8 +30,13 @@ public class SynchronizedScope extends Scope {
 
 	public SynchronizedScope(final IExtension provider, final ScopeDescription fromDescription) {
 		super(provider, fromDescription);
-		// TODO Auto-generated constructor stub
 	}
+
+	
+	public SynchronizedScope(final IExtension provider) {
+		super(provider, 0);
+	}
+
 
 	@Override
 	public String toString() {

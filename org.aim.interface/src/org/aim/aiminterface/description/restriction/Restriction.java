@@ -15,6 +15,7 @@
  */
 package org.aim.aiminterface.description.restriction;
 
+import java.beans.ConstructorProperties;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ public final class Restriction {
 
 	private final double granularity;
 
+	@ConstructorProperties({"packageIncludes","packageExcludes","modifierIncludes","modifierExcludes","granularity"})
 	@JsonCreator
 	public Restriction(
 			@JsonProperty("packageIncludes") final Set<String> packageIncludes, 

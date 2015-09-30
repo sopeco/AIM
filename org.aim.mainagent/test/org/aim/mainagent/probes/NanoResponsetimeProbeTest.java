@@ -40,7 +40,7 @@ public class NanoResponsetimeProbeTest extends ProbeTest {
 	protected void checkPostCall(MeasurementData mData) {
 		Assert.assertFalse(mData.getRecords().isEmpty());
 		Assert.assertEquals(NanoResponseTimeRecord.class, mData.getRecords().get(0).getClass());
-		NanoResponseTimeRecord record = mData.getRecords(NanoResponseTimeRecord.class).get(0);
+		NanoResponseTimeRecord record = mData.selectRecords(NanoResponseTimeRecord.class).get(0);
 		Assert.assertEquals(INSTRUmENTED_METHOD, record.getOperation());
 
 	}

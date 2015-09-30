@@ -15,10 +15,7 @@
  */
 package org.aim.mainagent.instrumentor;
 
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,24 +68,24 @@ public final class JInstrumentation {
 	public void setjInstrumentation(final Instrumentation jInstrumentation) {
 		this.jInstrumentation = jInstrumentation;
 		System.getProperties().put(J_INSTRUMENTATION_KEY, jInstrumentation);
-		jInstrumentation.addTransformer(new ClassFileTransformer() {
-			
-			@Override
-			public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,
-					final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
-				System.out.println(formatCL(loader) + " loaded/modified "+className.replace("/","."));
-				return null;
-			}
-
-			private String formatCL(ClassLoader loader) {
-				String result = "";
-				while (loader != null) {
-					result = loader.getClass().getSimpleName() + ":" + result;
-					loader = loader.getParent();
-				}
-				return "SystemLoader:" + result.substring(0, result.length()-1);
-			}
-		}, true);
+//		jInstrumentation.addTransformer(new ClassFileTransformer() {
+//			
+//			@Override
+//			public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,
+//					final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
+//				System.out.println(formatCL(loader) + " loaded/modified "+className.replace("/","."));
+//				return null;
+//			}
+//
+//			private String formatCL(ClassLoader loader) {
+//				String result = "";
+//				while (loader != null) {
+//					result = loader.getClass().getSimpleName() + ":" + result;
+//					loader = loader.getParent();
+//				}
+//				return "SystemLoader:" + result.substring(0, result.length()-1);
+//			}
+//		}, true);
 	}
 
 	/**
