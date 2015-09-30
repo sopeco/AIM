@@ -218,10 +218,8 @@ public abstract class AbstractScopeAnalyzer implements IScopeAnalyzer {
 		try {
 			return clazz.getClassLoader() == null;
 		} catch (final Throwable e) {
-
 			return false;
 		}
-
 	}
 
 	/**
@@ -237,7 +235,6 @@ public abstract class AbstractScopeAnalyzer implements IScopeAnalyzer {
 		} catch (final Throwable e) {
 			return false;
 		}
-
 	}
 
 }
