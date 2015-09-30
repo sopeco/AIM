@@ -19,10 +19,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.aiminterface.description.restriction.Restriction;
-import org.aim.aiminterface.description.scope.Scope;
+import org.aim.aiminterface.description.scope.ScopeDescription;
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * This is a wrapper class for instrumentation entities, composed of one scope
@@ -34,56 +36,54 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-// @JsonDeserialize(using = InstrumentationEntityDeserializer.class)
-// @JsonSerialize(using = InstrumentationEntitySerializer.class)
 public class InstrumentationEntity {
 
-	private final Scope scope;
+	private final ScopeDescription scopeDescription;
 
-	private final Set<MeasurementProbe> probes;
+	private final Set<MeasurementProbeDescription> probeDescriptions;
 
-	private Restriction localRestriction;
+	private final Restriction localRestriction;
+	
+	private final boolean isTraced;
 
 	/**
 	 * Constructor. Initializes the probe set with an empty one.
 	 * 
-	 * @param scope
+	 * @param scopeDescription
 	 *            scope to be set.
 	 */
-	public InstrumentationEntity(final Scope scope) {
+	@JsonCreator
+	public InstrumentationEntity(
+			@JsonProperty("scopeDescription") final ScopeDescription scopeDescription,
+			@JsonProperty("probeDescriptions") final Set<MeasurementProbeDescription> probeDescriptions,
+			@JsonProperty("localRestriction") final Restriction localRestriction,
+			@JsonProperty("traced") final boolean isTraced) {
 		super();
-		this.scope = scope;
-		this.probes = new HashSet<>();
+		if (scopeDescription == null || localRestriction == null) {
+			throw new IllegalArgumentException();
+		}
+		this.scopeDescription = scopeDescription;
+		this.probeDescriptions = new HashSet<>(probeDescriptions == null ? Collections.<MeasurementProbeDescription> emptySet() : probeDescriptions);
+		this.localRestriction = localRestriction;
+		this.isTraced = isTraced;
+	}
+
+	public boolean isTraced() {
+		return isTraced;
 	}
 
 	/**
 	 * @return the scope
 	 */
-	public Scope getScope() {
-		return scope;
-	}
-
-	/**
-	 * Adds a new probe.
-	 * 
-	 * @param probe
-	 *            new probe to be added
-	 */
-	public void addProbe(final MeasurementProbe probe) {
-		if (probe == null) {
-			throw new IllegalArgumentException("Invalid probe added to Instrumentation entity");
-		}
-		if (!probe.getRequiredScopeTypes().isEmpty() && !probe.getRequiredScopeTypes().contains(this.scope.getScopeType())) {
-			throw new IllegalArgumentException("Probe added to instrumentation entity does not support the entitie's scope");
-		}
-		probes.add(probe);
+	public ScopeDescription getScopeDescription() {
+		return scopeDescription;
 	}
 
 	/**
 	 * @return the probes
 	 */
-	public Set<MeasurementProbe> getProbes() {
-		return Collections.unmodifiableSet(probes);
+	public Set<MeasurementProbeDescription> getProbeDescriptions() {
+		return Collections.unmodifiableSet(probeDescriptions);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class InstrumentationEntity {
 	@JsonIgnore
 	public Set<String> getProbesAsStrings() {
 		final Set<String> stringSet = new HashSet<>();
-		for (final MeasurementProbe mProbe : probes) {
+		for (final MeasurementProbeDescription mProbe : probeDescriptions) {
 			stringSet.add(mProbe.getName());
 
 		}
@@ -102,23 +102,9 @@ public class InstrumentationEntity {
 	}
 
 	/**
-	 * Sets the local restriction.
-	 * 
-	 * @param restriction
-	 *            local restriction to be set
-	 */
-	public void setLocalRestriction(final Restriction restriction) {
-		this.localRestriction = restriction;
-	}
-
-	/**
 	 * @return the local restriction
 	 */
-	@JsonIgnore
 	public Restriction getLocalRestriction() {
-		if (localRestriction == null) {
-			localRestriction = new Restriction();
-		}
 		return localRestriction;
 	}
 
@@ -127,7 +113,13 @@ public class InstrumentationEntity {
 		final StringBuilder builder = new StringBuilder();
 		boolean trailingComma = false;
 
-		builder.append(scope.toString());
+		if (isTraced) {
+			builder.append("TraceScope [");
+		}
+		builder.append(scopeDescription.toString());
+		if (isTraced) {
+			builder.append("]");
+		}
 
 		if (!getLocalRestriction().isEmpty()) {
 			builder.append(" (");
@@ -137,7 +129,7 @@ public class InstrumentationEntity {
 
 		builder.append(": ");
 
-		for (final MeasurementProbe probe : probes) {
+		for (final MeasurementProbeDescription probe : probeDescriptions) {
 			builder.append(probe.getName());
 			builder.append(", ");
 			trailingComma = true;
@@ -156,8 +148,8 @@ public class InstrumentationEntity {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((localRestriction == null) ? 0 : localRestriction.hashCode());
-		result = prime * result + ((probes == null) ? 0 : probes.hashCode());
-		result = prime * result + ((scope == null) ? 0 : scope.hashCode());
+		result = prime * result + ((probeDescriptions == null) ? 0 : probeDescriptions.hashCode());
+		result = prime * result + ((scopeDescription == null) ? 0 : scopeDescription.hashCode());
 		return result;
 	}
 
@@ -180,18 +172,18 @@ public class InstrumentationEntity {
 		} else if (!localRestriction.equals(other.localRestriction)) {
 			return false;
 		}
-		if (probes == null) {
-			if (other.probes != null) {
+		if (probeDescriptions == null) {
+			if (other.probeDescriptions != null) {
 				return false;
 			}
-		} else if (!probes.equals(other.probes)) {
+		} else if (!probeDescriptions.equals(other.probeDescriptions)) {
 			return false;
 		}
-		if (scope == null) {
-			if (other.scope != null) {
+		if (scopeDescription == null) {
+			if (other.scopeDescription != null) {
 				return false;
 			}
-		} else if (!scope.equals(other.scope)) {
+		} else if (!scopeDescription.equals(other.scopeDescription)) {
 			return false;
 		}
 		return true;

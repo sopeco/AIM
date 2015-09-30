@@ -15,8 +15,10 @@
  */
 package org.aim.mainagent.service;
 
+import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
@@ -38,12 +40,11 @@ public class GetStateServlet implements Service {
 		final JsonFactory factory = new JsonFactory();
 		final ObjectMapper mapper = new ObjectMapper(factory);
 
-		//final FlatInstrumentationState fmInstrumentation = AdaptiveFacadeProvider.getAdaptiveInstrumentation()
-		//		.getInstrumentationState();
+		final FlatInstrumentationState fmInstrumentation = AdaptiveFacadeProvider.getAdaptiveInstrumentation()
+				.getInstrumentationState();
 
 		resp.setContentType("application/json");
-		//mapper.writeValue(resp.getOutputStream(), fmInstrumentation);
-
+		mapper.writeValue(resp.getOutputStream(), fmInstrumentation);
 	}
 
 }

@@ -51,7 +51,7 @@ public final class ClientManager {
 	}
 
 	private InstrumentationClient client;
-	private Collection<ConnectionStateListener> csListener;
+	private final Collection<ConnectionStateListener> csListener;
 
 	private ClientManager() {
 		csListener = new ArrayList<ConnectionStateListener>();
@@ -74,7 +74,7 @@ public final class ClientManager {
 	 * @param listener
 	 *            - listener to register
 	 */
-	public void addConnectionStateListener(ConnectionStateListener listener) {
+	public void addConnectionStateListener(final ConnectionStateListener listener) {
 		csListener.add(listener);
 	}
 
@@ -120,7 +120,7 @@ public final class ClientManager {
 	}
 
 	private void connected() {
-		for (ConnectionStateListener l : csListener) {
+		for (final ConnectionStateListener l : csListener) {
 			l.onConnection();
 		}
 	}
@@ -139,7 +139,7 @@ public final class ClientManager {
 	}
 
 	private void disconnected() {
-		for (ConnectionStateListener l : csListener) {
+		for (final ConnectionStateListener l : csListener) {
 			l.onDisconnection();
 		}
 	}
@@ -154,21 +154,21 @@ public final class ClientManager {
 
 		try {
 			final PipedOutputStream outPipe = new PipedOutputStream();
-			PipedInputStream inPipe = new PipedInputStream(outPipe);
+			final PipedInputStream inPipe = new PipedInputStream(outPipe);
 
 			Main.getThreadPool().execute(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						client.pipeToOutputStream(outPipe);
-					} catch (MeasurementException e) {
+					} catch (final MeasurementException e) {
 						e.printStackTrace();
 					}
 				}
 			});
 			RecordCSVWriter.getInstance().pipeDataToDatasetFiles(inPipe, targetDirectory.getAbsolutePath(),
 					new HashSet<Parameter>());
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -209,7 +209,7 @@ public final class ClientManager {
 	 * @return probes supported by the connected agent
 	 */
 	public List<String> getProbes() {
-		List<String> probes = new ArrayList<String>(client.getSupportedExtensions().getProbeExtensions());
+		final List<String> probes = new ArrayList<String>(client.getSupportedExtensions().getProbeExtensionsMapping().keySet());
 		return probes;
 	}
 
@@ -220,7 +220,7 @@ public final class ClientManager {
 	 * @return probes supported by the connected agent
 	 */
 	public Map<String, Set<String>> getProbeMapping() {
-		Map<String, Set<String>> probeExtensionsMapping = client.getSupportedExtensions().getProbeExtensionsMapping();
+		final Map<String, Set<String>> probeExtensionsMapping = client.getSupportedExtensions().getProbeExtensionsMapping();
 		return probeExtensionsMapping;
 	}
 
@@ -241,7 +241,7 @@ public final class ClientManager {
 	 * @return scopes supported by the connected agent
 	 */
 	public List<String> getScopes() {
-		List<String> scopeExtensions = new ArrayList<String>();
+		final List<String> scopeExtensions = new ArrayList<String>();
 		scopeExtensions.addAll(client.getSupportedExtensions().getApiScopeExtensions());
 		scopeExtensions.addAll(client.getSupportedExtensions().getCustomScopeExtensions());
 		return scopeExtensions;
@@ -254,10 +254,10 @@ public final class ClientManager {
 	 * @param instrumentationDescription
 	 *            - description to instrument
 	 */
-	public void instrument(InstrumentationDescription instrumentationDescription) {
+	public void instrument(final InstrumentationDescription instrumentationDescription) {
 		try {
 			client.instrument(instrumentationDescription);
-		} catch (InstrumentationException e) {
+		} catch (final InstrumentationException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -277,7 +277,7 @@ public final class ClientManager {
 	 * @param listener
 	 *            - listener to remove
 	 */
-	public void removeConnectionStateListener(ConnectionStateListener listener) {
+	public void removeConnectionStateListener(final ConnectionStateListener listener) {
 		csListener.remove(listener);
 	}
 
@@ -287,7 +287,7 @@ public final class ClientManager {
 	public void startMonitoring() {
 		try {
 			client.enableMonitoring();
-		} catch (MeasurementException e) {
+		} catch (final MeasurementException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -298,7 +298,7 @@ public final class ClientManager {
 	public void stopMonitoring() {
 		try {
 			client.disableMonitoring();
-		} catch (MeasurementException e) {
+		} catch (final MeasurementException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -309,7 +309,7 @@ public final class ClientManager {
 	public void uninstrument() {
 		try {
 			client.uninstrument();
-		} catch (InstrumentationException e) {
+		} catch (final InstrumentationException e) {
 			throw new RuntimeException(e);
 		}
 	}

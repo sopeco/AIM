@@ -27,7 +27,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractEventProbeExtension implements IExtension<AbstractEventProbe> {
+public abstract class AbstractEventProbeExtension implements IExtension {
 	@Override
 	public String getName() {
 		return getProbeClass().getName();

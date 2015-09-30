@@ -27,7 +27,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstApiScopeExtension implements IExtension<AbstractInstAPIScope> {
+public abstract class AbstractInstApiScopeExtension implements IExtension {
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -27,7 +27,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractEnclosingProbeExtension implements IExtension<AbstractEnclosingProbe> {
+public abstract class AbstractEnclosingProbeExtension implements IExtension {
 
 	@Override
 	public String getName() {

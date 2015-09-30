@@ -20,10 +20,13 @@
 		<module>../org.aim.resourcemonitoring</module>
 		<module>../org.aim.ui</module>
 		<module>
-			../../../Documents/workspaces/workspace_dynamicspotter/org.aim.mainagent.csharp
+			../org.aim.mainagent.csharp
 		</module>
 		<module>
-			../../../Documents/workspaces/workspace_dynamicspotter/org.aim.mainagent.json
+			../org.aim.interface
+		</module>
+		<module>
+			../org.aim.mainagent.json
 		</module>
 	</modules>
 

@@ -25,7 +25,7 @@ import org.lpe.common.extension.IExtension;
 
 public class DummyProbe extends AbstractEnclosingProbe {
 
-	public DummyProbe(IExtension<?> provider) {
+	public DummyProbe(final IExtension provider) {
 		super(provider);
 	}
 

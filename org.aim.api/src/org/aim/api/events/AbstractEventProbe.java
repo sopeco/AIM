@@ -32,7 +32,7 @@ public abstract class AbstractEventProbe extends AbstractExtensionArtifact imple
 	 * @param provider
 	 *            extension provider
 	 */
-	public AbstractEventProbe(IExtension<?> provider) {
+	public AbstractEventProbe(final IExtension provider) {
 		super(provider);
 	}
 

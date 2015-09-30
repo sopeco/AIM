@@ -15,8 +15,8 @@
  */
 package org.aim.artifacts.sampler;
 
-import org.aim.api.measurement.sampling.AbstractSampler;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for Disk sampler.
@@ -31,9 +31,10 @@ public class DiskIOSamplerExtension extends AbstractSamplerExtension {
 		return DiskIOSampler.class.getName();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractSampler createExtensionArtifact() {
-		return new DiskIOSampler(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new DiskIOSampler(this);
 	}
 
 }

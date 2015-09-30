@@ -17,6 +17,7 @@ package org.aim.mainagent;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,14 +31,13 @@ import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
 import org.aim.api.instrumentation.InstrumentationUtilsController;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
-import org.aim.api.instrumentation.description.internal.InstrumentationConstants;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
-import org.aim.description.scopes.AllocationScope;
-import org.aim.description.scopes.ConstructorScope;
-import org.aim.description.scopes.MemoryScope;
-import org.aim.description.scopes.MethodScope;
-import org.aim.description.scopes.SynchronizedScope;
-import org.aim.description.scopes.TraceScope;
+import org.aim.artifacts.scopes.AllocationScope;
+import org.aim.artifacts.scopes.ConstructorScope;
+import org.aim.artifacts.scopes.MemoryScope;
+import org.aim.artifacts.scopes.MethodScope;
+import org.aim.artifacts.scopes.SynchronizedScope;
+import org.aim.artifacts.scopes.TraceScope;
 import org.aim.mainagent.probes.IncrementalProbeExtension;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
@@ -76,18 +76,24 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		eventInstrumentor = EventInstrumentor.getInstance();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.aim.mainagent.IAdaptiveInstrumentation#instrument(org.aim.description.InstrumentationDescription)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.aim.mainagent.IAdaptiveInstrumentation#instrument(org.aim.description
+	 * .InstrumentationDescription)
 	 */
 	@Override
 	public synchronized void instrument(final InstrumentationDescription instrumentationDescription)
 			throws InstrumentationException {
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.AIM_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVA_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVASSIST_PACKAGE);
-		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVAX_PACKAGE);
-		instrumentationDescription.getGlobalRestriction()
-				.addPackageExclude(InstrumentationConstants.LPE_COMMON_PACKAGE);
+		
+		// TODO FIXME
+//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.AIM_PACKAGE);
+//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVA_PACKAGE);
+//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVASSIST_PACKAGE);
+//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVAX_PACKAGE);
+//		instrumentationDescription.getGlobalRestriction()
+//				.addPackageExclude(InstrumentationConstants.LPE_COMMON_PACKAGE);
 
 		methodInstrumentor.instrument(instrumentationDescription);
 		traceInstrumentor.instrument(instrumentationDescription);
@@ -97,11 +103,13 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.aim.mainagent.IAdaptiveInstrumentation#undoInstrumentation()
 	 */
 	@Override
-	public synchronized void undoInstrumentation()  {
+	public synchronized void undoInstrumentation() {
 		try {
 			methodInstrumentor.undoInstrumentation();
 			traceInstrumentor.undoInstrumentation();
@@ -114,7 +122,9 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		InstrumentationUtilsController.getInstance().clear();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.aim.mainagent.IAdaptiveInstrumentation#getInstrumentationState()
 	 */
 	@Override
@@ -126,61 +136,75 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		return fmInstrumentation;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.aim.mainagent.IAdaptiveInstrumentation#getSupportedExtensions()
 	 */
 	@Override
 	public synchronized SupportedExtensions getSupportedExtensions() throws InstrumentationException {
-		if (extensions == null) {
-			extensions = new SupportedExtensions();
+		if (extensions != null) {
+			return extensions;
+		}
 
-			final Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
-			knownConcreteScopeClasses.add(AllocationScope.class);
-			knownConcreteScopeClasses.add(ConstructorScope.class);
-			knownConcreteScopeClasses.add(MemoryScope.class);
-			knownConcreteScopeClasses.add(MethodScope.class);
-			knownConcreteScopeClasses.add(SynchronizedScope.class);
-			knownConcreteScopeClasses.add(TraceScope.class);
+		
+		final Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
+		knownConcreteScopeClasses.add(AllocationScope.class);
+		knownConcreteScopeClasses.add(ConstructorScope.class);
+		knownConcreteScopeClasses.add(MemoryScope.class);
+		knownConcreteScopeClasses.add(MethodScope.class);
+		knownConcreteScopeClasses.add(SynchronizedScope.class);
+		knownConcreteScopeClasses.add(TraceScope.class);
 
-			final Map<String, Set<Class<?>>> tempProbeScopeMapping = new HashMap<>();
-
-			for (final IExtension<?> extension : ExtensionRegistry.getSingleton().getExtensions()) {
-				if (extension instanceof AbstractCustomScopeExtension) {
-					extensions.getCustomScopeExtensions().add(extension.getName());
-					knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
-				} else if (extension instanceof AbstractEnclosingProbeExtension) {
-					if (extension instanceof IncrementalProbeExtension) {
-						continue;
-					}
-					tempProbeScopeMapping.put(extension.getName(),
-							((AbstractEnclosingProbeExtension) extension).getScopeDependencies());
-				} else if (extension instanceof AbstractEventProbeExtension) {
-					tempProbeScopeMapping.put(extension.getName(),
-							((AbstractEventProbeExtension) extension).getScopeDependencies());
-				} else if (extension instanceof AbstractInstApiScopeExtension) {
-					extensions.getApiScopeExtensions().add(extension.getName());
-					knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
-				} else if (extension instanceof AbstractSamplerExtension) {
-					extensions.getSamplerExtensions().add(extension.getName());
+		final Map<String, Set<Class<?>>> probeToSupportedScopesMapping = new HashMap<>();
+		final LinkedList<String> customScopes = new LinkedList<>();
+		final LinkedList<String> apiScopes = new LinkedList<>();
+		final LinkedList<String> sampler = new LinkedList<>();
+		
+		for (final IExtension extension : ExtensionRegistry.getSingleton().getExtensions()) {
+			if (extension instanceof AbstractCustomScopeExtension) {
+				customScopes.add(extension.getName());
+				knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
+			} else if (extension instanceof AbstractEnclosingProbeExtension) {
+				if (extension instanceof IncrementalProbeExtension) {
+					continue;
 				}
-			}
-
-			for (final String probeName : tempProbeScopeMapping.keySet()) {
-				final Set<String> scopes = new HashSet<>();
-				for (final Class<?> concreteScope : knownConcreteScopeClasses) {
-					supportedScopeLoop: for (final Class<?> supportedScope : tempProbeScopeMapping.get(probeName)) {
-						if (supportedScope.isAssignableFrom(concreteScope)) {
-							scopes.add(concreteScope.getName());
-							break supportedScopeLoop;
-						}
-					}
-				}
-
-				extensions.addProbeExtension(probeName, scopes);
+				probeToSupportedScopesMapping.put(extension.getName(),
+						((AbstractEnclosingProbeExtension) extension).getScopeDependencies());
+			} else if (extension instanceof AbstractEventProbeExtension) {
+				probeToSupportedScopesMapping.put(extension.getName(),
+						((AbstractEventProbeExtension) extension).getScopeDependencies());
+			} else if (extension instanceof AbstractInstApiScopeExtension) {
+				apiScopes.add(extension.getName());
+				knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
+			} else if (extension instanceof AbstractSamplerExtension) {
+				sampler.add(extension.getName());
 			}
 		}
 
-		return extensions;
+		final Map<String, Set<String>> probeToRegisteredScopesMapping = filterProbeScopeMappingToExistingScopes(knownConcreteScopeClasses,
+				probeToSupportedScopesMapping);
+
+		return extensions = new SupportedExtensions(sampler, apiScopes, probeToRegisteredScopesMapping, customScopes);
+	}
+
+	private Map<String, Set<String>> filterProbeScopeMappingToExistingScopes(
+			final Set<Class<?>> knownConcreteScopeClasses, final Map<String, Set<Class<?>>> tempProbeScopeMapping) {
+		final Map<String,Set<String>> probeMap = new HashMap<String, Set<String>>();
+		for (final String probeName : tempProbeScopeMapping.keySet()) {
+			final Set<String> scopes = new HashSet<>();
+			for (final Class<?> concreteScope : knownConcreteScopeClasses) {
+				supportedScopeLoop: for (final Class<?> supportedScope : tempProbeScopeMapping.get(probeName)) {
+					if (supportedScope.isAssignableFrom(concreteScope)) {
+						scopes.add(concreteScope.getName());
+						break supportedScopeLoop;
+					}
+				}
+			}
+
+			probeMap.put(probeName, scopes);
+		}
+		return probeMap;
 	}
 
 }

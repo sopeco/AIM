@@ -20,7 +20,8 @@ import java.util.Set;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.api.instrumentation.MethodsEnclosingScope;
+import org.lpe.common.extension.IExtensionArtifact;
 /**
  * Extension Provider for the Memory Footprint probe.
  * 
@@ -29,9 +30,10 @@ import org.aim.description.scopes.MethodsEnclosingScope;
  */
 public class MemoryFootprintProbeExtension extends AbstractEnclosingProbeExtension {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new MemoryFootprintProbe(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new MemoryFootprintProbe(this);
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class MemoryFootprintProbeExtension extends AbstractEnclosingProbeExtensi
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+		final Set<Class<?>> supportedScopes = new HashSet<>();
 		supportedScopes.add(MethodsEnclosingScope.class);
 		return supportedScopes;
 	}

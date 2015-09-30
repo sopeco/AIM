@@ -19,12 +19,14 @@ import java.util.Set;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 public class AnotherDummyProbeExtension extends AbstractEnclosingProbeExtension {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new AnotherDummyProbe(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new AnotherDummyProbe(this);
 	}
 
 	@Override

@@ -15,6 +15,9 @@
  */
 package org.aim.description.builder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aim.aiminterface.description.restriction.Restriction;
 
 /**
@@ -23,11 +26,15 @@ import org.aim.aiminterface.description.restriction.Restriction;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
+public class RestrictionBuilder<ParentBuilderType extends AbstractRestrictableBuilder> {
 
-	private final B parentBuilder;
-
-	private final Restriction restriction;
+	private final ParentBuilderType parentBuilder;
+	private final Set<String> includePackages = new HashSet<>();
+	private final Set<String> excludePackages = new HashSet<>();
+	private final Set<Integer> includeModifiers = new HashSet<>();
+	private final Set<Integer> excludeModifiers = new HashSet<>();
+	
+	private double granularity = 1.0;
 
 	/**
 	 * Constructor.
@@ -36,10 +43,9 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            builder which called this constructor.
 	 * @param restriction 
 	 */
-	public RestrictionBuilder(final B parentBuilder, final Restriction restriction) {
+	public RestrictionBuilder(final ParentBuilderType parentBuilder) {
 		super();
 		this.parentBuilder = parentBuilder;
-		this.restriction = restriction;
 	}
 
 	/**
@@ -49,8 +55,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            package to be included
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> includePackage(final String packageName) {
-		restriction.addPackageInclude(packageName);
+	public RestrictionBuilder<ParentBuilderType> includePackage(final String packageName) {
+		includePackages.add(packageName);
 		return this;
 	}
 
@@ -61,8 +67,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            package to be excluded
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> excludePackage(final String packageName) {
-		restriction.addPackageExclude(packageName);
+	public RestrictionBuilder<ParentBuilderType> excludePackage(final String packageName) {
+		excludePackages.add(packageName);
 		return this;
 	}
 
@@ -73,8 +79,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            modifier of the methods to be included
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> includeModifier(final int modifier) {
-		restriction.addModifierInclude(modifier);
+	public RestrictionBuilder<ParentBuilderType> includeModifier(final int modifier) {
+		includeModifiers.add(modifier);
 		return this;
 	}
 
@@ -85,8 +91,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            modifier of the methods to be excluded
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> excludeModifier(final int modifier) {
-		restriction.addModifierExclude(modifier);
+	public RestrictionBuilder<ParentBuilderType> excludeModifier(final int modifier) {
+		excludeModifiers.add(modifier);
 		return this;
 	}
 	
@@ -98,8 +104,8 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 *            granularity to be set
 	 * @return this builder
 	 */
-	public RestrictionBuilder<B> setGranularity(final double granularity) {
-		restriction.setGranularity(granularity);
+	public RestrictionBuilder<ParentBuilderType> setGranularity(final double granularity) {
+		this.granularity = granularity;
 		return this;
 	}
 
@@ -108,8 +114,9 @@ public class RestrictionBuilder<B extends AbstractRestrictableBuilder> {
 	 * 
 	 * @return the parent builder
 	 */
-	public B restrictionDone() {
-		parentBuilder.setRestriction(restriction);
+	public ParentBuilderType restrictionDone() {
+		parentBuilder.setRestriction(
+			 new Restriction(this.includePackages, this.excludePackages, this.includeModifiers, this.excludeModifiers, this.granularity));
 		return parentBuilder;
 	}
 

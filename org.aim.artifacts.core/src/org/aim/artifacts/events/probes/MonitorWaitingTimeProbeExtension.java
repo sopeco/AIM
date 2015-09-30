@@ -20,7 +20,8 @@ import java.util.Set;
 
 import org.aim.api.events.AbstractEventProbe;
 import org.aim.api.events.AbstractEventProbeExtension;
-import org.aim.description.scopes.SynchronizedScope;
+import org.aim.artifacts.scopes.SynchronizedScope;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Event probe for gathering the waiting times on monitor(synchronization)
@@ -31,10 +32,6 @@ import org.aim.description.scopes.SynchronizedScope;
  */
 public class MonitorWaitingTimeProbeExtension extends AbstractEventProbeExtension {
 
-	@Override
-	public AbstractEventProbe createExtensionArtifact() {
-		return new MonitorWaitingTimeProbe(this);
-	}
 
 	@Override
 	public Class<? extends AbstractEventProbe> getProbeClass() {
@@ -43,9 +40,15 @@ public class MonitorWaitingTimeProbeExtension extends AbstractEventProbeExtensio
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+		final Set<Class<?>> supportedScopes = new HashSet<>();
 		supportedScopes.add(SynchronizedScope.class);
 		return supportedScopes;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new MonitorWaitingTimeProbe(this);
 	}
 
 }

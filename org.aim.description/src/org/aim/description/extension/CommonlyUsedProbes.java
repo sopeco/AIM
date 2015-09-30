@@ -15,7 +15,7 @@
  */
 package org.aim.description.extension;
 
-import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 
 /**
  * Utility Class wrapping commonly used Measurement Probes..
@@ -25,12 +25,10 @@ import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
  */
 public final class CommonlyUsedProbes {
 
-	public static final MeasurementProbe RESPONSE_TIME_PROBE = new MeasurementProbe("ResponseTimeProbe",
-			CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
-	public static final MeasurementProbe TRACING_PROBE = new MeasurementProbe("TracingProbe",
-			CommonlyUsedScopeTypes.METHOD_ENCLOSING_SCOPE_TYPE);
-	public static final MeasurementProbe MEMORY_FOOTPRINT_PROBE = new MeasurementProbe("MemoryFootprintProbe");
-	public static final MeasurementProbe WAITING_TIME_PROBE = new MeasurementProbe("WaitingTimeProbe");
+	public static final MeasurementProbeDescription RESPONSE_TIME_PROBE = new MeasurementProbeDescription("ResponseTimeProbe");
+	public static final MeasurementProbeDescription TRACING_PROBE = new MeasurementProbeDescription("TracingProbe");
+	public static final MeasurementProbeDescription MEMORY_FOOTPRINT_PROBE = new MeasurementProbeDescription("MemoryFootprintProbe");
+	public static final MeasurementProbeDescription WAITING_TIME_PROBE = new MeasurementProbeDescription("WaitingTimeProbe");
 
 	private CommonlyUsedProbes() {
 		// should not be instantiated

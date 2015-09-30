@@ -22,7 +22,7 @@ import org.aim.api.instrumentation.ProbeVariable;
 import org.lpe.common.extension.IExtension;
 
 public class InvalidDummyProbe extends AbstractEnclosingProbe {
-	public InvalidDummyProbe(IExtension<?> provider) {
+	public InvalidDummyProbe(final IExtension provider) {
 		super(provider);
 	}
 

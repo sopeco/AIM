@@ -21,6 +21,7 @@ import java.util.Set;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.artifacts.scopes.JmsScope;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension Provider for the JMS Communication probe.
@@ -30,10 +31,10 @@ import org.aim.artifacts.scopes.JmsScope;
  */
 public class JmsCommunicationProbeExtension extends AbstractEnclosingProbeExtension {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-
-		return new JmsCommunicationProbe(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new JmsCommunicationProbe(this);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class JmsCommunicationProbeExtension extends AbstractEnclosingProbeExtens
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+		final Set<Class<?>> supportedScopes = new HashSet<>();
 		supportedScopes.add(JmsScope.class);
 		return supportedScopes;
 	}

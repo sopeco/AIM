@@ -27,7 +27,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractCustomScopeExtension implements IExtension<AbstractCustomScope> {
+public abstract class AbstractCustomScopeExtension implements IExtension {
 
 	@SuppressWarnings("unchecked")
 	@Override

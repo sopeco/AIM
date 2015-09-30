@@ -33,7 +33,7 @@ public abstract class AbstractSampler implements ISampler, IExtensionArtifact {
 	/**
 	 * Extension provider.
 	 */
-	private final IExtension<?> provider;
+	private final IExtension provider;
 
 	/**
 	 * Creates a new extension artifact with the given extension provider.
@@ -41,13 +41,14 @@ public abstract class AbstractSampler implements ISampler, IExtensionArtifact {
 	 * @param provider
 	 *            the provider of this artifact
 	 */
-	public AbstractSampler(IExtension<?> provider) {
+	public AbstractSampler(final IExtension provider) {
 		this.provider = provider;
 	}
 
 	/**
 	 * Samples the underlying resource.
 	 */
+	@Override
 	public abstract void sample();
 
 	/**
@@ -61,14 +62,15 @@ public abstract class AbstractSampler implements ISampler, IExtensionArtifact {
 	 * @param dataCollector
 	 *            the dataCollector to set
 	 */
-	public void setDataCollector(IDataCollector dataCollector) {
+	public void setDataCollector(final IDataCollector dataCollector) {
 		this.dataCollector = dataCollector;
 	}
 
 	/**
 	 * @return returns the provider of this extension.
 	 */
-	public IExtension<?> getProvider() {
+	@Override
+	public IExtension getProvider() {
 		return this.provider;
 	}
 

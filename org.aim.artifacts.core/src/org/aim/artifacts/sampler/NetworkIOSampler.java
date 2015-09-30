@@ -50,7 +50,7 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 	 * @param provider
 	 *            extension provider
 	 */
-	public NetworkIOSampler(IExtension<?> provider) {
+	public NetworkIOSampler(final IExtension provider) {
 		super(provider);
 		networkInterfaces = null;
 	}
@@ -61,14 +61,14 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 	 */
 	@Override
 	public void sample() {
-		long timestamp = System.currentTimeMillis();
+		final long timestamp = System.currentTimeMillis();
 		synchronized (this) {
 			if (networkInterfaces == null) {
 				try {
 					networkInterfaces = new ArrayList<>();
-					for (String networkInterface : getSigar().getNetInterfaceList()) {
+					for (final String networkInterface : getSigar().getNetInterfaceList()) {
 						if (!getSigar().getNetInterfaceConfig(networkInterface).getAddress().equals("0.0.0.0")) {
-							NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
+							final NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
 							getDataCollector().newRecord(
 									new NetworkInterfaceInfoRecord(System.currentTimeMillis(), networkInterface,
 											netStat.getSpeed()));
@@ -76,20 +76,20 @@ public class NetworkIOSampler extends AbstractResourceSampler {
 						}
 
 					}
-				} catch (SigarException e) {
+				} catch (final SigarException e) {
 					LOGGER.warn("Sigar Exception: {}", e);
 					return;
 				}
 			}
 		}
 
-		for (String networkInterface : networkInterfaces) {
+		for (final String networkInterface : networkInterfaces) {
 			try {
-				NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
-				NetworkRecord record = new NetworkRecord(timestamp, networkInterface, netStat.getRxBytes(),
+				final NetInterfaceStat netStat = getSigar().getNetInterfaceStat(networkInterface);
+				final NetworkRecord record = new NetworkRecord(timestamp, networkInterface, netStat.getRxBytes(),
 						netStat.getTxBytes());
 				getDataCollector().newRecord(record);
-			} catch (SigarException e) {
+			} catch (final SigarException e) {
 				LOGGER.warn("Sigar Exception: {}", e);
 			}
 

@@ -40,13 +40,13 @@ public final class IDBuilder {
 			// ###### Create Scope
 			if (entity.getScope().equals(ScopePanel.METHOD_SCOPE)) {
 				if (entity.isTraceScope()) {
-					entBuilder = descBuilder.newTraceScopeEntity().setMethodSubScope(entity.getScopeSettings());
+					entBuilder = descBuilder.newMethodScopeEntity(entity.getScopeSettings()).enableTrace();
 				} else {
 					entBuilder = descBuilder.newMethodScopeEntity(entity.getScopeSettings());
 				}
 			} else if (entity.getScope().equals(ScopePanel.CONSTRUCTOR_SCOPE)) {
 				if (entity.isTraceScope()) {
-					entBuilder = descBuilder.newTraceScopeEntity().setConstructorSubScope(entity.getScopeSettings());
+					entBuilder = descBuilder.newConstructorScopeEntity(entity.getScopeSettings()).enableTrace();
 				} else {
 					entBuilder = descBuilder.newConstructorScopeEntity(entity.getScopeSettings());
 				}

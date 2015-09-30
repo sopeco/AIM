@@ -30,6 +30,11 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.13</version>
 		</dependency>
+		<dependency>
+			<groupId>org.aim</groupId>
+			<artifactId>org.aim.description</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

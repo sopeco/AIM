@@ -31,7 +31,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.aim</groupId>
-			<artifactId>org.aim.description</artifactId>
+			<artifactId>org.aim.interface</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

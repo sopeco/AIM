@@ -23,17 +23,16 @@ import java.util.Set;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
 import org.aim.aiminterface.description.restriction.Restriction;
-import org.aim.aiminterface.description.scope.Scope;
 import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.api.instrumentation.MethodsEnclosingScope;
+import org.aim.api.instrumentation.Scope;
+import org.aim.artifacts.scopes.APIScope;
+import org.aim.artifacts.scopes.ConstructorScope;
+import org.aim.artifacts.scopes.MethodScope;
+import org.aim.artifacts.scopes.TraceScope;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
 import org.aim.description.builder.InstrumentationEntityBuilder;
 import org.aim.description.builder.RestrictionBuilder;
-import org.aim.description.scopes.APIScope;
-import org.aim.description.scopes.ConstructorScope;
-import org.aim.description.scopes.CustomScope;
-import org.aim.description.scopes.MethodScope;
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.description.scopes.TraceScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
@@ -103,7 +102,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 				}
 				restrictionBuilder.restrictionDone();
 
-				final InstrumentationEntityBuilder<MethodScope> ieBuilder = idBuilder.newMethodScopeEntityWithId(jobID,
+				final InstrumentationEntityBuilder ieBuilder = idBuilder.newMethodScopeEntityWithId(jobID,
 						methodName);
 
 				for (final String probe : incrementalInstrumentationProbes.get(jobID)) {
@@ -129,22 +128,18 @@ public final class TraceInstrumentor implements IInstrumentor {
 			return;
 		}
 
-		for (final InstrumentationEntity<TraceScope> instrumentationEntity : descr
+		for (final InstrumentationEntity instrumentationEntity : descr
 				.getInstrumentationEntities(TraceScope.class)) {
-			final TraceScope tScope = instrumentationEntity.getScope();
+			// TODO
+			// FIXME
+			final TraceScope tScope = new TraceScope(null);
 			final long scopeId = idCounter++;
 			incrementalInstrumentationProbes.put(scopeId, instrumentationEntity.getProbesAsStrings());
 
-			final Restriction restriction = new Restriction();
-			restriction.getPackageExcludes().addAll(descr.getGlobalRestriction().getPackageExcludes());
-			restriction.getPackageIncludes().addAll(descr.getGlobalRestriction().getPackageIncludes());
-			restriction.getModifierExcludes().addAll(descr.getGlobalRestriction().getModifierExcludes());
-			restriction.getModifierIncludes().addAll(descr.getGlobalRestriction().getModifierIncludes());
-
-			incrementalInstrumentationRestrictions.put(scopeId, restriction);
+			incrementalInstrumentationRestrictions.put(scopeId, descr.getGlobalRestriction());
 			final InstrumentationDescription extendedDescr = getExtendedInstrumentationDescription(descr, tScope,
 					instrumentationEntity, scopeId);
-			//AdaptiveInstrumentationFacade.getInstance().instrument(extendedDescr);
+			AdaptiveInstrumentationFacade.getInstance().instrument(extendedDescr);
 		}
 
 	}
@@ -179,13 +174,11 @@ public final class TraceInstrumentor implements IInstrumentor {
 		restrictionBuilder.restrictionDone();
 
 		if (initialScopes instanceof MethodScope) {
-			buildMethodInstEntity(eiEntity, scopeId, idBuilder, initialScopes);
+			buildMethodInstEntity(eiEntity, scopeId, idBuilder, (MethodsEnclosingScope) initialScopes);
 		} else if (initialScopes instanceof ConstructorScope) {
-			buildConstructorInstEntity(eiEntity, scopeId, idBuilder, initialScopes);
+			buildConstructorInstEntity(eiEntity, scopeId, idBuilder, (ConstructorScope) initialScopes);
 		} else if (initialScopes instanceof APIScope) {
-			buildAPIInstEntity(eiEntity, scopeId, idBuilder, initialScopes);
-		} else if (initialScopes instanceof CustomScope) {
-			buildCustomInstEntity(eiEntity, scopeId, idBuilder, initialScopes);
+			buildAPIInstEntity(eiEntity, scopeId, idBuilder, (MethodsEnclosingScope) initialScopes);
 		} else {
 			throw new InstrumentationException("Invalid sub scope type for full trace instrumentation scope: "
 					+ initialScopes.getClass().getName());
@@ -194,39 +187,10 @@ public final class TraceInstrumentor implements IInstrumentor {
 		return idBuilder.build();
 	}
 
-	private void buildCustomInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
-			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
-		final CustomScope cScope = (CustomScope) iScope;
-		final InstrumentationEntityBuilder<CustomScope> csBuilder = idBuilder.newCustomScopeEntityWithId(scopeId,
-				cScope.getScopeName());
-
-		csBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
-		for (final String probe : eiEntity.getProbesAsStrings()) {
-			csBuilder.addProbe(probe);
-		}
-		final RestrictionBuilder<?> restrictionBuilder = csBuilder.newLocalRestriction();
-		for (final String exclusion : eiEntity.getLocalRestriction().getPackageExcludes()) {
-			restrictionBuilder.excludePackage(exclusion);
-		}
-		for (final String inclusion : eiEntity.getLocalRestriction().getPackageIncludes()) {
-			restrictionBuilder.includePackage(inclusion);
-		}
-		for (final int modifier : eiEntity.getLocalRestriction().getModifierExcludes()) {
-			restrictionBuilder.excludeModifier(modifier);
-		}
-		for (final int modifier : eiEntity.getLocalRestriction().getModifierIncludes()) {
-			restrictionBuilder.includeModifier(modifier);
-		}
-
-		restrictionBuilder.restrictionDone();
-
-		csBuilder.entityDone();
-	}
-
-	private void buildAPIInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
+	private void buildAPIInstEntity(final InstrumentationEntity eiEntity, final Long scopeId,
 			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
 		final APIScope apiScope = (APIScope) iScope;
-		final InstrumentationEntityBuilder<APIScope> apisBuilder = idBuilder.newAPIScopeEntityWithId(scopeId,
+		final InstrumentationEntityBuilder apisBuilder = idBuilder.newAPIScopeEntityWithId(scopeId,
 				apiScope.getApiName());
 		apisBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
 		for (final String probe : eiEntity.getProbesAsStrings()) {
@@ -280,10 +244,10 @@ public final class TraceInstrumentor implements IInstrumentor {
 		csBuilder.entityDone();
 	}
 
-	private void buildMethodInstEntity(final InstrumentationEntity<TraceScope> eiEntity, final Long scopeId,
+	private void buildMethodInstEntity(final InstrumentationEntity eiEntity, final Long scopeId,
 			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
 		final MethodScope mScope = (MethodScope) iScope;
-		final InstrumentationEntityBuilder<MethodScope> msBuilder = idBuilder.newMethodScopeEntityWithId(scopeId,
+		final InstrumentationEntityBuilder msBuilder = idBuilder.newMethodScopeEntityWithId(scopeId,
 				mScope.getMethods());
 		msBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
 		for (final String probe : eiEntity.getProbesAsStrings()) {

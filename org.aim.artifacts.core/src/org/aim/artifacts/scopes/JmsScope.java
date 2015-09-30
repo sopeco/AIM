@@ -31,7 +31,7 @@ public class JmsScope extends AbstractInstAPIScope {
 	 * @param provider
 	 *            extension provider
 	 */
-	public JmsScope(IExtension<?> provider) {
+	public JmsScope(final IExtension provider) {
 		super(provider);
 	}
 

@@ -15,6 +15,10 @@
  */
 package org.aim.description.servlet;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -24,18 +28,25 @@ import org.glassfish.grizzly.http.server.Response;
 
 public class TestIDMServlet {
 
-	public void doService(Request req, Response resp) throws Exception {
+	public void doService(final Request req, final Response resp) throws Exception {
 		resp.setContentType("application/json");
 
-		ObjectMapper mapper = new ObjectMapper();
+		final byte[] b = new byte[req.getContentLength()];
+		final ObjectMapper mapper = new ObjectMapper();
 		try {
-			InstrumentationDescription description = mapper.readValue(req.getInputStream(),
+			req.getInputStream().read(b,0, req.getContentLength());
+			final BufferedReader reader = new BufferedReader(new InputStreamReader( new ByteArrayInputStream(b) ));
+			String s;
+			while ((s = reader.readLine()) != null) {
+				System.out.println(s);
+			}
+			final InstrumentationDescription description = mapper.readValue(b,
 					InstrumentationDescription.class);
 			mapper.writeValue(resp.getOutputStream(), description);
-		} catch (JsonParseException jpe) {
+		} catch (final JsonParseException jpe) {
 			jpe.printStackTrace();
 			throw new IllegalArgumentException("Incoming description is invalid!");
-		} catch (JsonMappingException jme) {
+		} catch (final JsonMappingException jme) {
 			jme.printStackTrace();
 			throw new IllegalArgumentException("Incoming description is invalid!");
 		}

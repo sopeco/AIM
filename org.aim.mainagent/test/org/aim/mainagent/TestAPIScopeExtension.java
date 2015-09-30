@@ -15,8 +15,8 @@
  */
 package org.aim.mainagent;
 
-import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 public class TestAPIScopeExtension extends AbstractInstApiScopeExtension {
 
@@ -25,10 +25,11 @@ public class TestAPIScopeExtension extends AbstractInstApiScopeExtension {
 		return TestAPIScope.class.getName();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractInstAPIScope createExtensionArtifact() {
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String ... patterns) {
 		// TODO Auto-generated method stub
-		return new TestAPIScope(this);
+		return (EA) new TestAPIScope(this);
 	}
 
 }

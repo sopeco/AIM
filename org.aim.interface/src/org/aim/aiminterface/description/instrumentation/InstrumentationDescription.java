@@ -19,13 +19,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.description.sampling.SamplingDescription;
-import org.aim.aiminterface.description.scope.Scope;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * This class is a wrapper class for instrumentation descriptions.
@@ -34,32 +32,24 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-@XmlRootElement
 public class InstrumentationDescription {
 
 	private final Set<InstrumentationEntity> instrumentationEntities;
-
-	private Restriction globalRestriction;
-
 	private final Set<SamplingDescription> samplingDescriptions;
+	private final Restriction globalRestriction;
 
 	/**
 	 * Constructor. Initializes all sets with empty sets.
 	 */
 	@JsonCreator
-	public InstrumentationDescription() {
-		this.instrumentationEntities = new HashSet<>();
-		this.samplingDescriptions = new HashSet<>();
-	}
-
-	/**
-	 * Adds a new instrumentation entity to the description.
-	 * 
-	 * @param entity
-	 *            instrumentation entity to be added
-	 */
-	public void addInstrumentationEntity(final InstrumentationEntity entity) {
-		instrumentationEntities.add(entity);
+	public InstrumentationDescription(
+			@JsonProperty("instrumentationEntities") final Set<InstrumentationEntity> instrumentationEntities, 
+			@JsonProperty("samplingDescriptions") final Set<SamplingDescription> samplingDescriptions, 
+			@JsonProperty("globalRestriction") final Restriction globalRestriction) {
+		super();
+		this.instrumentationEntities = new HashSet<>(instrumentationEntities);
+		this.samplingDescriptions = new HashSet<>(samplingDescriptions);
+		this.globalRestriction = globalRestriction;
 	}
 
 	/**
@@ -85,7 +75,7 @@ public class InstrumentationDescription {
 		final Set<InstrumentationEntity> sEntities = new HashSet<>();
 
 		for (final InstrumentationEntity ie : instrumentationEntities) {
-			if (type.isAssignableFrom(ie.getScope().getClass())) {
+			if (type.isAssignableFrom(ie.getScopeDescription().getClass())) {
 				sEntities.add(ie);
 			}
 		}
@@ -94,35 +84,12 @@ public class InstrumentationDescription {
 	}
 
 	/**
-	 * Sets the global restriction.
-	 * 
-	 * @param restriction
-	 *            global restriction to be set
-	 */
-	public void setGlobalRestriction(final Restriction restriction) {
-		this.globalRestriction = restriction;
-	}
-
-	/**
 	 * Return the global restriction.
 	 * 
 	 * @return the global restriction
 	 */
 	public Restriction getGlobalRestriction() {
-		if (globalRestriction == null) {
-			globalRestriction = new Restriction();
-		}
 		return globalRestriction;
-	}
-
-	/**
-	 * Adds a sampling description.
-	 * 
-	 * @param description
-	 *            sampling description to be added.
-	 */
-	public void addSamplingDescription(final SamplingDescription description) {
-		samplingDescriptions.add(description);
 	}
 
 	/**
@@ -143,9 +110,9 @@ public class InstrumentationDescription {
 	 * @return {@code true}, if there is an entity of the {@code scopeClass}
 	 *         type, of {@code false} otherwise
 	 */
-	public boolean containsScopeType(final Class<? extends Scope> scopeClass) {
+	public boolean containsScopeType(final Class<? /* extends Scope*/> scopeClass) {
 		for (final InstrumentationEntity entity : instrumentationEntities) {
-			if (scopeClass.isAssignableFrom(entity.getScope().getClass())) {
+			if (scopeClass.isAssignableFrom(entity.getScopeDescription().getClass())) {
 				return true;
 			}
 		}

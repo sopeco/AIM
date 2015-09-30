@@ -32,14 +32,14 @@ public class EntryPointScope extends AbstractInstAPIScope {
 	 * @param provider
 	 *            extension provider
 	 */
-	public EntryPointScope(IExtension<?> provider) {
+	public EntryPointScope(final IExtension provider) {
 		super(provider);
 	}
 
 	@Override
 	protected void init() {
 		final String httpServletClassName = "javax.servlet.http.HttpServlet";
-		for (String action : new String[]{"Delete","Get","Head","Options","Post","Put","Trace"}) {
+		for (final String action : new String[]{"Delete","Get","Head","Options","Post","Put","Trace"}) {
 			addMethod(httpServletClassName,
 					"do" + action + "(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)");			
 		}

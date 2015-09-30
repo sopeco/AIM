@@ -44,7 +44,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.aim</groupId>
-			<artifactId>org.aim.interface</artifactId>
+			<artifactId>org.aim.artifacts.core</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aim</groupId>
+			<artifactId>org.aim.api</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

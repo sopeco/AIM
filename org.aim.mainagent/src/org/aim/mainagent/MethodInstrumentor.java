@@ -25,9 +25,9 @@ import java.util.Set;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.api.instrumentation.MethodsEnclosingScope;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
 import org.aim.api.instrumentation.description.internal.InstrumentationSet;
-import org.aim.description.scopes.MethodsEnclosingScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.instrumentor.BCInjector;
@@ -45,36 +45,35 @@ public class MethodInstrumentor implements IInstrumentor {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(MethodInstrumentor.class);
 	private final Set<FlatInstrumentationEntity> currentInstrumentationState = new HashSet<>();
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void instrument(InstrumentationDescription descr) throws InstrumentationException {
+	public void instrument(final InstrumentationDescription descr) throws InstrumentationException {
 		if (!containsValidInstrumentationInstructions(descr)) {
 			return;
 		}
-		ScopeAnalysisController scopeAnalyzer = new ScopeAnalysisController(descr); // TODO:
+		final ScopeAnalysisController scopeAnalyzer = new ScopeAnalysisController(descr); // TODO:
 																					// usage
 																					// with
 																					// IDM
-		Class[] classes = JInstrumentation.getInstance().getjInstrumentation().getAllLoadedClasses();
+		final Class<?>[] classes = JInstrumentation.getInstance().getjInstrumentation().getAllLoadedClasses();
 
 		// copy all classes to a new list as the array is not allowed to be
 		// modified!
-		List<Class> allLoadedClasses = new ArrayList<>();
+		final List<Class<?>> allLoadedClasses = new ArrayList<>();
 		allLoadedClasses.addAll(Arrays.asList(classes));
 
-		Set<FlatInstrumentationEntity> newInstrumentationStatements = scopeAnalyzer.resolveScopes(allLoadedClasses);
-		Set<Class<?>> overLappingClasses = revertOverlappingInstrumentation(newInstrumentationStatements);
+		final Set<FlatInstrumentationEntity> newInstrumentationStatements = scopeAnalyzer.resolveScopes(allLoadedClasses);
+		final Set<Class<?>> overLappingClasses = revertOverlappingInstrumentation(newInstrumentationStatements);
 
-		for (FlatInstrumentationEntity oldEntity : getCurrentInstrumentationState()) {
+		for (final FlatInstrumentationEntity oldEntity : getCurrentInstrumentationState()) {
 			if (overLappingClasses.contains(oldEntity.getClazz())) {
 				newInstrumentationStatements.add(oldEntity);
 			}
 		}
 
-		InstrumentationSet newInstrumentationSet = new InstrumentationSet(newInstrumentationStatements);
+		final InstrumentationSet newInstrumentationSet = new InstrumentationSet(newInstrumentationStatements);
 
 		LOGGER.info("Going to instrument the following methods:");
-		for (FlatInstrumentationEntity fie : newInstrumentationStatements) {
+		for (final FlatInstrumentationEntity fie : newInstrumentationStatements) {
 			LOGGER.info("{}", fie.getMethodSignature());
 		}
 
@@ -84,31 +83,31 @@ public class MethodInstrumentor implements IInstrumentor {
 
 	}
 
-	private boolean containsValidInstrumentationInstructions(InstrumentationDescription descr) {
+	private boolean containsValidInstrumentationInstructions(final InstrumentationDescription descr) {
 		return descr.containsScopeType(MethodsEnclosingScope.class);
 
 	}
 
-	private void injectNewInstrumentation(InstrumentationSet newInstrumentationSet,
-			Restriction instrumentationRestriction) throws InstrumentationException {
-		Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().injectInstrumentationProbes(
+	private void injectNewInstrumentation(final InstrumentationSet newInstrumentationSet,
+			final Restriction instrumentationRestriction) throws InstrumentationException {
+		final Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().injectInstrumentationProbes(
 				newInstrumentationSet, instrumentationRestriction);
 		JAgentSwapper.getInstance().redefineClasses(classesToRevert);
 	}
 
-	private Set<Class<?>> revertOverlappingInstrumentation(Set<FlatInstrumentationEntity> newInstrumentationStatements)
+	private Set<Class<?>> revertOverlappingInstrumentation(final Set<FlatInstrumentationEntity> newInstrumentationStatements)
 			throws InstrumentationException {
-		Set<Class<?>> intersection = new InstrumentationSet(newInstrumentationStatements).classesToInstrument();
+		final Set<Class<?>> intersection = new InstrumentationSet(newInstrumentationStatements).classesToInstrument();
 
 		intersection.retainAll(new InstrumentationSet(getCurrentInstrumentationState()).classesToInstrument());
-		Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().partlyRevertInstrumentation(intersection);
+		final Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().partlyRevertInstrumentation(intersection);
 		JAgentSwapper.getInstance().redefineClasses(classesToRevert);
 		return intersection;
 	}
 
 	@Override
 	public void undoInstrumentation() throws InstrumentationException {
-		Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().revertInstrumentation();
+		final Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().revertInstrumentation();
 		JAgentSwapper.getInstance().redefineClasses(classesToRevert);
 		getCurrentInstrumentationState().clear();
 	}

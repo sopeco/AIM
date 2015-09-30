@@ -26,7 +26,7 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  *
  */
-public abstract class AbstractSamplerExtension implements IExtension<AbstractSampler> {
+public abstract class AbstractSamplerExtension implements IExtension {
 
 	@SuppressWarnings("unchecked")
 	@Override

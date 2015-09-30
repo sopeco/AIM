@@ -32,7 +32,7 @@ public class JDBCScope extends AbstractInstAPIScope {
 	 * @param provider
 	 *            extension provider
 	 */
-	public JDBCScope(IExtension<?> provider) {
+	public JDBCScope(final IExtension provider) {
 		super(provider);
 	}
 

@@ -15,16 +15,12 @@
  */
 package org.aim.aiminterface.entities.results;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Container for the information about supported extensions.
@@ -32,106 +28,47 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Alexander Wert
  * 
  */
-@XmlRootElement
-public class SupportedExtensions implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3482210215382858791L;
-	private List<String> samplerExtensions;
-	private List<String> apiScopeExtensions;
-	private Map<String, Set<String>> probeExtensionsMapping;
-	private List<String> customScopeExtensions;
+public class SupportedExtensions {
+
+	private final List<String> samplerExtensions;
+	private final List<String> apiScopeExtensions;
+	private final Map<String, Set<String>> probeExtensionsMapping;
+	private final List<String> customScopeExtensions;
+
+	public SupportedExtensions(final List<String> samplerExtensions, final List<String> apiScopeExtensions,
+			final Map<String, Set<String>> probeExtensionsMapping, final List<String> customScopeExtensions) {
+		super();
+		this.samplerExtensions = new ArrayList<>(samplerExtensions);
+		this.apiScopeExtensions = new ArrayList<>(apiScopeExtensions);
+		this.probeExtensionsMapping = new HashMap<>(probeExtensionsMapping);
+		this.customScopeExtensions = new ArrayList<>(customScopeExtensions);
+	}
 
 	/**
 	 * @return the samplerExtensions
 	 */
 	public List<String> getSamplerExtensions() {
-		if (samplerExtensions == null) {
-			samplerExtensions = new ArrayList<>();
-		}
-		return samplerExtensions;
-	}
-
-	/**
-	 * @param samplerExtensions
-	 *            the samplerExtensions to set
-	 */
-	public void setSamplerExtensions(final List<String> samplerExtensions) {
-		this.samplerExtensions = samplerExtensions;
+		return Collections.unmodifiableList(samplerExtensions);
 	}
 
 	/**
 	 * @return the apiScopeExtensions
 	 */
 	public List<String> getApiScopeExtensions() {
-		if (apiScopeExtensions == null) {
-			apiScopeExtensions = new ArrayList<>();
-		}
-		return apiScopeExtensions;
-	}
-
-	/**
-	 * @param apiScopeExtensions
-	 *            the apiScopeExtensions to set
-	 */
-	public void setApiScopeExtensions(final List<String> apiScopeExtensions) {
-		this.apiScopeExtensions = apiScopeExtensions;
-	}
-
-	/**
-	 * @return the enclosingProbeExtensions
-	 */
-	@JsonIgnore
-	public Set<String> getProbeExtensions() {
-		return getProbeExtensionsMapping().keySet();
-	}
-
-	/**
-	 * @param probeExtension
-	 *            the enclosingProbeExtension to add
-	 * @param supportedScopes
-	 *            scopes which are supported by this probe
-	 */
-	@JsonIgnore
-	public void addProbeExtension(final String probeExtension, final Set<String> supportedScopes) {
-		getProbeExtensionsMapping().put(probeExtension, supportedScopes);
+		return Collections.unmodifiableList(apiScopeExtensions);
 	}
 
 	/**
 	 * @return the customScopeExtensions
 	 */
 	public List<String> getCustomScopeExtensions() {
-		if (customScopeExtensions == null) {
-			customScopeExtensions = new ArrayList<>();
-		}
-		return customScopeExtensions;
-	}
-
-	/**
-	 * @param customScopeExtensions
-	 *            the customScopeExtensions to set
-	 */
-	public void setCustomScopeExtensions(final List<String> customScopeExtensions) {
-		this.customScopeExtensions = customScopeExtensions;
+		return Collections.unmodifiableList(customScopeExtensions);
 	}
 
 	/**
 	 * @return the probeExtensionsMapping
 	 */
 	public Map<String, Set<String>> getProbeExtensionsMapping() {
-		if (probeExtensionsMapping == null) {
-			probeExtensionsMapping = new HashMap<>();
-		}
-		return probeExtensionsMapping;
+		return Collections.unmodifiableMap(probeExtensionsMapping);
 	}
-
-	/**
-	 * @param probeExtensionsMapping
-	 *            the probeExtensionsMapping to set
-	 */
-	public void setProbeExtensionsMapping(final Map<String, Set<String>> probeExtensionsMapping) {
-		this.probeExtensionsMapping = probeExtensionsMapping;
-	}
-
 }

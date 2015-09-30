@@ -24,7 +24,7 @@ import org.aim.artifacts.records.ResponseTimeRecord;
 import org.lpe.common.extension.IExtension;
 
 public class DummyProbe2 extends AbstractEnclosingProbe {
-	public DummyProbe2(IExtension<?> provider) {
+	public DummyProbe2(final IExtension provider) {
 		super(provider);
 	}
 

@@ -20,7 +20,8 @@ import java.util.Set;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.api.instrumentation.MethodsEnclosingScope;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension Provider for the Thread Tracing probe.
@@ -31,19 +32,20 @@ import org.aim.description.scopes.MethodsEnclosingScope;
 public class ThreadTracingProbeExtension extends AbstractEnclosingProbeExtension {
 
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new ThreadTracingProbe(this);
-	}
-
-	@Override
 	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
 		return ThreadTracingProbe.class;
 	}
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+		final Set<Class<?>> supportedScopes = new HashSet<>();
 		supportedScopes.add(MethodsEnclosingScope.class);
 		return supportedScopes;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new ThreadTracingProbe(this);
 	}
 }

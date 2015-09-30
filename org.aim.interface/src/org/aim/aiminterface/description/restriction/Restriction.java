@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.lpe.common.util.LpeStringUtils;
 
 /**
@@ -30,36 +31,32 @@ import org.lpe.common.util.LpeStringUtils;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-public class Restriction {
+public final class Restriction {
 
+	public static final Restriction EMPTY_RESTRICTION = new Restriction(
+			Collections.<String> emptySet(), Collections.<String> emptySet(), Collections.<Integer> emptySet(), Collections.<Integer> emptySet(), 1.0d);
+	
 	private final Set<String> packageIncludes;
 	private final Set<String> packageExcludes;
 
 	private final Set<Integer> modifierIncludes;
 	private final Set<Integer> modifierExcludes;
 
-	private double granularity = 1.0;
+	private final double granularity;
 
-	/**
-	 * Constructor. Sets all sets to empty ones.
-	 */
 	@JsonCreator
-	public Restriction() {
+	public Restriction(
+			@JsonProperty("packageIncludes") final Set<String> packageIncludes, 
+			@JsonProperty("packageExcludes") final Set<String> packageExcludes, 
+			@JsonProperty("modifierIncludes") final Set<Integer> modifierIncludes,
+			@JsonProperty("modifierExcludes") final Set<Integer> modifierExcludes, 
+			@JsonProperty("granularity") final double granularity) {
 		super();
-		this.packageIncludes = new HashSet<>();
-		this.packageExcludes = new HashSet<>();
-		this.modifierExcludes = new HashSet<>();
-		this.modifierIncludes = new HashSet<>();
-	}
-
-	/**
-	 * Includes the given package.
-	 * 
-	 * @param packageName
-	 *            package to be included
-	 */
-	public void addPackageInclude(final String packageName) {
-		packageIncludes.add(packageName);
+		this.packageIncludes = new HashSet<>(packageIncludes);
+		this.packageExcludes = new HashSet<String>(packageExcludes);
+		this.modifierIncludes = new HashSet<Integer>(modifierIncludes);
+		this.modifierExcludes = new HashSet<Integer>(modifierExcludes);
+		this.granularity = granularity;
 	}
 
 	/**
@@ -70,30 +67,10 @@ public class Restriction {
 	}
 
 	/**
-	 * Excludes the given package.
-	 * 
-	 * @param packageName
-	 *            package to be excluded
-	 */
-	public void addPackageExclude(final String packageName) {
-		packageExcludes.add(packageName);
-	}
-
-	/**
 	 * @return the packageExcludes
 	 */
 	public Set<String> getPackageExcludes() {
 		return Collections.unmodifiableSet(packageExcludes);
-	}
-
-	/**
-	 * Includes all methods having the given modifier.
-	 * 
-	 * @param modifier
-	 *            modifier of the methods to be included
-	 */
-	public void addModifierInclude(final int modifier) {
-		modifierIncludes.add(modifier);
 	}
 
 	/**
@@ -104,34 +81,10 @@ public class Restriction {
 	}
 
 	/**
-	 * Excludes all methods having the given modifier.
-	 * 
-	 * @param modifier
-	 *            modifier of the methods to be excluded
-	 */
-	public void addModifierExclude(final int modifier) {
-		modifierExcludes.add(modifier);
-	}
-
-	/**
 	 * @return the modifierExcludes
 	 */
 	public Set<Integer> getModifierExcludes() {
 		return Collections.unmodifiableSet(modifierExcludes);
-	}
-
-	/**
-	 * Sets the granularity. Note is has to be between 0 to 1.
-	 * 
-	 * @param granularity
-	 *            granularity to be set
-	 */
-	public void setGranularity(final double granularity) {
-		if (granularity > 1 || granularity < 0) {
-			throw new IllegalArgumentException("The granularity has to be between 0 to 1!");
-		}
-
-		this.granularity = granularity;
 	}
 
 	/**
@@ -250,18 +203,16 @@ public class Restriction {
 	 * @return merge of this restriction and {@code other}
 	 */
 	public Restriction mergeWith(final Restriction other) {
-		final Restriction result = new Restriction();
-		result.getModifierExcludes().addAll(this.getModifierExcludes());
-		result.getModifierExcludes().addAll(other.getModifierExcludes());
-		result.getModifierIncludes().addAll(this.getModifierIncludes());
-		result.getModifierIncludes().addAll(other.getModifierIncludes());
-		result.getPackageExcludes().addAll(this.getPackageExcludes());
-		result.getPackageExcludes().addAll(other.getPackageExcludes());
-		result.getPackageIncludes().addAll(this.getPackageIncludes());
-		result.getPackageIncludes().addAll(other.getPackageIncludes());
-		result.setGranularity(this.getGranularity());
+		final Set<String> packageIncludes = new HashSet<String>(this.packageIncludes);
+		packageIncludes.addAll(other.packageIncludes);
+		final Set<String> packageExcludes = new HashSet<String>(this.packageExcludes);
+		packageIncludes.addAll(other.packageExcludes);
+		final Set<Integer> modifierIncludes = new HashSet<Integer>(this.modifierIncludes);
+		modifierIncludes.addAll(other.modifierIncludes);
+		final Set<Integer> modifierExcludes = new HashSet<Integer>(this.modifierExcludes);
+		modifierExcludes.addAll(other.modifierExcludes);
 
-		return result;
+		return new Restriction(packageIncludes, packageExcludes, modifierIncludes, modifierExcludes, this.granularity);
 	}
 
 	@Override

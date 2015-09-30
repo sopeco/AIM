@@ -15,7 +15,6 @@
  */
 package org.aim.api.instrumentation;
 
-import org.aim.description.scopes.MethodsEnclosingScope;
 import org.lpe.common.extension.IExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 
@@ -30,7 +29,7 @@ public abstract class AbstractCustomScope extends MethodsEnclosingScope implemen
 	/**
 	 * Extension provider.
 	 */
-	private final IExtension<?> provider;
+	private final IExtension provider;
 
 	/**
 	 * Constructor.
@@ -38,8 +37,8 @@ public abstract class AbstractCustomScope extends MethodsEnclosingScope implemen
 	 * @param provider
 	 *            extension provider
 	 */
-	public AbstractCustomScope(final IExtension<?> provider) {
-		super(0);
+	public AbstractCustomScope(final IExtension provider) {
+		super(provider,0);
 		this.provider = provider;
 	}
 
@@ -47,7 +46,7 @@ public abstract class AbstractCustomScope extends MethodsEnclosingScope implemen
 	 * @return returns the provider of this extension.
 	 */
 	@Override
-	public IExtension<?> getProvider() {
+	public IExtension getProvider() {
 		return this.provider;
 	}
 

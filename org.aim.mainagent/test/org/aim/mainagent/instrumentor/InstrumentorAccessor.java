@@ -18,18 +18,18 @@ package org.aim.mainagent.instrumentor;
 import java.util.Collections;
 import java.util.Set;
 
-import javassist.CannotCompileException;
-import javassist.CtClass;
-import javassist.NotFoundException;
-
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.NotFoundException;
+
 public class InstrumentorAccessor {
-	public static void instrumentBehaviour(Set<Class<? extends AbstractEnclosingProbe>> probeTypes, CtClass ctClass,
-			String behaviourSignature) throws InstrumentationException, CannotCompileException, NotFoundException {
-		BCInjector.getInstance().instrumentBehaviour(probeTypes, ctClass, behaviourSignature, Collections.EMPTY_SET,
-				new Restriction());
+	public static void instrumentBehaviour(final Set<Class<? extends AbstractEnclosingProbe>> probeTypes, final CtClass ctClass,
+			final String behaviourSignature) throws InstrumentationException, CannotCompileException, NotFoundException {
+		BCInjector.getInstance().instrumentBehaviour(probeTypes, ctClass, behaviourSignature, Collections.<Long> emptySet(),
+				Restriction.EMPTY_RESTRICTION);
 	}
 }

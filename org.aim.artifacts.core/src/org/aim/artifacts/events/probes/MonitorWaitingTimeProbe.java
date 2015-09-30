@@ -15,13 +15,12 @@
  */
 package org.aim.artifacts.events.probes;
 
-import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.events.AbstractEventProbe;
 import org.aim.api.events.IMonitorEventProbe;
 import org.aim.api.instrumentation.GenericProbe;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.artifacts.records.EventTimeStampRecord;
-import org.aim.description.extension.CommonlyUsedScopeTypes;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -46,12 +45,12 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 	 * @param provider
 	 *            extension provider.
 	 */
-	public MonitorWaitingTimeProbe(final IExtension<?> provider) {
+	public MonitorWaitingTimeProbe(final IExtension provider) {
 		super(provider);
 	}
 
-	public static final MeasurementProbe MODEL_PROBE 
-		= new MeasurementProbe(MonitorWaitingTimeProbe.class.getName(),CommonlyUsedScopeTypes.SYNCHRONIZED_SCOPE_TYPE);
+	public static final MeasurementProbeDescription MODEL_PROBE 
+		= new MeasurementProbeDescription(MonitorWaitingTimeProbe.class.getName());
 
 	private Object monitor;
 	private long eventTimeStamp;

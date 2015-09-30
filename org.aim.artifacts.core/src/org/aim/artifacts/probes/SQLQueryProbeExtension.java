@@ -21,6 +21,7 @@ import java.util.Set;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.artifacts.scopes.JDBCScope;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension Provider for the SQL Query probe.
@@ -30,9 +31,10 @@ import org.aim.artifacts.scopes.JDBCScope;
  */
 public class SQLQueryProbeExtension extends AbstractEnclosingProbeExtension {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new SQLQueryProbe(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new SQLQueryProbe(this);
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class SQLQueryProbeExtension extends AbstractEnclosingProbeExtension {
 
 	@Override
 	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+		final Set<Class<?>> supportedScopes = new HashSet<>();
 		supportedScopes.add(JDBCScope.class);
 		return supportedScopes;
 	}

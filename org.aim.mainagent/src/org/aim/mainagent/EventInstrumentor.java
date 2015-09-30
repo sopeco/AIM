@@ -17,11 +17,11 @@ package org.aim.mainagent;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
-import org.aim.aiminterface.description.measurementprobe.MeasurementProbe;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.events.AbstractEventProbe;
 import org.aim.api.events.IMonitorEventProbe;
-import org.aim.description.scopes.SynchronizedScope;
+import org.aim.artifacts.scopes.SynchronizedScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.EventProbeRegistry;
@@ -57,30 +57,29 @@ public final class EventInstrumentor implements IInstrumentor {
 	private EventInstrumentor() {
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void instrument(InstrumentationDescription descr) throws InstrumentationException {
+	public void instrument(final InstrumentationDescription descr) throws InstrumentationException {
 		if (!CEventAgentAdapter.isInitialized()) {
 			return;
 		}
 
 		boolean activated = false;
 
-		for (InstrumentationEntity<SynchronizedScope> entitiy : descr
+		for (final InstrumentationEntity entitiy : descr
 				.getInstrumentationEntities(SynchronizedScope.class)) {
 			CEventAgentAdapter.setMonitorListener(MonitorEventListener.getInstance());
-			for (MeasurementProbe<? super SynchronizedScope> mProbe : entitiy.getProbes()) {
+			for (final MeasurementProbeDescription mProbe : entitiy.getProbeDescriptions()) {
 				LOGGER.info("Enabling event listening with SynchronizedBlocksWaitingTimeProbe");
 				LOGGER.warn("Choosing the event listening description from the instrumentation description is not implemented yet.");
 
-				IExtension<?> ext = ExtensionRegistry.getSingleton().getExtension(mProbe.getName());
+				final IExtension ext = ExtensionRegistry.getSingleton().getExtension(mProbe.getName());
 				if (ext == null) {
 					throw new InstrumentationException("Failed loading Probe class " + mProbe.getName());
 				}
-				IExtension<AbstractEventProbe> probeExtension = (IExtension<AbstractEventProbe>) ext;
-				AbstractEventProbe eventProbe = probeExtension.createExtensionArtifact();
+				final IExtension probeExtension = ext;
+				final AbstractEventProbe eventProbe = probeExtension.createExtensionArtifact();
 				if (eventProbe instanceof IMonitorEventProbe) {
-					IMonitorEventProbe monitorProbe = (IMonitorEventProbe) eventProbe;
+					final IMonitorEventProbe monitorProbe = (IMonitorEventProbe) eventProbe;
 					EventProbeRegistry.getInstance().addProbe(MonitorEventListener.class, monitorProbe.getClass());
 					CEventAgentAdapter.setMonitorGranularity(entitiy.getLocalRestriction().getGranularity());
 					activated = true;

@@ -18,7 +18,6 @@ package org.aim.description;
 import static org.aim.description.extension.CommonlyUsedAPIs.DATABASE_API;
 import static org.aim.description.extension.CommonlyUsedProbes.MEMORY_FOOTPRINT_PROBE;
 import static org.aim.description.extension.CommonlyUsedProbes.RESPONSE_TIME_PROBE;
-import static org.aim.description.extension.CommonlyUsedProbes.TRACING_PROBE;
 import static org.aim.description.extension.CommonlyUsedResources.CPU;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,48 +42,40 @@ public class IDBTest {
 		
 		idBuilder.newAllocationScopeEntity("my.package.*").addProbe(MEMORY_FOOTPRINT_PROBE).entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString().contains("Instrumentation Entities:\n\t\t* Allocation Scope [my.package.*]: MemoryFootprintProbe"));
+		assertTrue(id.toString().contains("Instrumentation Entities:\n\t\t* AllocationScope [my.package.*]: MemoryFootprintProbe"));
 		
 		idBuilder.newAPIScopeEntity(DATABASE_API).addProbe("MyProbe").entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Database API Scope: MyProbe"));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* APIScope [Database API]: MyProbe"));
 		
 		idBuilder.newConstructorScopeEntity("my.*", "your.*").addProbe(RESPONSE_TIME_PROBE).entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Constructor Scope [my.*, your.*]: ResponseTimeProbe"));
-		
-		idBuilder.newCustomScopeEntity("My Scope").addProbe(TRACING_PROBE).entityDone();
-		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* My Scope: TracingProbe"));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* ConstructorScope [my.*, your.*]: ResponseTimeProbe"));
 		
 		idBuilder.newMemoryScopeEntity().addProbe("MyProbe").entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Memory Scope: MyProbe"));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* MemoryScope: MyProbe"));
 		
 		idBuilder.newMethodScopeEntity("my.package.*").entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Method Scope [my.package.*]: "));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* MethodScope [my.package.*]: "));
 		
 		idBuilder.newSynchronizedScopeEntity().newLocalRestriction().excludeModifier(Modifier.PRIVATE).restrictionDone().addProbe("MyProbe").entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Synchronized Scope (-\"private\" methods): MyProbe"));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* SynchronizedScope (-\"private\" methods): MyProbe"));
 		
-		idBuilder.newTraceScopeEntity().setMethodSubScope("my.package.*").newLocalRestriction().includePackage("my.package").restrictionDone().entityDone();
+		idBuilder.newMethodScopeEntity("my.package.*").enableTrace().newLocalRestriction().includePackage("my.package").restrictionDone().entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Trace Scope [Method Scope [my.package.*]] (+my.package): "));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* TraceScope [MethodScope [my.package.*]] (+my.package): "));
 		
-		idBuilder.newTraceScopeEntity().setAPISubScope("My API").newLocalRestriction().includeModifier(Modifier.PUBLIC).restrictionDone().entityDone();
+		idBuilder.newAPIScopeEntity("My API").enableTrace().newLocalRestriction().includeModifier(Modifier.PUBLIC).restrictionDone().entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Trace Scope [My API Scope] (+\"public\" methods): "));
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* TraceScope [APIScope [My API]] (+\"public\" methods): "));
 		
-		idBuilder.newTraceScopeEntity().setConstructorSubScope("my.classes.*").entityDone();
+		idBuilder.newConstructorScopeEntity("my.classes.*").enableTrace().entityDone();
 		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Trace Scope [Constructor Scope [my.classes.*]]: "));
-		
-		idBuilder.newTraceScopeEntity().setCustomSubScope("MyScope").entityDone();
-		id = idBuilder.build();
-		assertTrue(id.toString(), id.toString().contains("\n\t\t* Trace Scope [MyScope]: "));
-		
+		assertTrue(id.toString(), id.toString().contains("\n\t\t* TraceScope [ConstructorScope [my.classes.*]]: "));
+				
 		idBuilder.newGlobalRestriction().excludePackage("my.package").restrictionDone();
 		id = idBuilder.build();
 		assertTrue(id.toString(), id.toString().contains("\tGlobal Restriction:\n\t\t- my.package"));

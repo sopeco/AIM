@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for incremental meta-probe.
@@ -28,9 +29,10 @@ import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
  */
 public class IncrementalProbeExtension extends AbstractEnclosingProbeExtension {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new IncrementalInstrumentationProbe(this);
+	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
+		return (EA) new IncrementalInstrumentationProbe(this);
 	}
 
 	@Override
