@@ -65,9 +65,8 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 		for (final String containerName : apiScope.getMethodsToMatch().keySet()) {
 			try {
 				final List<Class<?>> classList = JInstrumentation.getInstance().getClassesByName(containerName);
-				if (classList.size() != 1) {
-					throw new InstrumentationException("Multiple classes found with name "+containerName);
-				}
+				// TODO: This assumes that multiple loaded classes are of the same version and hence, we can take any one 
+				// as representative
 				final Class<?> containerClass = classList.get(0);
 				final List<MethodSignature> signatures = new ArrayList<>();
 				for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
