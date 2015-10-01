@@ -17,6 +17,7 @@ import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.Parameter;
 import org.aim.api.measurement.utils.RecordCSVWriter;
+import org.aim.artifacts.instrumentation.JMXAdaptiveInstrumentationClient;
 import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
@@ -104,10 +105,24 @@ public final class ClientManager {
 			LOGGER.debug("Connecting to {}:{}", host, port);
 
 			if (!JsonAdaptiveInstrumentationClient.testConnection(host, port)) {
-				MainView.instance().addLogMessage("Can't establish connection to " + host + ":" + port + "");
+				MainView.instance().addLogMessage("Can't establish Json connection to " + host + ":" + port + "");
 				LOGGER.debug("Can't establish connection to {}:{}", host, port);
 
 				MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
+				if (!JMXAdaptiveInstrumentationClient.testConnection(host, port)) {
+					MainView.instance().addLogMessage("Can't establish JMX connection to " + host + ":" + port + "");
+					LOGGER.debug("Can't establish connection to {}:{}", host, port);
+
+					MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
+				} else {
+					MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
+					LOGGER.debug("Client connected to {}:{}", host, port);
+					client = new JMXAdaptiveInstrumentationClient(host, port);
+
+					MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTED);
+
+					connected();				
+				}
 			} else {
 				MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
 				LOGGER.debug("Client connected to {}:{}", host, port);

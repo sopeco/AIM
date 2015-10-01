@@ -91,9 +91,9 @@ public final class OverheadEstimator {
 		final OverheadRecord record = new OverheadRecord();
 		final OverheadData data = new OverheadData();
 		data.setoRecords(records);
-		record.setOverallNanoTimeSpan((long) data.getMeanOverall());
-		record.setBeforeNanoTimeSpan((long) data.getMeanBefore());
-		record.setAfterNanoTimeSpan((long) data.getMeanAfter());
+		record.setOverallNanoTimeSpan((long) data.computeMeanOverall());
+		record.setBeforeNanoTimeSpan((long) data.computeMeanBefore());
+		record.setAfterNanoTimeSpan((long) data.computeMeanAfter());
 		return record;
 	}
 

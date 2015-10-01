@@ -17,10 +17,6 @@ package org.aim.aiminterface.entities.results;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -29,8 +25,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Alexander Wert
  * 
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class OverheadData {
 	private List<OverheadRecord> oRecords;
 
@@ -45,7 +39,7 @@ public class OverheadData {
 	 * @param oRecords
 	 *            the oRecords to set
 	 */
-	public void setoRecords(List<OverheadRecord> oRecords) {
+	public void setoRecords(final List<OverheadRecord> oRecords) {
 		this.oRecords = oRecords;
 	}
 
@@ -54,10 +48,9 @@ public class OverheadData {
 	 * 
 	 * @return mean overhead of the before part
 	 */
-	@JsonIgnore
-	public double getMeanBefore() {
+	public double computeMeanBefore() {
 		double mean = 0.0;
-		for (OverheadRecord rec : oRecords) {
+		for (final OverheadRecord rec : oRecords) {
 			mean += ((double) rec.getBeforeNanoTimeSpan()) / ((double) oRecords.size());
 		}
 		return mean;
@@ -68,10 +61,9 @@ public class OverheadData {
 	 * 
 	 * @return mean overhead of the after part
 	 */
-	@JsonIgnore
-	public double getMeanAfter() {
+	public double computeMeanAfter() {
 		double mean = 0.0;
-		for (OverheadRecord rec : oRecords) {
+		for (final OverheadRecord rec : oRecords) {
 			mean += ((double) rec.getAfterNanoTimeSpan()) / ((double) oRecords.size());
 		}
 		return mean;
@@ -83,9 +75,9 @@ public class OverheadData {
 	 * @return mean overhead
 	 */
 	@JsonIgnore
-	public double getMeanOverall() {
+	public double computeMeanOverall() {
 		double mean = 0.0;
-		for (OverheadRecord rec : oRecords) {
+		for (final OverheadRecord rec : oRecords) {
 			mean += ((double) rec.getOverallNanoTimeSpan()) / ((double) oRecords.size());
 		}
 		return mean;
@@ -94,7 +86,7 @@ public class OverheadData {
 	@Override
 	public String toString() {
 		String s = "";
-		for (OverheadRecord rec : oRecords) {
+		for (final OverheadRecord rec : oRecords) {
 			s += rec.toString() + "\n";
 		}
 		return s;
