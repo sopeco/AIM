@@ -4,7 +4,7 @@ import static org.lpe.common.util.web.LpeWebUtils.addServlet;
 
 import java.io.IOException;
 
-import org.aim.artifacts.instrumentation.InstrumentationClient;
+import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.service.CurrentTimeServlet;
@@ -30,10 +30,10 @@ public class Main {
 		return logger;
 	}
 
-	public static final String PATH_PREFIX = InstrumentationClient.PATH_PREFIX;
+	public static final String PATH_PREFIX = JsonAdaptiveInstrumentationClient.PATH_PREFIX;
 	private static String port = "8888";
-	public static final String URL_PATH_INSTRUMENTATION = InstrumentationClient.URL_PATH_INSTRUMENTATION;
-	public static final String URL_PATH_MEASUREMENT = InstrumentationClient.URL_PATH_MEASUREMENT;
+	public static final String URL_PATH_INSTRUMENTATION = JsonAdaptiveInstrumentationClient.URL_PATH_INSTRUMENTATION;
+	public static final String URL_PATH_MEASUREMENT = JsonAdaptiveInstrumentationClient.URL_PATH_MEASUREMENT;
 
 
 	public static void main(final String[] args) throws InterruptedException {

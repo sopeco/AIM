@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aim.aiminterface.IAdaptiveInstrumentation;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.Parameter;
 import org.aim.api.measurement.utils.RecordCSVWriter;
-import org.aim.artifacts.instrumentation.InstrumentationClient;
+import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;
@@ -50,7 +51,7 @@ public final class ClientManager {
 		return instance;
 	}
 
-	private InstrumentationClient client;
+	private IAdaptiveInstrumentation client;
 	private final Collection<ConnectionStateListener> csListener;
 
 	private ClientManager() {
@@ -102,7 +103,7 @@ public final class ClientManager {
 		} else {
 			LOGGER.debug("Connecting to {}:{}", host, port);
 
-			if (!InstrumentationClient.testConnection(host, port)) {
+			if (!JsonAdaptiveInstrumentationClient.testConnection(host, port)) {
 				MainView.instance().addLogMessage("Can't establish connection to " + host + ":" + port + "");
 				LOGGER.debug("Can't establish connection to {}:{}", host, port);
 
@@ -110,7 +111,7 @@ public final class ClientManager {
 			} else {
 				MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
 				LOGGER.debug("Client connected to {}:{}", host, port);
-				client = new InstrumentationClient(host, port);
+				client = new JsonAdaptiveInstrumentationClient(host, port);
 
 				MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTED);
 

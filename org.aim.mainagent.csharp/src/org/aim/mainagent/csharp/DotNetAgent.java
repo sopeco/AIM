@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
-import org.aim.artifacts.instrumentation.InstrumentationClient;
+import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
@@ -58,9 +58,9 @@ public final class DotNetAgent {
 	private static final String LOGGING_LEVEL_KEY = "logLevel";
 	private static final String DEFAULT_PLUGINS_FOLDER = "plugins";
 
-	public static final String URL_PATH_INSTRUMENTATION = InstrumentationClient.URL_PATH_INSTRUMENTATION;
-	public static final String URL_PATH_MEASUREMENT = InstrumentationClient.URL_PATH_MEASUREMENT;
-	public static final String PATH_PREFIX = InstrumentationClient.PATH_PREFIX;
+	public static final String URL_PATH_INSTRUMENTATION = JsonAdaptiveInstrumentationClient.URL_PATH_INSTRUMENTATION;
+	public static final String URL_PATH_MEASUREMENT = JsonAdaptiveInstrumentationClient.URL_PATH_MEASUREMENT;
+	public static final String PATH_PREFIX = JsonAdaptiveInstrumentationClient.PATH_PREFIX;
 
 	private static String pluginsRoot;
 	private static String collectorType = MemoryDataSource.class.getName();

@@ -1,5 +1,7 @@
 package org.aim.aiminterface;
 
+import java.io.OutputStream;
+
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
@@ -44,6 +46,7 @@ public interface IAdaptiveInstrumentation {
 	 * instrumentation description.
 	 * 
 	 * @return an object wrapping all supported extensions
+	 * @throws InstrumentationException 
 	 */
 	SupportedExtensions getSupportedExtensions();
 
@@ -98,5 +101,7 @@ public interface IAdaptiveInstrumentation {
 	 * @return true if connecting to service possible
 	 */
 	boolean testConnection();
+
+	void pipeToOutputStream(OutputStream oStream) throws MeasurementException;
 
 }

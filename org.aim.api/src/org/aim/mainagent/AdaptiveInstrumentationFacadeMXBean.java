@@ -2,6 +2,7 @@ package org.aim.mainagent;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
+import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
@@ -43,7 +44,7 @@ public interface AdaptiveInstrumentationFacadeMXBean {
 	 * @throws InstrumentationException
 	 *             thrown if extensions cannot be retrieved
 	 */
-	SupportedExtensions getSupportedExtensions() throws InstrumentationException;
+	SupportedExtensions getSupportedExtensions();
 	
 	/**
 	 * Enables monitoring or measurement data collection.
@@ -68,4 +69,8 @@ public interface AdaptiveInstrumentationFacadeMXBean {
 	 *             thrown if data cannot be retrieved
 	 */
 	byte[] getMeasurementData() throws MeasurementException;
+
+	long getCurrentTime();
+
+	OverheadData measureProbeOverhead(String probeClassName);
 }

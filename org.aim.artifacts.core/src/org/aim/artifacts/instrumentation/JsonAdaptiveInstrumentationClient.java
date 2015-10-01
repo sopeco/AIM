@@ -40,7 +40,7 @@ import com.sun.jersey.api.client.WebResource;
  * @author Alexander Wert
  * 
  */
-public class InstrumentationClient implements IAdaptiveInstrumentation {
+public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentation {
 	public static final String URL_PATH_INSTRUMENTATION = "instrumentation";
 	public static final String URL_PATH_MEASUREMENT = "measurement";
 	public static final String PATH_PREFIX = "agent";
@@ -82,7 +82,7 @@ public class InstrumentationClient implements IAdaptiveInstrumentation {
 	 * @param port
 	 *            port where to reach service
 	 */
-	public InstrumentationClient(final String host, final String port) {
+	public JsonAdaptiveInstrumentationClient(final String host, final String port) {
 		this.host = host;
 		this.port = port;
 		this.baseUrl = "http://" + host + ":" + port;

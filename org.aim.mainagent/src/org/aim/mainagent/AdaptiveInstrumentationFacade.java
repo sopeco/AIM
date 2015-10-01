@@ -26,6 +26,7 @@ import java.util.Set;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.InstrumentationEntity;
+import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
@@ -150,7 +151,7 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	 * @see org.aim.mainagent.IAdaptiveInstrumentation#getSupportedExtensions()
 	 */
 	@Override
-	public synchronized SupportedExtensions getSupportedExtensions() throws InstrumentationException {
+	public synchronized SupportedExtensions getSupportedExtensions()  {
 		if (extensions != null) {
 			return extensions;
 		}
@@ -230,6 +231,23 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		AbstractDataSource.getDefaultDataSource().pipeToOutputStream(outputStream);
 		return outputStream.toByteArray();
+	}
+
+	@Override
+	public long getCurrentTime() {
+		return System.currentTimeMillis();
+	}
+
+	@Override
+	public OverheadData measureProbeOverhead(final String probeClassName) {
+		final OverheadData oData = new OverheadData();
+
+		// TODO 
+		// FIXME
+		//List<OverheadRecord> records = OverheadEstimator.measureOverhead(probeClassName);
+		//oData.setoRecords(records);
+
+		return oData;
 	}
 
 }
