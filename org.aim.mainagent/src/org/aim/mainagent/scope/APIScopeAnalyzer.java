@@ -65,16 +65,20 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 		for (final String containerName : apiScope.getMethodsToMatch().keySet()) {
 			try {
 				final List<Class<?>> classList = JInstrumentation.getInstance().getClassesByName(containerName);
-				// TODO: This assumes that multiple loaded classes are of the same version and hence, we can take any one 
+				// TODO: This assumes that multiple loaded classes are of the
+				// same version and hence, we can take any one
 				// as representative
-				final Class<?> containerClass = classList.get(0);
-				final List<MethodSignature> signatures = new ArrayList<>();
-				for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
-					final String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
-					final Class<?>[] paramTypes = Utils.getParameterTypes(apiMethod,containerClass.getClassLoader());
-					signatures.add(new MethodSignature(methodName, paramTypes));
+				if (!classList.isEmpty()) {
+					final Class<?> containerClass = classList.get(0);
+					final List<MethodSignature> signatures = new ArrayList<>();
+					for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
+						final String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
+						final Class<?>[] paramTypes = Utils.getParameterTypes(apiMethod,
+								containerClass.getClassLoader());
+						signatures.add(new MethodSignature(methodName, paramTypes));
+					}
+					methodsToMatch.put(containerClass, signatures);
 				}
-				methodsToMatch.put(containerClass, signatures);
 			} catch (final ClassNotFoundException e) {
 				throw new InstrumentationException("Failed determining scope " + apiScope.getClass().getName(), e);
 			}
@@ -100,8 +104,7 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 			try {
 				if (clazz.getName().equals(annotationName)) {
 					@SuppressWarnings("unchecked")
-					final
-					Class<Annotation> annotationClass = (Class<Annotation>) clazz;
+					final Class<Annotation> annotationClass = (Class<Annotation>) clazz;
 					return annotationClass;
 				}
 			} catch (final Throwable t) {
