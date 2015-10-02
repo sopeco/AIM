@@ -9,13 +9,13 @@ import java.util.Properties;
 
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
-import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.logging.AIMLoggingConfig;
 import org.aim.logging.LoggingLevel;
 import org.aim.mainagent.CEventAgentAdapter;
+import org.aim.mainagent.JsonAdaptiveInstrumentationClient;
 import org.aim.mainagent.csharp.services.CsInstrumentServlet;
 import org.aim.mainagent.csharp.services.CsServiceHandler;
 import org.aim.mainagent.csharp.services.CsUninstrumentServlet;

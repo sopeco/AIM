@@ -87,8 +87,9 @@ public interface IAdaptiveInstrumentation {
 	 * @param probeType
 	 *            type of the probe
 	 * @return overhead information.
+	 * @throws InstrumentationException 
 	 */
-	OverheadData measureProbeOverhead(String probeType);
+	OverheadData measureProbeOverhead(String probeType) throws InstrumentationException;
 
 	/**
 	 * 

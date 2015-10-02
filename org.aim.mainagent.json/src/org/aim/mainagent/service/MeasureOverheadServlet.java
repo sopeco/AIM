@@ -23,12 +23,12 @@ import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.OverheadRecord;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.lpe.common.util.web.Service;
-import org.overhead.OverheadEstimator;
 
 /**
  * Measures probe overhead for given probe.
@@ -40,22 +40,22 @@ public class MeasureOverheadServlet implements Service {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
 
 	@Override
-	public void doService(Request req, Response resp) throws Exception {
+	public void doService(final Request req, final Response resp) throws Exception {
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
 		String json = "";
 		if (br != null) {
 			json = br.readLine();
 		}
 
-		JsonFactory factory = new JsonFactory();
-		ObjectMapper mapper = new ObjectMapper(factory);
+		final JsonFactory factory = new JsonFactory();
+		final ObjectMapper mapper = new ObjectMapper(factory);
 
-		String probeClassName = json;
+		final String probeClassName = json;
 		LOGGER.info("Requested overhead measurement for probe {}", probeClassName);
-		OverheadData oData = new OverheadData();
+		final OverheadData oData = new OverheadData();
 
-		List<OverheadRecord> records = OverheadEstimator.measureOverhead(probeClassName);
+		final List<OverheadRecord> records = AdaptiveFacadeProvider.getAdaptiveInstrumentation().measureProbeOverhead(probeClassName).getoRecords();
 		oData.setoRecords(records);
 		resp.setContentType("application/json");
 		mapper.writeValue(resp.getOutputStream(), oData);

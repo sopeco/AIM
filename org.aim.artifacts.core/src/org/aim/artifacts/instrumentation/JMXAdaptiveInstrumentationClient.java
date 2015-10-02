@@ -149,7 +149,7 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 	 */
 	@Override
 	public OverheadData measureProbeOverhead(
-			final String probeClassName) {
+			final String probeClassName) throws InstrumentationException {
 		return bean.measureProbeOverhead(probeClassName);
 	}
 

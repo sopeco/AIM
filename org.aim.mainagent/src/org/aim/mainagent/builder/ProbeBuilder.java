@@ -20,8 +20,8 @@ import java.util.Set;
 
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.lpe.common.util.LpeNumericUtils;
 import org.lpe.common.util.LpeSupportedTypes;
+import org.lpe.common.utils.numeric.LpeNumericUtils;
 
 /**
  * Builder for creating a combined probe snippet.

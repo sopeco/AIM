@@ -33,7 +33,7 @@ import org.glassfish.grizzly.http.server.Response;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.lpe.common.util.LpeHTTPUtils;
+import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 

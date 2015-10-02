@@ -112,6 +112,7 @@ public class InstrumentationDescription {
 	 * @return {@code true}, if there is an entity of the {@code scopeClass}
 	 *         type, of {@code false} otherwise
 	 */
+	// TODO FIXME
 	public boolean containsScopeType(final Class<? /* extends Scope*/> scopeClass) {
 		for (final InstrumentationEntity entity : instrumentationEntities) {
 			if (scopeClass.isAssignableFrom(entity.getScopeDescription().getClass())) {

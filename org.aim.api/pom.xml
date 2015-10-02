@@ -39,5 +39,10 @@
 			<artifactId>org.lpe.common.extension</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils.csv</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

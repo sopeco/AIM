@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>org.aim.mainagent.json</artifactId>
-	<name>AIM Main Agent (Java-Agent)</name>
+	<name>AIM Main Agent Json Adapter (Java-Agent)</name>
 
 	<dependencies>
 	

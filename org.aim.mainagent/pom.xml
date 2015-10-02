@@ -37,6 +37,12 @@
 			<groupId>org.aim</groupId>
 			<artifactId>org.aim.api</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -47,6 +53,11 @@
 		<dependency>
 			<groupId>org.aim</groupId>
 			<artifactId>org.aim.description</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils.numeric</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
@@ -69,18 +80,12 @@
 							<outputFile>${project.build.directory}/${project.build.finalName}-agent.jar</outputFile>
 							<artifactSet>
 								<excludes>
-									<exclude>junit:junit</exclude>
-									<exclude>jmock:*</exclude>
 									<exclude>org.apache.maven:lib:tests</exclude>
 									<exclude>log4j:log4j:jar:</exclude>
 								</excludes>
 							</artifactSet>
 							
 							<relocations>
-								<!--  <relocation>
-									<pattern>javax.servlet</pattern>
-									<shadedPattern>org.aim.agentlibs.javax.servlet</shadedPattern>
-								</relocation>  -->
 								<relocation>
 									<pattern>org.glassfish</pattern>
 									<shadedPattern>org.aim.agentlibs.org.glassfish</shadedPattern>
@@ -92,6 +97,14 @@
 								<relocation>
 									<pattern>japa</pattern>
 									<shadedPattern>org.aim.agentlibs.japa</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.apache</pattern>
+									<shadedPattern>org.aim.agentlibs.org.apache</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>com.strobel</pattern>
+									<shadedPattern>org.aim.agentlibs.com.strobel</shadedPattern>
 								</relocation>
 							</relocations>
 
@@ -123,6 +136,7 @@
 										<exclude>META-INF/*.DSA</exclude>
 										<exclude>META-INF/*.RSA</exclude>
 										<exclude>*.xsd</exclude>
+										<exclude>mainagent-example.conf</exclude>
 										<exclude>*.cat</exclude>
 										<exclude>javax/servlet/**</exclude>
 									</excludes>
@@ -132,12 +146,6 @@
 									<includes>
 										<include>**</include>
 									</includes>
-								</filter>
-								<filter>
-									<artifact>com.sun.jersey:*</artifact>
-									<excludes>
-										<exclude>**</exclude>
-									</excludes>
 								</filter>
 							</filters>
 						</configuration>

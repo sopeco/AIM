@@ -4,7 +4,6 @@ import static org.lpe.common.util.web.LpeWebUtils.addServlet;
 
 import java.io.IOException;
 
-import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.service.CurrentTimeServlet;

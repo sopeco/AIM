@@ -36,6 +36,7 @@ import org.aim.description.builder.RestrictionBuilder;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
+import org.lpe.common.extension.ExtensionRegistry;
 
 /**
  * Instrumentor for traces.
@@ -130,9 +131,11 @@ public final class TraceInstrumentor implements IInstrumentor {
 
 		for (final InstrumentationEntity instrumentationEntity : descr
 				.getInstrumentationEntities(TraceScope.class)) {
-			// TODO
-			// FIXME
-			final TraceScope tScope = new TraceScope(null);
+			final TraceScope tScope = new TraceScope(
+					(MethodsEnclosingScope) ExtensionRegistry.getSingleton().
+						getExtension(instrumentationEntity.getScopeDescription().getName()).
+						createExtensionArtifact(instrumentationEntity.getScopeDescription().getParameter().toArray(new String[]{}))
+					);
 			final long scopeId = idCounter++;
 			incrementalInstrumentationProbes.put(scopeId, instrumentationEntity.getProbesAsStrings());
 

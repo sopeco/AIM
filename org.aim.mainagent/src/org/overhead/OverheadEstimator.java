@@ -23,7 +23,7 @@ import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.OverheadRecord;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
+import org.aim.mainagent.AdaptiveInstrumentationFacade;
 
 /**
  * Estimates the measurement overhead of probes.
@@ -75,7 +75,7 @@ public final class OverheadEstimator {
 	 */
 	public static OverheadRecord runExperiment(final InstrumentationDescription instDescr) throws InstrumentationException {
 		final List<OverheadRecord> records = new ArrayList<>();
-		///AdaptiveFacadeProvider.getAdaptiveInstrumentation().instrument(instDescr);
+		AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
 
 		final OverheadTargetClass target = new OverheadTargetClass();
 		for (int i = 0; i < NUM_CALLS; i++) {
@@ -86,7 +86,7 @@ public final class OverheadEstimator {
 
 		}
 
-		AdaptiveFacadeProvider.getAdaptiveInstrumentation().undoInstrumentation();
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
 		final OverheadRecord record = new OverheadRecord();
 		final OverheadData data = new OverheadData();

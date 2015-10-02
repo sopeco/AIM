@@ -18,7 +18,7 @@ import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.Parameter;
 import org.aim.api.measurement.utils.RecordCSVWriter;
 import org.aim.artifacts.instrumentation.JMXAdaptiveInstrumentationClient;
-import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
+import org.aim.mainagent.JsonAdaptiveInstrumentationClient;
 import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;

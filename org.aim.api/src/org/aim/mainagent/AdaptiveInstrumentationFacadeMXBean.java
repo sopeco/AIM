@@ -72,5 +72,5 @@ public interface AdaptiveInstrumentationFacadeMXBean {
 
 	long getCurrentTime();
 
-	OverheadData measureProbeOverhead(String probeClassName);
+	OverheadData measureProbeOverhead(String probeClassName) throws InstrumentationException;
 }

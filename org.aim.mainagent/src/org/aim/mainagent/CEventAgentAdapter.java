@@ -19,7 +19,7 @@ import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.events.MonitorEventListener;
-import org.lpe.common.util.LpeNumericUtils;
+import org.lpe.common.utils.numeric.LpeNumericUtils;
 
 /**
  * Adapter for the JVMTI Event Agent. To use this agent, the CEventAgent has to

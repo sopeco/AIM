@@ -27,7 +27,7 @@ import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.lpe.common.util.LpeHTTPUtils;
+import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 

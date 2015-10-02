@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>org.aim.interface</artifactId>
-	<name>AIM API</name>
+	<name>AIM Interface and Entities</name>
 
 	<dependencies>
 		<dependency>

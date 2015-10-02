@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.artifacts.instrumentation;
+package org.aim.mainagent;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,7 +30,7 @@ import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
-import org.lpe.common.util.LpeHTTPUtils;
+import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 

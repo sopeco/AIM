@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.InstrumentationEntity;
 import org.aim.aiminterface.entities.results.OverheadData;
+import org.aim.aiminterface.entities.results.OverheadRecord;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
@@ -36,6 +38,7 @@ import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
 import org.aim.api.instrumentation.InstrumentationUtilsController;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
+import org.aim.api.instrumentation.description.internal.InstrumentationConstants;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
@@ -43,6 +46,7 @@ import org.aim.mainagent.probes.IncrementalProbeExtension;
 import org.aim.mainagent.sampling.Sampling;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
+import org.overhead.OverheadEstimator;
 
 /**
  * Coordinates the instrumentation process.
@@ -88,18 +92,26 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	@Override
 	public synchronized void instrument(final InstrumentationDescription instrumentationDescription)
 			throws InstrumentationException {
-		
-		// TODO FIXME
-//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.AIM_PACKAGE);
-//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVA_PACKAGE);
-//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVASSIST_PACKAGE);
-//		instrumentationDescription.getGlobalRestriction().addPackageExclude(InstrumentationConstants.JAVAX_PACKAGE);
-//		instrumentationDescription.getGlobalRestriction()
-//				.addPackageExclude(InstrumentationConstants.LPE_COMMON_PACKAGE);
+		final Set<String> newPackageExcludes = new HashSet<>(instrumentationDescription.getGlobalRestriction().getPackageExcludes());
+		newPackageExcludes.add(InstrumentationConstants.AIM_PACKAGE);
+		newPackageExcludes.add(InstrumentationConstants.JAVA_PACKAGE);
+		newPackageExcludes.add(InstrumentationConstants.JAVASSIST_PACKAGE);
+		newPackageExcludes.add(InstrumentationConstants.JAVAX_PACKAGE);
+		newPackageExcludes.add(InstrumentationConstants.LPE_COMMON_PACKAGE);
+		final Restriction adaptedRestriction = new Restriction(
+				instrumentationDescription.getGlobalRestriction().getPackageIncludes(), 
+				newPackageExcludes, 
+				instrumentationDescription.getGlobalRestriction().getModifierIncludes(), 
+				instrumentationDescription.getGlobalRestriction().getModifierExcludes(),
+				instrumentationDescription.getGlobalRestriction().getGranularity());
+		final InstrumentationDescription adaptedDescription = new InstrumentationDescription(
+				instrumentationDescription.getInstrumentationEntities(), 
+				instrumentationDescription.getSamplingDescriptions(), 
+				adaptedRestriction);
 
-		methodInstrumentor.instrument(instrumentationDescription);
-		traceInstrumentor.instrument(instrumentationDescription);
-		eventInstrumentor.instrument(instrumentationDescription);
+		methodInstrumentor.instrument(adaptedDescription);
+		traceInstrumentor.instrument(adaptedDescription);
+		eventInstrumentor.instrument(adaptedDescription);
 
 		// TODO: add Statement Instrumentation
 		if (!instrumentationDescription.getSamplingDescriptions().isEmpty()) {
@@ -239,13 +251,11 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	}
 
 	@Override
-	public OverheadData measureProbeOverhead(final String probeClassName) {
+	public OverheadData measureProbeOverhead(final String probeClassName) throws InstrumentationException {
 		final OverheadData oData = new OverheadData();
 
-		// TODO 
-		// FIXME
-		//List<OverheadRecord> records = OverheadEstimator.measureOverhead(probeClassName);
-		//oData.setoRecords(records);
+		final List<OverheadRecord> records = OverheadEstimator.measureOverhead(probeClassName);
+		oData.setoRecords(records);
 
 		return oData;
 	}

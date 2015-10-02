@@ -27,7 +27,6 @@ import javax.management.ObjectName;
 
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
-import org.aim.artifacts.instrumentation.JsonAdaptiveInstrumentationClient;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
@@ -65,13 +64,8 @@ public final class InstrumentationAgent {
 	private static final String LOGGING_LEVEL_KEY = "logLevel";
 	private static final String DEFAULT_PLUGINS_FOLDER = "plugins";
 
-	public static final String URL_PATH_INSTRUMENTATION = JsonAdaptiveInstrumentationClient.URL_PATH_INSTRUMENTATION;
-	public static final String URL_PATH_MEASUREMENT = JsonAdaptiveInstrumentationClient.URL_PATH_MEASUREMENT;
-	public static final String PATH_PREFIX = JsonAdaptiveInstrumentationClient.PATH_PREFIX;
-
 	private static final AIMLoggingConfig aimLoggingConfig = new AIMLoggingConfig();
 	private static final Properties properties = new Properties();
-	private static String port = "8888";
 	private static String pluginsRoot;
 	private static String collectorType = MemoryDataSource.class.getName();
 
@@ -178,7 +172,7 @@ public final class InstrumentationAgent {
 
 		for (final Object key : agentProperties.keySet()) {
 			if (key.toString().equals(PORT_KEY)) {
-				port = agentProperties.getProperty(PORT_KEY);
+				agentProperties.getProperty(PORT_KEY);
 			} else if (key.toString().equals(DATA_COLLECTOR_KEY)) {
 				collectorType = agentProperties.getProperty(DATA_COLLECTOR_KEY);
 			} else if (key.toString().equals(PLUGINS_ROOT_KEY)) {
