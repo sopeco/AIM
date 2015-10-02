@@ -15,39 +15,27 @@
  */
 package org.aim.api.instrumentation;
 
+import java.util.Collections;
+import java.util.Set;
+
+import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
-import org.lpe.common.extension.IExtensionArtifact;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
- * Common class for all custom scopes.
  * 
- * @author Alexander Wert
  * 
  */
-public abstract class AbstractCustomScope extends MethodsEnclosingScope implements IExtensionArtifact, IScopeAnalyzer {
+public abstract class AbstractScopeExtension extends ReflectiveAbstractExtension implements IExtension {
 
-	/**
-	 * Extension provider.
-	 */
-	private final IExtension provider;
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param provider
-	 *            extension provider
-	 */
-	public AbstractCustomScope(final IExtension provider) {
-		super(provider,0);
-		this.provider = provider;
+	protected AbstractScopeExtension(final Class<? extends Scope> extensionArtifactClass) {
+		super(extensionArtifactClass);
 	}
 
-	/**
-	 * @return returns the provider of this extension.
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public IExtension getProvider() {
-		return this.provider;
+	public Set<ConfigParameterDescription> getConfigParameters() {
+		return Collections.EMPTY_SET;
 	}
 
 }

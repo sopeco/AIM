@@ -25,6 +25,8 @@ import org.aim.aiminterface.description.sampling.SamplingDescription;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.lpe.common.extension.ExtensionRegistry;
+import org.lpe.common.extension.IExtension;
 
 /**
  * This class is a wrapper class for instrumentation descriptions.
@@ -77,7 +79,12 @@ public class InstrumentationDescription {
 		final Set<InstrumentationEntity> sEntities = new HashSet<>();
 
 		for (final InstrumentationEntity ie : instrumentationEntities) {
-			if (type.isAssignableFrom(ie.getScopeDescription().getClass())) {
+			final IExtension scopeExtension = ExtensionRegistry.getSingleton().getExtension(ie.getScopeDescription().getName());
+			if (scopeExtension == null) {
+				throw new RuntimeException("Described scope is not loaded as scope extension!");
+			}
+
+			if (type.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
 				sEntities.add(ie);
 			}
 		}
@@ -112,10 +119,13 @@ public class InstrumentationDescription {
 	 * @return {@code true}, if there is an entity of the {@code scopeClass}
 	 *         type, of {@code false} otherwise
 	 */
-	// TODO FIXME
 	public boolean containsScopeType(final Class<? /* extends Scope*/> scopeClass) {
 		for (final InstrumentationEntity entity : instrumentationEntities) {
-			if (scopeClass.isAssignableFrom(entity.getScopeDescription().getClass())) {
+			final IExtension scopeExtension = ExtensionRegistry.getSingleton().getExtension(entity.getScopeDescription().getName());
+			if (scopeExtension == null) {
+				throw new RuntimeException("Described scope "+entity.getScopeDescription().getName()+" is not loaded as scope extension!");
+			}
+			if (scopeClass.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
 				return true;
 			}
 		}

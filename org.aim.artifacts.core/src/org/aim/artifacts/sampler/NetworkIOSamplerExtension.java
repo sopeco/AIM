@@ -16,7 +16,6 @@
 package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
-import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for network IO sampler.
@@ -26,15 +25,9 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class NetworkIOSamplerExtension extends AbstractSamplerExtension {
 
-	@Override
-	public String getName() {
-		return NetworkIOSampler.class.getName();
+	public NetworkIOSamplerExtension() {
+		super(NetworkIOSampler.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new NetworkIOSampler(this);
-	}
 
 }

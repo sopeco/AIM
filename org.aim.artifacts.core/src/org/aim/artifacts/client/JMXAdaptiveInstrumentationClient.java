@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.artifacts.instrumentation;
+package org.aim.artifacts.client;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -34,6 +36,8 @@ import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.AdaptiveInstrumentationFacadeMXBean;
 
 /**
@@ -43,10 +47,11 @@ import org.aim.mainagent.AdaptiveInstrumentationFacadeMXBean;
  * 
  */
 public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentation {
+	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(JMXAdaptiveInstrumentationClient.class);
+	
 	private final String host;
 	private final String port;
 	private final AdaptiveInstrumentationFacadeMXBean bean;
-	private JMXServiceURL url;
 	private boolean monitoringEnabled;
 
 	/**
@@ -61,12 +66,16 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 		super();
 		this.host = host;
 		this.port = port;
+		this.bean = connectToJMX(host, port);
+	}
+
+	private AdaptiveInstrumentationFacadeMXBean connectToJMX(final String host, final String port) {
 		try {
-			this.url =  new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+host+":"+port+"/jmxrmi");
+			final JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+host+":"+port+"/jmxrmi");
 			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
 			final MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 			final ObjectName mbeanName = new ObjectName("org.aim:type=AdaptiveInstrumentationFacade");
-			this.bean = JMX.newMXBeanProxy(mbsc, mbeanName, AdaptiveInstrumentationFacadeMXBean.class, true);
+			return JMX.newMXBeanProxy(mbsc, mbeanName, AdaptiveInstrumentationFacadeMXBean.class, true);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -195,8 +204,18 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 	 * @return true if connection could have been established
 	 */
 	public static boolean testConnection(final String host, final String port) {
-		// TODO
-		// FIXME
+		JMXServiceURL connectionUrl;
+		try {
+			connectionUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+host+":"+port+"/jmxrmi");
+			final JMXConnector jmxc = JMXConnectorFactory.connect(connectionUrl, null);
+			final MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+			final ObjectName mbeanName = new ObjectName("org.aim:type=AdaptiveInstrumentationFacade");
+			JMX.newMXBeanProxy(mbsc, mbeanName, AdaptiveInstrumentationFacadeMXBean.class, true);
+			jmxc.close();
+		} catch (IOException | MalformedObjectNameException e) {
+			LOGGER.info("Failed connection test for JMX connection. Server {} Port {}", host, port);
+			return false;
+		}
 		return true;
 	}
 }

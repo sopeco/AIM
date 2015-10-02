@@ -26,15 +26,9 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class EntryPointScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return EntryPointScope.class.getName();
+	public EntryPointScopeExtension() {
+		super(EntryPointScope.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new EntryPointScope(this);
-	}
 
 }

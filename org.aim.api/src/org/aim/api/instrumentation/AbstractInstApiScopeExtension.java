@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
  * Abstract extension provider for api scopes.
@@ -27,7 +28,11 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstApiScopeExtension implements IExtension {
+public abstract class AbstractInstApiScopeExtension extends ReflectiveAbstractExtension implements IExtension {
+
+	protected AbstractInstApiScopeExtension(final Class<? extends AbstractInstAPIScope> extensionArtifactClass) {
+		super(extensionArtifactClass);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

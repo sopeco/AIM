@@ -24,7 +24,6 @@ import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.description.sampling.SamplingDescription;
 import org.aim.aiminterface.description.scope.ScopeDescription;
-import org.aim.api.instrumentation.Scope;
 import org.aim.artifacts.scopes.APIScope;
 import org.aim.artifacts.scopes.AllocationScope;
 import org.aim.artifacts.scopes.ConstructorScope;
@@ -113,8 +112,12 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 		return new InstrumentationEntityBuilder(getScopeDescription(MethodScope.class, patterns),this);
 	}
 
-	private ScopeDescription getScopeDescription(final Class<? extends Scope> scopeClass, final String... patterns) {
-		return new ScopeDescription(scopeClass.getSimpleName(), 0, Arrays.asList(patterns));
+	private ScopeDescription getScopeDescription(final Class<?> scopeClass, final String... patterns) {
+		return new ScopeDescription(scopeClass.getName(), 0, Arrays.asList(patterns));
+	}
+
+	private ScopeDescription getScopeDescription(final String scopeClass, final String... patterns) {
+		return new ScopeDescription(scopeClass, 0, Arrays.asList(patterns));
 	}
 
 	/**
@@ -170,7 +173,7 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 * @return an {@link InstrumentationEntityBuilder}
 	 */
 	public InstrumentationEntityBuilder newAPIScopeEntity(final String apiName) {
-		return new InstrumentationEntityBuilder(getScopeDescription(APIScope.class, apiName), this);
+		return new InstrumentationEntityBuilder(getScopeDescription(apiName), this);
 	}
 
 	/**

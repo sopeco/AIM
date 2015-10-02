@@ -18,8 +18,8 @@ package org.aim.artifacts.probes;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
+import org.aim.api.instrumentation.Scope;
 import org.aim.artifacts.scopes.JmsScope;
 import org.lpe.common.extension.IExtensionArtifact;
 /**
@@ -30,20 +30,13 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class JmsMessageSizeProbeExtension extends AbstractEnclosingProbeExtension {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new JmsMessageSizeProbe(this);
+	public JmsMessageSizeProbeExtension() {
+		super(JmsMessageSizeProbe.class);
 	}
 
 	@Override
-	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
-		return JmsMessageSizeProbe.class;
-	}
-
-	@Override
-	public Set<Class<?>> getScopeDependencies() {
-		final Set<Class<?>> supportedScopes = new HashSet<>();
+	public Set<Class<? extends Scope>> getScopeDependencies() {
+		final Set<Class<? extends Scope>> supportedScopes = new HashSet<>();
 		supportedScopes.add(JmsScope.class);
 		return supportedScopes;
 	}

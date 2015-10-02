@@ -20,16 +20,9 @@ import org.lpe.common.extension.IExtensionArtifact;
 
 public class TestAPIScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return TestAPIScope.class.getName();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String ... patterns) {
-		// TODO Auto-generated method stub
-		return (EA) new TestAPIScope(this);
+	public TestAPIScopeExtension() {
+		super(TestAPIScope.class);
+		// TODO Auto-generated constructor stub
 	}
 
 }

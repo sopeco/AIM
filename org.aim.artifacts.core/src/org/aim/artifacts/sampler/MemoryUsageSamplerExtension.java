@@ -16,7 +16,6 @@
 package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
-import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for memory usage sampler.
@@ -26,15 +25,9 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class MemoryUsageSamplerExtension extends AbstractSamplerExtension {
 
-	@Override
-	public String getName() {
-		return MemoryUsageSampler.class.getName();
+	public MemoryUsageSamplerExtension() {
+		super(MemoryUsageSampler.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new MemoryUsageSampler(this);
-	}
 
 }

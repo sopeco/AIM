@@ -33,10 +33,11 @@ import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.events.AbstractEventProbeExtension;
-import org.aim.api.instrumentation.AbstractCustomScopeExtension;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.aim.api.instrumentation.AbstractScopeExtension;
 import org.aim.api.instrumentation.InstrumentationUtilsController;
+import org.aim.api.instrumentation.Scope;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
 import org.aim.api.instrumentation.description.internal.InstrumentationConstants;
 import org.aim.api.measurement.collector.AbstractDataSource;
@@ -168,19 +169,14 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 			return extensions;
 		}
 
-		
-		final Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
-
-		final Map<String, Set<Class<?>>> probeToSupportedScopesMapping = new HashMap<>();
+		final Map<String, Set<Class<? extends Scope>>> probeToSupportedScopesMapping = new HashMap<>();
 		final LinkedList<String> customScopes = new LinkedList<>();
 		final LinkedList<String> apiScopes = new LinkedList<>();
 		final LinkedList<String> sampler = new LinkedList<>();
+		final Set<Class<?>> knownConcreteScopeClasses = new HashSet<>();
 		
 		for (final IExtension extension : ExtensionRegistry.getSingleton().getExtensions()) {
-			if (extension instanceof AbstractCustomScopeExtension) {
-				customScopes.add(extension.getName());
-				knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
-			} else if (extension instanceof AbstractEnclosingProbeExtension) {
+			if (extension instanceof AbstractEnclosingProbeExtension) {
 				if (extension instanceof IncrementalProbeExtension) {
 					continue;
 				}
@@ -189,9 +185,12 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 			} else if (extension instanceof AbstractEventProbeExtension) {
 				probeToSupportedScopesMapping.put(extension.getName(),
 						((AbstractEventProbeExtension) extension).getScopeDependencies());
+			} else if (extension instanceof AbstractScopeExtension) {
+				customScopes.add(extension.getName());
+				knownConcreteScopeClasses.add(extension.getExtensionArtifactClass());
 			} else if (extension instanceof AbstractInstApiScopeExtension) {
 				apiScopes.add(extension.getName());
-				knownConcreteScopeClasses.add(extension.createExtensionArtifact().getClass());
+				knownConcreteScopeClasses.add(extension.getExtensionArtifactClass());
 			} else if (extension instanceof AbstractSamplerExtension) {
 				sampler.add(extension.getName());
 			}
@@ -204,12 +203,12 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	}
 
 	private Map<String, Set<String>> filterProbeScopeMappingToExistingScopes(
-			final Set<Class<?>> knownConcreteScopeClasses, final Map<String, Set<Class<?>>> tempProbeScopeMapping) {
+			final Set<Class<?>> knownConcreteScopeClasses, final Map<String, Set<Class<? extends Scope>>> probeToSupportedScopesMapping) {
 		final Map<String,Set<String>> probeMap = new HashMap<String, Set<String>>();
-		for (final String probeName : tempProbeScopeMapping.keySet()) {
+		for (final String probeName : probeToSupportedScopesMapping.keySet()) {
 			final Set<String> scopes = new HashSet<>();
 			for (final Class<?> concreteScope : knownConcreteScopeClasses) {
-				supportedScopeLoop: for (final Class<?> supportedScope : tempProbeScopeMapping.get(probeName)) {
+				supportedScopeLoop: for (final Class<?> supportedScope : probeToSupportedScopesMapping.get(probeName)) {
 					if (supportedScope.isAssignableFrom(concreteScope)) {
 						scopes.add(concreteScope.getName());
 						break supportedScopeLoop;

@@ -16,7 +16,6 @@
 package org.aim.artifacts.sampler;
 
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
-import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for GC sampler.
@@ -26,15 +25,9 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class GarbageCollectionSamplerExtension extends AbstractSamplerExtension {
 
-	@Override
-	public String getName() {
-		return GarbageCollectionSampler.class.getName();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new GarbageCollectionSampler(this);
+	public GarbageCollectionSamplerExtension() {
+		super(GarbageCollectionSampler.class);
+		// TODO Auto-generated constructor stub
 	}
 
 }

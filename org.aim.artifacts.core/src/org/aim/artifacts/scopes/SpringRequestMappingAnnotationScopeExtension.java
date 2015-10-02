@@ -26,15 +26,9 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class SpringRequestMappingAnnotationScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return SpringRequestMappingAnnotationScope.class.getName();
+	public SpringRequestMappingAnnotationScopeExtension() {
+		super(SpringRequestMappingAnnotationScope.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new SpringRequestMappingAnnotationScope(this);
-	}
 
 }

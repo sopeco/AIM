@@ -15,7 +15,6 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.aiminterface.description.scope.ScopeDescription;
 import org.aim.api.instrumentation.Scope;
 import org.lpe.common.extension.IExtension;
 
@@ -27,11 +26,6 @@ import org.lpe.common.extension.IExtension;
  * 
  */
 public class SynchronizedScope extends Scope {
-
-	public SynchronizedScope(final IExtension provider, final ScopeDescription fromDescription) {
-		super(provider, fromDescription);
-	}
-
 	
 	public SynchronizedScope(final IExtension provider) {
 		super(provider, 0);

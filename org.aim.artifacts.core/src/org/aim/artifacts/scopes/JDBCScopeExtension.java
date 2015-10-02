@@ -26,15 +26,10 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class JDBCScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return JDBCScope.class.getName();
+	public JDBCScopeExtension() {
+		super(JDBCScope.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new JDBCScope(this);
-	}
+
 
 }

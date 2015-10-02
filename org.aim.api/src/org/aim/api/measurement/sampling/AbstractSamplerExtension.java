@@ -20,18 +20,23 @@ import java.util.Set;
 
 import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.IExtensionArtifact;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
  * Abstract extension provider for sampler extensions.
  * @author Alexander Wert
  *
  */
-public abstract class AbstractSamplerExtension implements IExtension {
+public abstract class AbstractSamplerExtension extends ReflectiveAbstractExtension implements IExtension {
 
-	@SuppressWarnings("unchecked")
+	protected AbstractSamplerExtension(final Class<? extends IExtensionArtifact> extensionArtifactClass) {
+		super(extensionArtifactClass);
+	}
+
 	@Override
 	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
+		return Collections.emptySet();
 	}
 
 }

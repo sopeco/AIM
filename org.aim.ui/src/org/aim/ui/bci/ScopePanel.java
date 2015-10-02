@@ -27,24 +27,24 @@ import org.aim.ui.manager.ClientManager;
 public class ScopePanel extends JPanel implements ActionListener {
 
 	public static final String ALLOCATION_SCOPE = "Allocation Scope";
-	public static final String CONSTRUCTOR_SCOPE = "Constructor Scope";
-	public static final String METHOD_SCOPE = "Method Scope";
-	public static final String MEMORY_SCOPE = "Memory Scope";
-	public static final String SYNCHRONIZED_SCOPE = "Synchronized Scope";
+	public static final String CONSTRUCTOR_SCOPE = "org.aim.artifacts.scopes.ConstructorScope";
+	public static final String METHOD_SCOPE = "org.aim.artifacts.scopes.MethodScope";
+	public static final String MEMORY_SCOPE = "org.aim.artifacts.scopes.MemoryScope";
+	public static final String SYNCHRONIZED_SCOPE = "org.aim.artifacts.scopes.SynchronizedScope";
 
 	private static final int INSET_VALUE = 5;
 
 	/** */
 	private static final long serialVersionUID = 1L;
 
-	private JCheckBox checkBoxTrace;
-	private ExtendedComboBox comboBox;
-	private JLabel lblSettings;
-	private JLabel lblTraceScope;
-	private ItemListPanel lpScopeSettings;
+	private final JCheckBox checkBoxTrace;
+	private final ExtendedComboBox comboBox;
+	private final JLabel lblSettings;
+	private final JLabel lblTraceScope;
+	private final ItemListPanel lpScopeSettings;
 
-	private Map<String, String> scopeMapping = new HashMap<String, String>();
-	private InstrumentationEntityWizard wizard;
+	private final Map<String, String> scopeMapping = new HashMap<String, String>();
+	private final InstrumentationEntityWizard wizard;
 
 	/**
 	 * Constructor.
@@ -52,19 +52,19 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @param wizard
 	 *            parent
 	 */
-	public ScopePanel(InstrumentationEntityWizard wizard) {
+	public ScopePanel(final InstrumentationEntityWizard wizard) {
 		this.wizard = wizard;
 
 		setBorder(new TitledBorder(null, "Scope", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		GridBagLayout gridBagLayout = new GridBagLayout();
+		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		JLabel lblType = new JLabel("Type:");
-		GridBagConstraints gbcLblType = new GridBagConstraints();
+		final JLabel lblType = new JLabel("Type:");
+		final GridBagConstraints gbcLblType = new GridBagConstraints();
 		gbcLblType.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
 		gbcLblType.anchor = GridBagConstraints.WEST;
 		gbcLblType.gridx = 0;
@@ -73,7 +73,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 
 		comboBox = new ExtendedComboBox();
 		comboBox.addActionListener(this);
-		GridBagConstraints gbcComboBox = new GridBagConstraints();
+		final GridBagConstraints gbcComboBox = new GridBagConstraints();
 		gbcComboBox.insets = new Insets(0, 0, INSET_VALUE, 0);
 		gbcComboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbcComboBox.gridx = 1;
@@ -81,7 +81,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		add(comboBox, gbcComboBox);
 
 		lblTraceScope = new JLabel("Trace Scope:");
-		GridBagConstraints gbcLblTraceScope = new GridBagConstraints();
+		final GridBagConstraints gbcLblTraceScope = new GridBagConstraints();
 		gbcLblTraceScope.anchor = GridBagConstraints.WEST;
 		gbcLblTraceScope.insets = new Insets(0, 0, INSET_VALUE, INSET_VALUE);
 		gbcLblTraceScope.gridx = 0;
@@ -89,7 +89,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		add(lblTraceScope, gbcLblTraceScope);
 
 		checkBoxTrace = new JCheckBox("");
-		GridBagConstraints gbcCheckBoxTrace = new GridBagConstraints();
+		final GridBagConstraints gbcCheckBoxTrace = new GridBagConstraints();
 		gbcCheckBoxTrace.insets = new Insets(0, 0, INSET_VALUE, 0);
 		gbcCheckBoxTrace.anchor = GridBagConstraints.WEST;
 		gbcCheckBoxTrace.gridx = 1;
@@ -97,7 +97,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		add(checkBoxTrace, gbcCheckBoxTrace);
 
 		lblSettings = new JLabel("Method Patterns:");
-		GridBagConstraints gbcLblSettings = new GridBagConstraints();
+		final GridBagConstraints gbcLblSettings = new GridBagConstraints();
 		gbcLblSettings.anchor = GridBagConstraints.NORTH;
 		gbcLblSettings.insets = new Insets(INSET_VALUE, 0, 0, INSET_VALUE);
 		gbcLblSettings.gridx = 0;
@@ -105,7 +105,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 		add(lblSettings, gbcLblSettings);
 
 		lpScopeSettings = new ItemListPanel();
-		GridBagConstraints gbcPanel = new GridBagConstraints();
+		final GridBagConstraints gbcPanel = new GridBagConstraints();
 		gbcPanel.fill = GridBagConstraints.BOTH;
 		gbcPanel.gridx = 1;
 		gbcPanel.gridy = 2;
@@ -115,34 +115,20 @@ public class ScopePanel extends JPanel implements ActionListener {
 		lpScopeSettings
 				.setValidationPattern("([a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*\\.)*[a-zA-Z_$\\*\\?][a-zA-Z\\d_$\\*\\?]*");
 
-		comboBox.addDelimiter("Scopes");
-
-		comboBox.addItem(METHOD_SCOPE);
-		comboBox.addItem(CONSTRUCTOR_SCOPE);
-		comboBox.addItem(ALLOCATION_SCOPE);
-		comboBox.addItem(MEMORY_SCOPE);
-		comboBox.addItem(SYNCHRONIZED_SCOPE);
-
-		scopeMapping.put(METHOD_SCOPE, METHOD_SCOPE);
-		scopeMapping.put(CONSTRUCTOR_SCOPE, CONSTRUCTOR_SCOPE);
-		scopeMapping.put(ALLOCATION_SCOPE, ALLOCATION_SCOPE);
-		scopeMapping.put(MEMORY_SCOPE, MEMORY_SCOPE);
-		scopeMapping.put(SYNCHRONIZED_SCOPE, SYNCHRONIZED_SCOPE);
-
 		if (ClientManager.instance().isConnected()) {
-			List<String> apiScopes = ClientManager.instance().getApiScopes();
-			if (!apiScopes.isEmpty()) {
-				comboBox.addDelimiter("API Scopes");
-				for (String i : apiScopes) {
+			final List<String> customScopes = ClientManager.instance().getCustomScopes();
+			if (!customScopes.isEmpty()) {
+				comboBox.addDelimiter("Scopes");
+				for (final String i : customScopes) {
 					scopeMapping.put(abbreviateString(i), i);
 					comboBox.addItem(abbreviateString(i));
 				}
 			}
-
-			List<String> customScopes = ClientManager.instance().getCustomScopes();
-			if (!customScopes.isEmpty()) {
-				comboBox.addDelimiter("Custom Scopes");
-				for (String i : customScopes) {
+			
+			final List<String> apiScopes = ClientManager.instance().getApiScopes();
+			if (!apiScopes.isEmpty()) {
+				comboBox.addDelimiter("API Scopes");
+				for (final String i : apiScopes) {
 					scopeMapping.put(abbreviateString(i), i);
 					comboBox.addItem(abbreviateString(i));
 				}
@@ -150,8 +136,8 @@ public class ScopePanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private String abbreviateString(String scopeName) {
-		int lastIndexOf = scopeName.lastIndexOf('.');
+	private String abbreviateString(final String scopeName) {
+		final int lastIndexOf = scopeName.lastIndexOf('.');
 		if (lastIndexOf >= 0) {
 			return scopeName.substring(lastIndexOf + 1);
 		}
@@ -159,21 +145,21 @@ public class ScopePanel extends JPanel implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		lpScopeSettings.removeItems();
 
 		wizard.filterProbes();
 
-		String scp = (String) comboBox.getSelectedItem();
-		if (scp != null && (scp.equals(METHOD_SCOPE) || scp.equals(CONSTRUCTOR_SCOPE) || scp.equals(ALLOCATION_SCOPE))) {
+		final String scp = (String) comboBox.getSelectedItem();
+		if (scp != null && (scp.equals(abbreviateString(METHOD_SCOPE)) || scp.equals(abbreviateString(CONSTRUCTOR_SCOPE)))) {
 			showSettings();
 
-			if (!scp.equals(ALLOCATION_SCOPE)) {
+			if (!scp.equals(abbreviateString(ALLOCATION_SCOPE))) {
 				showTraceOption();
 			}
 
 			String lblText;
-			if (scp.equals(METHOD_SCOPE)) {
+			if (scp.equals(abbreviateString(METHOD_SCOPE))) {
 				lblText = "Method Patterns:";
 			} else {
 				lblText = "Target Classes:";
@@ -192,7 +178,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @return scope name
 	 */
 	public String getSelectedScope() {
-		return scopeMapping.get((String) comboBox.getSelectedItem());
+		return scopeMapping.get(comboBox.getSelectedItem());
 	}
 
 	/**
@@ -235,7 +221,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @param scope
 	 *            - scope to select
 	 */
-	public void setScope(String scope) {
+	public void setScope(final String scope) {
 		for (int i = 0; i < comboBox.getItemCount(); i++) {
 			if (comboBox.getItemAt(i).equals(scope)) {
 				comboBox.setSelectedIndex(i);
@@ -252,8 +238,8 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @param scopeSettings
 	 *            - strings to load
 	 */
-	public void setScopeSettings(String[] scopeSettings) {
-		for (String s : scopeSettings) {
+	public void setScopeSettings(final String[] scopeSettings) {
+		for (final String s : scopeSettings) {
 			lpScopeSettings.addItem(s);
 		}
 	}
@@ -264,7 +250,7 @@ public class ScopePanel extends JPanel implements ActionListener {
 	 * @param isTraceScope
 	 *            - is the scope a trace scope
 	 */
-	public void setTraceScope(boolean isTraceScope) {
+	public void setTraceScope(final boolean isTraceScope) {
 		checkBoxTrace.setSelected(isTraceScope);
 	}
 

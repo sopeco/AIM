@@ -33,13 +33,6 @@ import org.lpe.common.extension.IExtension;
 public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMonitorEventProbe {
 
 	/**
-	 * Default Constructor.
-	 */
-	public MonitorWaitingTimeProbe() {
-		super(null);
-	}
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param provider

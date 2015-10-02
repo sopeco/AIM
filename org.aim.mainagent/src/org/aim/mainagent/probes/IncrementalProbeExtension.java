@@ -15,9 +15,6 @@
  */
 package org.aim.mainagent.probes;
 
-import java.util.Set;
-
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 
@@ -29,20 +26,8 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class IncrementalProbeExtension extends AbstractEnclosingProbeExtension {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new IncrementalInstrumentationProbe(this);
-	}
-
-	@Override
-	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
-		return IncrementalInstrumentationProbe.class;
-	}
-
-	@Override
-	public Set<Class<?>> getScopeDependencies() {
-		return null;
+	public IncrementalProbeExtension() {
+		super(IncrementalInstrumentationProbe.class);
 	}
 
 }

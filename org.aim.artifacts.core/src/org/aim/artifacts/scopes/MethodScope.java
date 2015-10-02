@@ -17,9 +17,8 @@ package org.aim.artifacts.scopes;
 
 import java.util.Collection;
 
-import org.aim.aiminterface.description.scope.ScopeDescription;
+import org.aim.api.instrumentation.AbstractScope;
 import org.aim.api.instrumentation.IScopeAnalyzer;
-import org.aim.api.instrumentation.MethodsEnclosingScope;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -29,17 +28,13 @@ import org.lpe.common.extension.IExtension;
  * @author Henning Schulz, Steffen Becker
  * 
  */
-public class MethodScope extends MethodsEnclosingScope {
+public class MethodScope extends AbstractScope {
 
 	private final String[] methods;
 
-	public MethodScope(final IExtension provider, final long id, final String[] methods) {
-		super(provider, id);
+	public MethodScope(final IExtension provider, final String[] methods) {
+		super(provider, 0);
 		this.methods = methods;
-	}
-
-	public MethodScope(final IExtension provider, final ScopeDescription fromDescription) {
-		this(provider, fromDescription.getId(), fromDescription.getParameter().toArray(new String[]{}));
 	}
 
 	/**

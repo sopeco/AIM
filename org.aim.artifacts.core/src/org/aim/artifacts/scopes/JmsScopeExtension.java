@@ -26,15 +26,8 @@ import org.lpe.common.extension.IExtensionArtifact;
  */
 public class JmsScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return JmsScope.class.getName();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new JmsScope(this);
+	public JmsScopeExtension() {
+		super(JmsScope.class);
 	}
 
 }

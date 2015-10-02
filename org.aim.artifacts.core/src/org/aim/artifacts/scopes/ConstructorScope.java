@@ -18,8 +18,8 @@ package org.aim.artifacts.scopes;
 import java.util.Collection;
 
 import org.aim.aiminterface.description.scope.ScopeDescription;
+import org.aim.api.instrumentation.AbstractScope;
 import org.aim.api.instrumentation.IScopeAnalyzer;
-import org.aim.api.instrumentation.MethodsEnclosingScope;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -28,7 +28,7 @@ import org.lpe.common.extension.IExtension;
  * @author Henning Schulz
  * 
  */
-public class ConstructorScope extends MethodsEnclosingScope {
+public class ConstructorScope extends AbstractScope {
 
 	private final String[] targetClasses;
 

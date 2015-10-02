@@ -23,7 +23,7 @@ public class ProbePanel extends JPanel {
 	/**  */
 	private static final long serialVersionUID = 1L;
 
-	private ItemListPanel panel;
+	private final ItemListPanel panel;
 
 	private Map<String, Set<String>> probeMapping;
 
@@ -32,7 +32,7 @@ public class ProbePanel extends JPanel {
 	 */
 	public ProbePanel() {
 		setBorder(new TitledBorder(null, "Probes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		GridBagLayout gridBagLayout = new GridBagLayout();
+		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
@@ -40,7 +40,7 @@ public class ProbePanel extends JPanel {
 		setLayout(gridBagLayout);
 
 		panel = new ItemListPanel();
-		GridBagConstraints gbcPanel = new GridBagConstraints();
+		final GridBagConstraints gbcPanel = new GridBagConstraints();
 		gbcPanel.fill = GridBagConstraints.BOTH;
 		gbcPanel.gridx = 0;
 		gbcPanel.gridy = 0;
@@ -67,8 +67,8 @@ public class ProbePanel extends JPanel {
 	 * @param probes
 	 *            - the probes to set
 	 */
-	public void setProbes(String[] probes) {
-		for (String probe : probes) {
+	public void setProbes(final String[] probes) {
+		for (final String probe : probes) {
 			panel.addItem(probe);
 		}
 	}
@@ -82,23 +82,9 @@ public class ProbePanel extends JPanel {
 	 * @param traceScope
 	 *            scope is trace scope
 	 */
-	public void filterProbes(String selectedScope, boolean traceScope) {
-		if (traceScope) {
-			selectedScope = "org.aim.description.scopes.TraceScope";
-		} else if (selectedScope.equals(ScopePanel.METHOD_SCOPE)) {
-			selectedScope = "org.aim.description.scopes.MethodScope";
-		} else if (selectedScope.equals(ScopePanel.CONSTRUCTOR_SCOPE)) {
-			selectedScope = "org.aim.description.scopes.ConstructorScope";
-		} else if (selectedScope.equals(ScopePanel.ALLOCATION_SCOPE)) {
-			selectedScope = "org.aim.description.scopes.AllocationScope";
-		} else if (selectedScope.equals(ScopePanel.MEMORY_SCOPE)) {
-			selectedScope = "org.aim.description.scopes.MemoryScope";
-		} else if (selectedScope.equals(ScopePanel.SYNCHRONIZED_SCOPE)) {
-			selectedScope = "org.aim.description.scopes.SynchronizedScope";
-		}
-
-		List<String> filtered = new ArrayList<String>();
-		for (String probe : probeMapping.keySet()) {
+	public void filterProbes(final String selectedScope, final boolean traceScope) {
+		final List<String> filtered = new ArrayList<String>();
+		for (final String probe : probeMapping.keySet()) {
 			if (probeMapping.get(probe).contains(selectedScope)) {
 				filtered.add(probe);
 			}
@@ -107,8 +93,15 @@ public class ProbePanel extends JPanel {
 		panel.setPredefinedValues(filtered, true);
 	}
 	
+	private String abbreviateString(final String scopeName) {
+		final int lastIndexOf = scopeName.lastIndexOf('.');
+		if (lastIndexOf >= 0) {
+			return scopeName.substring(lastIndexOf + 1);
+		}
+		return scopeName;
+	}
 	
-	public void filterProbes(String scope) {
+	public void filterProbes(final String scope) {
 //		if (rawEntity == null) {
 //			return;
 //		}

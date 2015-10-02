@@ -15,30 +15,13 @@
  */
 package org.aim.mainagent.probes.builder;
 
-import java.util.Set;
-
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 
 public class InvalidDummyProbeExtension extends AbstractEnclosingProbeExtension {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new InvalidDummyProbe(this);
-	}
-
-	@Override
-	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
-
-		return InvalidDummyProbe.class;
-	}
-
-	@Override
-	public Set<Class<?>> getScopeDependencies() {
-		// TODO Auto-generated method stub
-		return null;
+	public InvalidDummyProbeExtension() {
+		super(InvalidDummyProbe.class);
 	}
 
 }

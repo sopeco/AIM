@@ -15,8 +15,7 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
-import org.lpe.common.extension.IExtensionArtifact;
+import org.aim.api.instrumentation.AbstractScopeExtension;
 
 /**
  * Extension provider for entry point scope..
@@ -24,17 +23,11 @@ import org.lpe.common.extension.IExtensionArtifact;
  * @author Alexander Wert
  * 
  */
-public class SynchronizedScopeExtension extends AbstractInstApiScopeExtension {
+public class SynchronizedScopeExtension extends AbstractScopeExtension {
 
-	@Override
-	public String getName() {
-		return SynchronizedScope.class.getName();
+	public SynchronizedScopeExtension() {
+		super(SynchronizedScope.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new SynchronizedScope(this);
-	}
 
 }

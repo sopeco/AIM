@@ -15,8 +15,7 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
-import org.lpe.common.extension.IExtensionArtifact;
+import org.aim.api.instrumentation.AbstractScopeExtension;
 
 /**
  * Extension provider for entry point scope..
@@ -24,17 +23,10 @@ import org.lpe.common.extension.IExtensionArtifact;
  * @author Alexander Wert
  * 
  */
-public class MethodScopeExtension extends AbstractInstApiScopeExtension {
+public class MethodScopeExtension extends AbstractScopeExtension {
 
-	@Override
-	public String getName() {
-		return MethodScope.class.getName();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <EA extends IExtensionArtifact> EA createExtensionArtifact(final String... patterns) {
-		return (EA) new MethodScope(this, 0, patterns);
+	public MethodScopeExtension() {
+		super(MethodScope.class);
 	}
 
 }

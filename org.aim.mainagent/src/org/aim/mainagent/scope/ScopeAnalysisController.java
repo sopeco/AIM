@@ -98,7 +98,7 @@ public class ScopeAnalysisController {
 							throw new InstrumentationException("Failed loading Probe class " + probe);
 						}
 						final AbstractEnclosingProbeExtension probeExtension = (AbstractEnclosingProbeExtension) ext;
-						probeClass = probeExtension.getProbeClass();
+						probeClass = (Class<? extends AbstractEnclosingProbe>) probeExtension.getExtensionArtifactClass();
 						probeClasses.put(probe, probeClass);
 					} else {
 						probeClass = probeClasses.get(probe);
@@ -154,13 +154,23 @@ public class ScopeAnalysisController {
 			throws InstrumentationException {
 		final Map<IScopeAnalyzer, Set<String>> mapping = new HashMap<>();
 		for (final InstrumentationEntity mScopeEntity : instrumentationDescription.getInstrumentationEntities(MethodsEnclosingScope.class)) {
-			final MethodsEnclosingScope methodsEnclosingScope = ExtensionRegistry.getSingleton().getExtension(mScopeEntity.getScopeDescription().getName()).createExtensionArtifact(mScopeEntity.getScopeDescription().getParameter().toArray(new String[]{}));
+			Object[] args;
+			if (mScopeEntity.getScopeDescription().getParameter().size() == 0) {
+				args = new Object[]{};
+			} else if (mScopeEntity.getScopeDescription().getParameter().size() == 1) {
+				args = new Object[]{mScopeEntity.getScopeDescription().getParameter().get(0)};
+			} else {
+				args = new Object[]{mScopeEntity.getScopeDescription().getParameter().toArray(new String[]{})};
+			}
+			final MethodsEnclosingScope methodsEnclosingScope = ExtensionRegistry.getSingleton().getExtension(mScopeEntity.getScopeDescription().getName()).
+					createExtensionArtifact(args);
 			final IScopeAnalyzer scopeAnalyzer = methodsEnclosingScope.getScopeAnalyzer(allLoadedClasses);
 
-
-			scopeAnalyzer.setRestriction(mScopeEntity.getLocalRestriction().mergeWith(instrumentationDescription.getGlobalRestriction()));
-			scopeAnalyzer.setScopeId(mScopeEntity.getScopeDescription().getId());
-			mapping.put(scopeAnalyzer, mScopeEntity.getProbesAsStrings());
+			if (scopeAnalyzer != null) {
+				scopeAnalyzer.setRestriction(mScopeEntity.getLocalRestriction().mergeWith(instrumentationDescription.getGlobalRestriction()));
+				scopeAnalyzer.setScopeId(mScopeEntity.getScopeDescription().getId());
+				mapping.put(scopeAnalyzer, mScopeEntity.getProbesAsStrings());
+			}
 
 		}
 		return mapping;
