@@ -208,7 +208,7 @@ public final class Restriction {
 		final Set<String> packageIncludes = new HashSet<String>(this.packageIncludes);
 		packageIncludes.addAll(other.packageIncludes);
 		final Set<String> packageExcludes = new HashSet<String>(this.packageExcludes);
-		packageIncludes.addAll(other.packageExcludes);
+		packageExcludes.addAll(other.packageExcludes);
 		final Set<Integer> modifierIncludes = new HashSet<Integer>(this.modifierIncludes);
 		modifierIncludes.addAll(other.modifierIncludes);
 		final Set<Integer> modifierExcludes = new HashSet<Integer>(this.modifierExcludes);

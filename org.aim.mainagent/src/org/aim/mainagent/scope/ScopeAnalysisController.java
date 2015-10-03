@@ -104,7 +104,6 @@ public class ScopeAnalysisController {
 						probeClass = probeClasses.get(probe);
 					}
 					final FlatInstrumentationEntity fiEntity = new FlatInstrumentationEntity(fse, probeClass);
-					fiEntity.setScopeId(sAnalyzer.getScopeId());
 
 					instrumentationEntities.add(fiEntity);
 				}

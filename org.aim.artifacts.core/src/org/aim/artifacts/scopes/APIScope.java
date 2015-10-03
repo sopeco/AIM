@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.aim.aiminterface.description.scope.ScopeDescription;
 import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.api.instrumentation.APIScopeAnalyzer;
 import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
 import org.aim.api.instrumentation.IScopeAnalyzer;

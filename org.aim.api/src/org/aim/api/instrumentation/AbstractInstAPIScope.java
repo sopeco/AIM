@@ -115,7 +115,7 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 
 	@Override
 	public IScopeAnalyzer getScopeAnalyzer(final Collection<Class<?>> allLoadedClasses) throws InstrumentationException {
-		return null;
+		return new APIScopeAnalyzer(this, allLoadedClasses);
 	}
 	
 	

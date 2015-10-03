@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.artifacts.scopes;
+package org.aim.api.instrumentation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -30,8 +30,6 @@ import java.util.Set;
 
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.exceptions.InstrumentationException;
-import org.aim.api.instrumentation.AbstractInstAPIScope;
-import org.aim.api.instrumentation.AbstractScopeAnalyzer;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
 import org.aim.artifacts.scopes.utils.MethodSignature;
 
@@ -58,24 +56,26 @@ public class APIScopeAnalyzer extends AbstractScopeAnalyzer {
 	 * @throws InstrumentationException
 	 *             if an API class or interface could not be found.
 	 */
-	@SuppressWarnings("rawtypes")
 	public APIScopeAnalyzer(final AbstractInstAPIScope apiScope, final Collection<Class<?>> allLoadedClasses)
 			throws InstrumentationException {
 		methodsToMatch = new HashMap<>();
 		for (final String containerName : apiScope.getMethodsToMatch().keySet()) {
 			try {
-				final List<Class<?>> classList = getClassesByName(containerName,allLoadedClasses);
-				if (classList.size() != 1) {
-					throw new InstrumentationException("Multiple classes found with name "+containerName);
+				final List<Class<?>> classList = getClassesByName(containerName, allLoadedClasses);
+				// TODO: This assumes that multiple loaded classes are of the
+				// same version and hence, we can take any one
+				// as representative
+				if (!classList.isEmpty()) {
+					final Class<?> containerClass = classList.get(0);
+					final List<MethodSignature> signatures = new ArrayList<>();
+					for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
+						final String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
+						final Class<?>[] paramTypes = getParameterTypes(apiMethod,
+								containerClass.getClassLoader());
+						signatures.add(new MethodSignature(methodName, paramTypes));
+					}
+					methodsToMatch.put(containerClass, signatures);
 				}
-				final Class<?> containerClass = classList.get(0);
-				final List<MethodSignature> signatures = new ArrayList<>();
-				for (final String apiMethod : apiScope.getMethodsToMatch().get(containerName)) {
-					final String methodName = apiMethod.substring(0, apiMethod.indexOf('('));
-					final Class<?>[] paramTypes = getParameterTypes(apiMethod,containerClass.getClassLoader());
-					signatures.add(new MethodSignature(methodName, paramTypes));
-				}
-				methodsToMatch.put(containerClass, signatures);
 			} catch (final ClassNotFoundException e) {
 				throw new InstrumentationException("Failed determining scope " + apiScope.getClass().getName(), e);
 			}

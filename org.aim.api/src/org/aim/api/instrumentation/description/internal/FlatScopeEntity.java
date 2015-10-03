@@ -22,9 +22,9 @@ package org.aim.api.instrumentation.description.internal;
  * 
  */
 public class FlatScopeEntity {
-	private Long scopeId;
-	private Class<?> clazz;
-	private String methodSignature;
+	private final long scopeId;
+	private final Class<?> clazz;
+	private final String methodSignature;
 
 	/**
 	 * Constructor.
@@ -35,10 +35,15 @@ public class FlatScopeEntity {
 	 *            Signature of the method to instrument. This signature must
 	 *            contain the fully qualified name of the declaring class!
 	 */
-	public FlatScopeEntity(Class<?> clazz, String methodSignature) {
+	public FlatScopeEntity(final Class<?> clazz, final String methodSignature, final long id) {
 		super();
 		this.clazz = clazz;
 		this.methodSignature = methodSignature;
+		this.scopeId = id;
+	}
+
+	public FlatScopeEntity(final Class<?> clazz, final String methodSignature) {
+		this(clazz,methodSignature,0L);
 	}
 
 	/**
@@ -49,14 +54,6 @@ public class FlatScopeEntity {
 	}
 
 	/**
-	 * @param clazz
-	 *            the clazz to set
-	 */
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
-	}
-
-	/**
 	 * @return the methodSignature
 	 */
 	public String getMethodSignature() {
@@ -64,11 +61,10 @@ public class FlatScopeEntity {
 	}
 
 	/**
-	 * @param methodSignature
-	 *            the methodSignature to set
+	 * @return the scopeId
 	 */
-	public void setMethodSignature(String methodSignature) {
-		this.methodSignature = methodSignature;
+	public Long getScopeId() {
+		return scopeId;
 	}
 
 	/*
@@ -91,7 +87,7 @@ public class FlatScopeEntity {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -101,7 +97,7 @@ public class FlatScopeEntity {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		FlatScopeEntity other = (FlatScopeEntity) obj;
+		final FlatScopeEntity other = (FlatScopeEntity) obj;
 		if (clazz == null) {
 			if (other.clazz != null) {
 				return false;
@@ -119,19 +115,10 @@ public class FlatScopeEntity {
 		return true;
 	}
 
-	/**
-	 * @return the scopeId
-	 */
-	public Long getScopeId() {
-		return scopeId;
-	}
-
-	/**
-	 * @param scopeId
-	 *            the scopeId to set
-	 */
-	public void setScopeId(Long scopeId) {
-		this.scopeId = scopeId;
+	@Override
+	public String toString() {
+		return "FlatScopeEntity [scopeId=" + scopeId + ", clazz=" + clazz + ", methodSignature=" + methodSignature
+				+ "]";
 	}
 
 }
