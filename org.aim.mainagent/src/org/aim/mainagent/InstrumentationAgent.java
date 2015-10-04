@@ -32,7 +32,7 @@ import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.logging.AIMLoggingConfig;
 import org.aim.logging.LoggingLevel;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.lpe.common.config.GlobalConfiguration;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.util.system.LpeSystemUtils;

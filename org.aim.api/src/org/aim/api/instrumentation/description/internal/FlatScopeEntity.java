@@ -93,7 +93,7 @@ public class FlatScopeEntity {
 			if (other.clazz != null) {
 				return false;
 			}
-		} else if (!clazz.getName().equals(other.clazz.getName())) {
+		} else if (!clazz.getName().equals(other.clazz.getName()) && !(clazz.getClassLoader() == other.clazz.getClassLoader())) {
 			return false;
 		}
 		if (methodSignature == null) {

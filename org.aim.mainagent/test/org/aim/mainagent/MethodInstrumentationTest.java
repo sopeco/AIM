@@ -30,7 +30,7 @@ import org.aim.artifacts.probes.ResponsetimeProbe;
 import org.aim.artifacts.records.NanoResponseTimeRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -46,6 +46,7 @@ import org.test.sut.ClassF;
 import org.test.sut.ClassG;
 import org.test.sut.ClassH;
 import org.test.sut.ClassI;
+import org.test.sut.ClassK;
 
 import junit.framework.Assert;
 
@@ -79,6 +80,7 @@ public class MethodInstrumentationTest {
 		final ClassE e = new ClassE();
 		final ClassF f = new ClassF();
 		final ClassG g = new ClassG();
+		final ClassK k = new ClassK();
 		final AbstractDataSource dataSource = CollectorFactory.createDataSource(MemoryDataSource.class.getName(), null);
 		AbstractDataSource.setDefaultDataSource(dataSource);
 		
@@ -678,6 +680,34 @@ public class MethodInstrumentationTest {
 		Assert.assertFalse(data.getRecords().isEmpty());
 		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
 		Assert.assertEquals(2, data.selectRecords(NanoResponseTimeRecord.class).size());
+	}
+	
+	@Test
+	public void testReturnMethodInstrumentation() throws InstrumentationException, MeasurementException {
+		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
+				.newMethodScopeEntity(ClassK.class.getName() + ".returnMethod(boolean)")
+				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		enableMeasurement();
+		final ClassK k = new ClassK();
+		k.returnMethod(false);
+		disableMeasurement();
+		MeasurementData data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		enableMeasurement();
+		k.returnMethod(true);
+		disableMeasurement();
+		data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent;
+package org.aim.mainagent.instrumentor;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
@@ -24,6 +24,7 @@ import org.aim.api.events.IMonitorEventProbe;
 import org.aim.artifacts.scopes.SynchronizedScope;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
+import org.aim.mainagent.CEventAgentAdapter;
 import org.aim.mainagent.events.EventProbeRegistry;
 import org.aim.mainagent.events.MonitorEventListener;
 import org.lpe.common.extension.ExtensionRegistry;

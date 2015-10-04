@@ -16,6 +16,7 @@
 package org.aim.mainagent;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
-import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.InstrumentationEntity;
 import org.aim.aiminterface.entities.results.OverheadData;
@@ -43,6 +43,15 @@ import org.aim.api.instrumentation.description.internal.InstrumentationConstants
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
+import org.aim.description.builder.InstrumentationDescriptionBuilder;
+import org.aim.description.builder.RestrictionBuilder;
+import org.aim.logging.AIMLogger;
+import org.aim.logging.AIMLoggerFactory;
+import org.aim.logging.LoggingLevel;
+import org.aim.mainagent.instrumentor.EventInstrumentor;
+import org.aim.mainagent.instrumentor.IInstrumentor;
+import org.aim.mainagent.instrumentor.MethodInstrumentor;
+import org.aim.mainagent.instrumentor.TraceInstrumentor;
 import org.aim.mainagent.probes.IncrementalProbeExtension;
 import org.aim.mainagent.sampling.Sampling;
 import org.lpe.common.extension.ExtensionRegistry;
@@ -55,32 +64,28 @@ import org.overhead.OverheadEstimator;
  * @author Alexander Wert
  * 
  */
-public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFacadeMXBean {
-	private static AdaptiveInstrumentationFacade instance;
+public enum AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFacadeMXBean {
+	INSTANCE;
 
+	private final static AIMLogger LOGGER = AIMLoggerFactory.getLogger(AdaptiveInstrumentationFacade.class);
+	
 	/**
 	 * Singleton instance.
 	 * 
 	 * @return singleton instance
 	 */
 	public static synchronized AdaptiveInstrumentationFacadeMXBean getInstance() {
-		if (instance == null) {
-			instance = new AdaptiveInstrumentationFacade();
-		}
-		return instance;
+		return INSTANCE;
 	}
 
-	private final MethodInstrumentor methodInstrumentor;
-	private final TraceInstrumentor traceInstrumentor;
-	private final EventInstrumentor eventInstrumentor;
-
+	private final Collection<IInstrumentor> knownInstrumentors = new LinkedList<>();
 	private SupportedExtensions extensions = null;
+	private final MethodInstrumentor methodInstrumentor = new MethodInstrumentor();
 
 	private AdaptiveInstrumentationFacade() {
-		methodInstrumentor = new MethodInstrumentor();
-
-		traceInstrumentor = TraceInstrumentor.getInstance();
-		eventInstrumentor = EventInstrumentor.getInstance();
+		this.knownInstrumentors.add(methodInstrumentor);
+		this.knownInstrumentors.add(TraceInstrumentor.INSTANCE);
+		this.knownInstrumentors.add(EventInstrumentor.getInstance());
 	}
 
 	/*
@@ -93,32 +98,20 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	@Override
 	public synchronized void instrument(final InstrumentationDescription instrumentationDescription)
 			throws InstrumentationException {
-		final Set<String> newPackageExcludes = new HashSet<>(instrumentationDescription.getGlobalRestriction().getPackageExcludes());
-		newPackageExcludes.add(InstrumentationConstants.AIM_PACKAGE);
-		newPackageExcludes.add(InstrumentationConstants.JAVA_PACKAGE);
-		newPackageExcludes.add(InstrumentationConstants.JAVASSIST_PACKAGE);
-		newPackageExcludes.add(InstrumentationConstants.JAVAX_PACKAGE);
-		newPackageExcludes.add(InstrumentationConstants.LPE_COMMON_PACKAGE);
-		final Restriction adaptedRestriction = new Restriction(
-				instrumentationDescription.getGlobalRestriction().getPackageIncludes(), 
-				newPackageExcludes, 
-				instrumentationDescription.getGlobalRestriction().getModifierIncludes(), 
-				instrumentationDescription.getGlobalRestriction().getModifierExcludes(),
-				instrumentationDescription.getGlobalRestriction().getGranularity());
-		final InstrumentationDescription adaptedDescription = new InstrumentationDescription(
-				instrumentationDescription.getInstrumentationEntities(), 
-				instrumentationDescription.getSamplingDescriptions(), 
-				adaptedRestriction);
-
-		methodInstrumentor.instrument(adaptedDescription);
-		traceInstrumentor.instrument(adaptedDescription);
-		eventInstrumentor.instrument(adaptedDescription);
+		if (LOGGER.isLogLevelEnabled(LoggingLevel.DEBUG)) {
+			LOGGER.debug("Requesting instrumentation. Instrumen tation description {}", instrumentationDescription.toString());
+		}
+		
+		for (final IInstrumentor instrumentor : knownInstrumentors) {
+			instrumentor.instrument(adaptInstrumentationDescription(instrumentationDescription));
+		}
 
 		// TODO: add Statement Instrumentation
 		if (!instrumentationDescription.getSamplingDescriptions().isEmpty()) {
 			try {
 				Sampling.getInstance().addMonitoringJob(instrumentationDescription.getSamplingDescriptions());
 			} catch (final MeasurementException e) {
+				LOGGER.error("Failed to configure sampling. Exception {}", e.toString());
 				throw new InstrumentationException(e);
 			}
 		}
@@ -131,13 +124,13 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 	 */
 	@Override
 	public synchronized void undoInstrumentation() {
+		LOGGER.debug("Requesting instrumentation revert");
 		try {
-			methodInstrumentor.undoInstrumentation();
-			traceInstrumentor.undoInstrumentation();
-			eventInstrumentor.undoInstrumentation();
+			for (final IInstrumentor instrumentor : knownInstrumentors) {
+				instrumentor.undoInstrumentation();
+			}
 		} catch (final InstrumentationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error("Undo instrumentation failed. Exception was {}", e.toString());
 		}
 
 		InstrumentationUtilsController.getInstance().clear();
@@ -257,6 +250,22 @@ public final class AdaptiveInstrumentationFacade implements AdaptiveInstrumentat
 		oData.setoRecords(records);
 
 		return oData;
+	}
+
+	/** Create a new, adapted instrumentation description that excludes JBCL and AIM classes
+	 * @param instrumentationDescription Original description
+	 * @return Adapted description
+	 */
+	private InstrumentationDescription adaptInstrumentationDescription(
+			final InstrumentationDescription instrumentationDescription) {
+		final InstrumentationDescriptionBuilder adaptedDescriptionBuilder = 
+				InstrumentationDescriptionBuilder.fromInstrumentationDescription(instrumentationDescription);
+		final RestrictionBuilder<InstrumentationDescriptionBuilder> restrictionBuilder = adaptedDescriptionBuilder.editGlobalRestriction();
+		for (final String systemPackage : InstrumentationConstants.ALL_SYSTEM_PACKAGES) {
+			restrictionBuilder.excludePackage(systemPackage);
+		}
+		final InstrumentationDescription adaptedDescription = restrictionBuilder.restrictionDone().build();
+		return adaptedDescription;
 	}
 
 }

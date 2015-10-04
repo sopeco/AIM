@@ -49,17 +49,19 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	public InstrumentationDescriptionBuilder() {
 		super();
 	}
-
-	/**
-	 * Adds an instrumentation entity.
-	 * 
-	 * @param entity
-	 *            entity to add
-	 */
-	protected void addInstrumentationEntity(final InstrumentationEntity entity) {
-		instrumentationEntities.add(entity);
+	
+	public static InstrumentationDescriptionBuilder newBuilder() {
+		return new InstrumentationDescriptionBuilder();
 	}
 
+	public static InstrumentationDescriptionBuilder fromInstrumentationDescription(final InstrumentationDescription from) {
+		final InstrumentationDescriptionBuilder newBuilder = new InstrumentationDescriptionBuilder();
+		newBuilder.instrumentationEntities.addAll(from.getInstrumentationEntities());
+		newBuilder.samplingDescriptions.addAll(from.getSamplingDescriptions());
+		newBuilder.globalRestriction = from.getGlobalRestriction();
+		return newBuilder;
+	}
+	
 	/**
 	 * Starts definition of the global restriction.
 	 * 
@@ -69,11 +71,11 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 		return new RestrictionBuilder<>(this);
 	}
 
-	@Override
-	protected void setRestriction(final Restriction restriction) {
-		this.globalRestriction = restriction;
+	public RestrictionBuilder<InstrumentationDescriptionBuilder> editGlobalRestriction() {
+		final RestrictionBuilder<InstrumentationDescriptionBuilder> result = RestrictionBuilder.fromRestriction(this,this.globalRestriction);
+		return result;
 	}
-
+	
 	/**
 	 * Adds a new {@link SamplingDescription}.
 	 * 
@@ -110,14 +112,6 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 	 */
 	public InstrumentationEntityBuilder newMethodScopeEntity(final String... patterns) {
 		return new InstrumentationEntityBuilder(getScopeDescription(MethodScope.class, 0L, patterns),this);
-	}
-
-	private ScopeDescription getScopeDescription(final Class<?> scopeClass, final long id, final String... patterns) {
-		return new ScopeDescription(scopeClass.getName(), id, Arrays.asList(patterns));
-	}
-
-	private ScopeDescription getScopeDescription(final String scopeClass, final String... patterns) {
-		return new ScopeDescription(scopeClass, 0, Arrays.asList(patterns));
 	}
 
 	/**
@@ -293,5 +287,28 @@ public class InstrumentationDescriptionBuilder extends AbstractRestrictableBuild
 			newSampling(sDescr.getResourceName(), sDescr.getDelay());
 		}
 
+	}
+
+	/**
+	 * Adds an instrumentation entity.
+	 * 
+	 * @param entity
+	 *            entity to add
+	 */
+	protected void addInstrumentationEntity(final InstrumentationEntity entity) {
+		instrumentationEntities.add(entity);
+	}
+
+	@Override
+	protected void setRestriction(final Restriction restriction) {
+		this.globalRestriction = restriction;
+	}
+
+	private ScopeDescription getScopeDescription(final Class<?> scopeClass, final long id, final String... patterns) {
+		return new ScopeDescription(scopeClass.getName(), id, Arrays.asList(patterns));
+	}
+
+	private ScopeDescription getScopeDescription(final String scopeClass, final String... patterns) {
+		return new ScopeDescription(scopeClass, 0, Arrays.asList(patterns));
 	}
 }

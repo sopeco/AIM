@@ -120,4 +120,15 @@ public class RestrictionBuilder<ParentBuilderType extends AbstractRestrictableBu
 		return parentBuilder;
 	}
 
+	static <RBT extends AbstractRestrictableBuilder> RestrictionBuilder<RBT> fromRestriction(
+			final AbstractRestrictableBuilder parent, final Restriction prototype) {
+		final RestrictionBuilder<RBT> result = new RestrictionBuilder<RBT>((RBT) parent);
+		result.excludeModifiers.addAll(prototype.getModifierExcludes());
+		result.includeModifiers.addAll(prototype.getModifierIncludes());
+		result.excludePackages.addAll(prototype.getPackageExcludes());
+		result.includePackages.addAll(prototype.getPackageIncludes());
+		result.granularity = prototype.getGranularity();
+		return result;
+	}
+
 }

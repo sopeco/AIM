@@ -28,7 +28,7 @@ import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
-import org.aim.mainagent.instrumentor.InstrumentorAccessor;
+import org.aim.mainagent.instrumentation.InstrumentorAccessor;
 import org.aim.mainagent.utils.DummyClass;
 
 public abstract class ProbeTest {

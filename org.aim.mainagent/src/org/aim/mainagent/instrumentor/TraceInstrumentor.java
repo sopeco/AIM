@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent;
+package org.aim.mainagent.instrumentor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +36,7 @@ import org.aim.description.builder.InstrumentationEntityBuilder;
 import org.aim.description.builder.RestrictionBuilder;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
+import org.aim.mainagent.AdaptiveInstrumentationFacade;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
 import org.lpe.common.extension.ExtensionRegistry;
 

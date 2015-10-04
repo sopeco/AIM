@@ -29,7 +29,7 @@ import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.artifacts.probes.ResponsetimeProbe;
 import org.aim.artifacts.records.ResponseTimeRecord;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.BeforeClass;

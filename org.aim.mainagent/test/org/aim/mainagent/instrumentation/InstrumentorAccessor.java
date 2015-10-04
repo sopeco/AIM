@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.instrumentor;
+package org.aim.mainagent.instrumentation;
 
 import java.util.Set;
 
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
+import org.aim.mainagent.instrumentation.BCInjector;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;

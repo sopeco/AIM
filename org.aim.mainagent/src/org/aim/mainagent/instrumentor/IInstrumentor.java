@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent;
+package org.aim.mainagent.instrumentor;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.exceptions.InstrumentationException;
@@ -24,7 +24,7 @@ import org.aim.aiminterface.exceptions.InstrumentationException;
  * @author Alexander Wert
  * 
  */
-interface IInstrumentor {
+public interface IInstrumentor {
 
 	/**
 	 * Instruments target application according to the passed instrumentation

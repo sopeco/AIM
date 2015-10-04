@@ -23,9 +23,9 @@ import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.artifacts.records.NanoResponseTimeRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
-import org.aim.mainagent.TraceInstrumentor;
 import org.aim.mainagent.builder.MultiSnippet;
 import org.aim.mainagent.builder.SnippetProvider;
+import org.aim.mainagent.instrumentor.TraceInstrumentor;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
 
 public class SnippetProviderTest {

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent;
+package org.aim.mainagent.instrumentor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,9 +29,10 @@ import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntit
 import org.aim.api.instrumentation.description.internal.InstrumentationSet;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.aim.mainagent.instrumentor.BCInjector;
-import org.aim.mainagent.instrumentor.JAgentSwapper;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.logging.LoggingLevel;
+import org.aim.mainagent.instrumentation.BCInjector;
+import org.aim.mainagent.instrumentation.JAgentSwapper;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.aim.mainagent.scope.ScopeAnalysisController;
 
 /**
@@ -47,21 +47,15 @@ public class MethodInstrumentor implements IInstrumentor {
 
 	@Override
 	public void instrument(final InstrumentationDescription descr) throws InstrumentationException {
-		if (!containsValidInstrumentationInstructions(descr)) {
+		if (!descr.containsScopeType(MethodsEnclosingScope.class)) {
 			return;
 		}
 		final ScopeAnalysisController scopeAnalyzer = new ScopeAnalysisController(descr); // TODO:
 																					// usage
 																					// with
 																					// IDM
-		final Class<?>[] classes = JInstrumentation.getInstance().getjInstrumentation().getAllLoadedClasses();
-
-		// copy all classes to a new list as the array is not allowed to be
-		// modified!
-		final List<Class<?>> allLoadedClasses = new ArrayList<>();
-		allLoadedClasses.addAll(Arrays.asList(classes));
-
-		final Set<FlatInstrumentationEntity> newInstrumentationStatements = scopeAnalyzer.resolveScopes(allLoadedClasses);
+		final Set<FlatInstrumentationEntity> newInstrumentationStatements = scopeAnalyzer.resolveScopes(
+				 JInstrumentation.getInstance().getKnownClasses());
 		final Set<Class<?>> overLappingClasses = revertOverlappingInstrumentation(newInstrumentationStatements);
 
 		for (final FlatInstrumentationEntity oldEntity : getCurrentInstrumentationState()) {
@@ -70,28 +64,20 @@ public class MethodInstrumentor implements IInstrumentor {
 			}
 		}
 
-		final InstrumentationSet newInstrumentationSet = new InstrumentationSet(newInstrumentationStatements);
-
-		LOGGER.info("Going to instrument the following methods:");
-		for (final FlatInstrumentationEntity fie : newInstrumentationStatements) {
-			LOGGER.info("{} in ScopeID {} with Probetype {}", fie.getMethodSignature(), fie.getScopeId(), fie.getProbeType().getName());
-		}
-
-		injectNewInstrumentation(newInstrumentationSet, descr.getGlobalRestriction());
-
+		injectNewInstrumentation(newInstrumentationStatements, descr.getGlobalRestriction());
 		getCurrentInstrumentationState().addAll(newInstrumentationStatements);
-
 	}
 
-	private boolean containsValidInstrumentationInstructions(final InstrumentationDescription descr) {
-		return descr.containsScopeType(MethodsEnclosingScope.class);
-
-	}
-
-	private void injectNewInstrumentation(final InstrumentationSet newInstrumentationSet,
+	private void injectNewInstrumentation(final Set<FlatInstrumentationEntity> newInstrumentationStatements,
 			final Restriction instrumentationRestriction) throws InstrumentationException {
+		if (LOGGER.isLogLevelEnabled(LoggingLevel.INFO)) {
+			LOGGER.info("Going to instrument the following methods:");
+			for (final FlatInstrumentationEntity fie : newInstrumentationStatements) {
+				LOGGER.info("{} in ScopeID {} with Probetype {}", fie.getMethodSignature(), fie.getScopeId(), fie.getProbeType().getName());
+			}
+		}
 		final Map<Class<?>, byte[]> classesToRevert = BCInjector.getInstance().injectInstrumentationProbes(
-				newInstrumentationSet, instrumentationRestriction);
+				new InstrumentationSet(newInstrumentationStatements), instrumentationRestriction);
 		JAgentSwapper.getInstance().redefineClasses(classesToRevert);
 	}
 

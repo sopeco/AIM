@@ -18,7 +18,7 @@ package org.aim.mainagent.probes;
 import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeIncrementalInstrumentation;
-import org.aim.mainagent.TraceInstrumentor;
+import org.aim.mainagent.instrumentor.TraceInstrumentor;
 import org.lpe.common.extension.IExtension;
 
 /**
