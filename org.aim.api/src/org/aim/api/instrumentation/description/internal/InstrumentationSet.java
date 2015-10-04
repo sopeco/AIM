@@ -40,7 +40,7 @@ public class InstrumentationSet {
 	 * @param instrumentationEntities
 	 *            flat representation
 	 */
-	public InstrumentationSet(Collection<FlatInstrumentationEntity> instrumentationEntities) {
+	public InstrumentationSet(final Collection<FlatInstrumentationEntity> instrumentationEntities) {
 		this.instrumentationEntities = instrumentationEntities;
 	}
 
@@ -50,8 +50,8 @@ public class InstrumentationSet {
 	 * @return classes to instrument
 	 */
 	public Set<Class<?>> classesToInstrument() {
-		Set<Class<?>> result = new HashSet<Class<?>>();
-		for (FlatInstrumentationEntity fie : instrumentationEntities) {
+		final Set<Class<?>> result = new HashSet<Class<?>>();
+		for (final FlatInstrumentationEntity fie : instrumentationEntities) {
 			result.add(fie.getClazz());
 		}
 		return result;
@@ -67,15 +67,15 @@ public class InstrumentationSet {
 	 *         for that methods or an empty map if class is not marked to be
 	 *         instrumented
 	 */
-	public Map<String, Set<Long>> methodsToInstrument(Class<?> clazz) {
-		Map<String, Set<Long>> result = new HashMap<>();
+	public Map<String, Set<Long>> methodsToInstrument(final Class<?> clazz) {
+		final Map<String, Set<Long>> result = new HashMap<>();
 
-		for (FlatInstrumentationEntity fie : instrumentationEntities) {
+		for (final FlatInstrumentationEntity fie : instrumentationEntities) {
 			if (fie.getClazz().equals(clazz)) {
 				if (!result.containsKey(fie.getMethodSignature())) {
 					result.put(fie.getMethodSignature(), new HashSet<Long>());
 				}
-				Long scopeId = fie.getScopeId();
+				final Long scopeId = fie.getScopeId();
 				if (scopeId >= 0) {
 					result.get(fie.getMethodSignature()).add(scopeId);
 				}
@@ -94,10 +94,10 @@ public class InstrumentationSet {
 	 * @return a set of probes to inject into the given method or an empty set
 	 *         if method is not going to be instrumented
 	 */
-	public Set<Class<? extends AbstractEnclosingProbe>> probesToInject(String methodSignature) {
-		Set<Class<? extends AbstractEnclosingProbe>> result = new HashSet<Class<? extends AbstractEnclosingProbe>>();
-		for (FlatInstrumentationEntity fie : instrumentationEntities) {
-			if (fie.getMethodSignature().equals(methodSignature)) {
+	public Set<Class<? extends AbstractEnclosingProbe>> probesToInject(final String methodSignature, final long scopeId) {
+		final Set<Class<? extends AbstractEnclosingProbe>> result = new HashSet<Class<? extends AbstractEnclosingProbe>>();
+		for (final FlatInstrumentationEntity fie : instrumentationEntities) {
+			if (fie.getScopeId() == scopeId && fie.getMethodSignature().equals(methodSignature)) {
 				result.add(fie.getProbeType());
 			}
 		}

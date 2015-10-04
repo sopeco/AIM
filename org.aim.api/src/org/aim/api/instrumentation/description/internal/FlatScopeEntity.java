@@ -67,25 +67,16 @@ public class FlatScopeEntity {
 		return scopeId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+		result = prime * result + ((clazz == null) ? 0 : clazz.getName().hashCode());
 		result = prime * result + ((methodSignature == null) ? 0 : methodSignature.hashCode());
+		result = prime * result + (int) (scopeId ^ (scopeId >>> 32));
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -102,7 +93,7 @@ public class FlatScopeEntity {
 			if (other.clazz != null) {
 				return false;
 			}
-		} else if (!clazz.equals(other.clazz)) {
+		} else if (!clazz.getName().equals(other.clazz.getName())) {
 			return false;
 		}
 		if (methodSignature == null) {
@@ -110,6 +101,9 @@ public class FlatScopeEntity {
 				return false;
 			}
 		} else if (!methodSignature.equals(other.methodSignature)) {
+			return false;
+		}
+		if (scopeId != other.scopeId) {
 			return false;
 		}
 		return true;

@@ -79,12 +79,16 @@ public class InstrumentationDescription {
 		final Set<InstrumentationEntity> sEntities = new HashSet<>();
 
 		for (final InstrumentationEntity ie : instrumentationEntities) {
+			if (type.getName().equals("org.aim.artifacts.scopes.TraceScope") && ie.isTraced()) {
+				sEntities.add(ie);
+				continue;
+			}
 			final IExtension scopeExtension = ExtensionRegistry.getSingleton().getExtension(ie.getScopeDescription().getName());
 			if (scopeExtension == null) {
 				throw new RuntimeException("Described scope is not loaded as scope extension!");
 			}
 
-			if (type.isAssignableFrom(scopeExtension.getExtensionArtifactClass()) || (type.getName().equals("org.aim.artifacts.scopes.TraceScope") && ie.isTraced())) {
+			if (!ie.isTraced() && type.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
 				sEntities.add(ie);
 			}
 		}
@@ -121,11 +125,14 @@ public class InstrumentationDescription {
 	 */
 	public boolean containsScopeType(final Class<? /* extends Scope*/> scopeClass) {
 		for (final InstrumentationEntity entity : instrumentationEntities) {
+			if (scopeClass.getName().equals("org.aim.artifacts.scopes.TraceScope") && entity.isTraced()) {
+				return true;
+			}
 			final IExtension scopeExtension = ExtensionRegistry.getSingleton().getExtension(entity.getScopeDescription().getName());
 			if (scopeExtension == null) {
 				throw new RuntimeException("Described scope "+entity.getScopeDescription().getName()+" is not loaded as scope extension!");
 			}
-			if (scopeClass.isAssignableFrom(scopeExtension.getExtensionArtifactClass()) || (scopeClass.getName().equals("org.aim.artifacts.scopes.TraceScope") && entity.isTraced())) {
+			if (!entity.isTraced() && scopeClass.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
 				return true;
 			}
 		}

@@ -23,10 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javassist.CannotCompileException;
-import javassist.CtBehavior;
-import javassist.CtClass;
-
 import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
@@ -38,6 +34,10 @@ import org.aim.mainagent.builder.Snippet;
 import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
 import org.aim.mainagent.utils.JavassistWrapper;
 import org.aim.mainagent.utils.Utils;
+
+import javassist.CannotCompileException;
+import javassist.CtBehavior;
+import javassist.CtClass;
 
 /**
  * Conducts instrumentation of methods and constructors.
@@ -78,25 +78,27 @@ public final class BCInjector {
 	 * @param instrumentationRestriction
 	 *            restriction for the instrumentation
 	 */
-	public synchronized Map<Class<?>, byte[]> injectInstrumentationProbes(InstrumentationSet instrumentationSet,
-			Restriction instrumentationRestriction) {
-		Map<Class<?>, byte[]> classesToRedefine = new HashMap<Class<?>, byte[]>();
-		for (Class<?> clazz : instrumentationSet.classesToInstrument()) {
+	public synchronized Map<Class<?>, byte[]> injectInstrumentationProbes(final InstrumentationSet instrumentationSet,
+			final Restriction instrumentationRestriction) {
+		final Map<Class<?>, byte[]> classesToRedefine = new HashMap<Class<?>, byte[]>();
+		for (final Class<?> clazz : instrumentationSet.classesToInstrument()) {
 			try {
-				CtClass ctClass = JavassistWrapper.getInstance().getCtClass(clazz);
+				final CtClass ctClass = JavassistWrapper.getInstance().getCtClass(clazz);
 				if (ctClass == null) {
 					LOGGER.warn("No CtClass found for class {}. Skipping this class for instrumentation.",
 							clazz.getCanonicalName());
 					continue;
 				}
-				byte[] originalByteCode = ctClass.toBytecode();
+				final byte[] originalByteCode = ctClass.toBytecode();
 
 				if (ctClass.isFrozen()) {
 					ctClass.defrost();
 				}
-				for (Entry<String, Set<Long>> methodEntry : instrumentationSet.methodsToInstrument(clazz).entrySet()) {
-					instrumentBehaviour(instrumentationSet.probesToInject(methodEntry.getKey()), ctClass,
-							methodEntry.getKey(), methodEntry.getValue(), instrumentationRestriction);
+				for (final Entry<String, Set<Long>> methodEntry : instrumentationSet.methodsToInstrument(clazz).entrySet()) {
+					for (final long scopeId : methodEntry.getValue()) {
+						instrumentBehaviour(instrumentationSet.probesToInject(methodEntry.getKey(), scopeId), ctClass,
+								methodEntry.getKey(), scopeId, instrumentationRestriction);
+					}
 				}
 				ctClass.freeze();
 
@@ -104,7 +106,7 @@ public final class BCInjector {
 					originalByteCodes.put(clazz, originalByteCode);
 				}
 				classesToRedefine.put(clazz, ctClass.toBytecode());
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				LOGGER.warn("Error ocured during instrumentation. Ignoring this error... {}", e);
 				// throw new RuntimeException(e);
 				// TODO: continue; ????
@@ -120,19 +122,19 @@ public final class BCInjector {
 	 *            classes to revert
 	 * @return mapping from classes to original bytecodes
 	 */
-	public synchronized Map<Class<?>, byte[]> partlyRevertInstrumentation(Collection<Class<?>> classes) {
-		Map<Class<?>, byte[]> classesToRedefine = new HashMap<Class<?>, byte[]>();
-		for (Class<?> clazz : classes) {
+	public synchronized Map<Class<?>, byte[]> partlyRevertInstrumentation(final Collection<Class<?>> classes) {
+		final Map<Class<?>, byte[]> classesToRedefine = new HashMap<Class<?>, byte[]>();
+		for (final Class<?> clazz : classes) {
 			try {
 				if (originalByteCodes.containsKey(clazz)) {
-					CtClass ctClass = JavassistWrapper.getInstance().getCtClass(clazz);
+					final CtClass ctClass = JavassistWrapper.getInstance().getCtClass(clazz);
 					if (ctClass != null) {
 						ctClass.detach();
 					}
 					classesToRedefine.put(clazz, originalByteCodes.get(clazz));
 					originalByteCodes.remove(clazz);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				LOGGER.error("Error: {}", e);
 			}
 
@@ -146,7 +148,7 @@ public final class BCInjector {
 	 * @return mapping from classes to original bytecodes
 	 */
 	public synchronized Map<Class<?>, byte[]> revertInstrumentation() {
-		List<Class<?>> classes = new ArrayList<>();
+		final List<Class<?>> classes = new ArrayList<>();
 		classes.addAll(originalByteCodes.keySet());
 		return partlyRevertInstrumentation(classes);
 	}
@@ -167,31 +169,29 @@ public final class BCInjector {
 	 * @throws InstrumentationException
 	 *             thrown if instrumentation fails
 	 */
-	protected void instrumentBehaviour(Set<Class<? extends AbstractEnclosingProbe>> probeTypes, CtClass ctClass,
-			String behaviourSignature, Set<Long> scopeIds, Restriction instrumentationRestriction)
+	protected void instrumentBehaviour(final Set<Class<? extends AbstractEnclosingProbe>> probeTypes, final CtClass ctClass,
+			final String behaviourSignature, final long scopeId, final Restriction instrumentationRestriction)
 			throws InstrumentationException {
 		try {
-			ProbeBuilder pBuilder = new ProbeBuilder(behaviourSignature, instrumentationRestriction.getGranularity());
-			for (Class<? extends AbstractEnclosingProbe> probeType : probeTypes) {
+			final ProbeBuilder pBuilder = new ProbeBuilder(behaviourSignature, instrumentationRestriction.getGranularity());
+			for (final Class<? extends AbstractEnclosingProbe> probeType : probeTypes) {
 				pBuilder.inject(probeType);
 			}
 
-			CtBehavior ctBehaviour = Utils.getCtBehaviour(ctClass, behaviourSignature);
+			final CtBehavior ctBehaviour = Utils.getCtBehaviour(ctClass, behaviourSignature);
 
 			if (ctBehaviour != null) {
-				Snippet snippet = pBuilder.build();
+				final Snippet snippet = pBuilder.build();
 
-				if (!snippet.getIncrementalPart().isEmpty() && !scopeIds.isEmpty()) {
-					for (Long scopeId : scopeIds) {
-						String tempSnippet = snippet.getIncrementalPart().replace(
-								IncrementalInstrumentationProbe.CLAZZ, "$0");
-						tempSnippet = tempSnippet.replace(IncrementalInstrumentationProbe.INST_DESCRIPTION,
-								String.valueOf(scopeId) + "L");
+				if (!snippet.getIncrementalPart().isEmpty()) {
+					String tempSnippet = snippet.getIncrementalPart().replace(
+							IncrementalInstrumentationProbe.CLAZZ, "$0");
+					tempSnippet = tempSnippet.replace(IncrementalInstrumentationProbe.INST_DESCRIPTION,
+							String.valueOf(scopeId) + "L");
 
-						FullTraceMethodEditor ftmEditor = new FullTraceMethodEditor(ctBehaviour.getLongName(),
-								tempSnippet, instrumentationRestriction);
-						ctBehaviour.instrument(ftmEditor);
-					}
+					final FullTraceMethodEditor ftmEditor = new FullTraceMethodEditor(ctBehaviour.getLongName(),
+							tempSnippet, instrumentationRestriction);
+					ctBehaviour.instrument(ftmEditor);
 				}
 
 				Utils.insertMethodLocalVariables(ctBehaviour, snippet.getVariables());
@@ -200,7 +200,7 @@ public final class BCInjector {
 				ctBehaviour.insertAfter(snippet.getAfterPart());
 
 			}
-		} catch (CannotCompileException e) {
+		} catch (final CannotCompileException e) {
 			throw new InstrumentationException("Failed instrumenting behaviour: " + behaviourSignature, e);
 		}
 

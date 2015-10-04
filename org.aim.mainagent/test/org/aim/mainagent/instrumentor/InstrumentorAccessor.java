@@ -15,7 +15,6 @@
  */
 package org.aim.mainagent.instrumentor;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.aim.aiminterface.description.restriction.Restriction;
@@ -29,7 +28,7 @@ import javassist.NotFoundException;
 public class InstrumentorAccessor {
 	public static void instrumentBehaviour(final Set<Class<? extends AbstractEnclosingProbe>> probeTypes, final CtClass ctClass,
 			final String behaviourSignature) throws InstrumentationException, CannotCompileException, NotFoundException {
-		BCInjector.getInstance().instrumentBehaviour(probeTypes, ctClass, behaviourSignature, Collections.<Long> emptySet(),
+		BCInjector.getInstance().instrumentBehaviour(probeTypes, ctClass, behaviourSignature, 0L,
 				Restriction.EMPTY_RESTRICTION);
 	}
 }

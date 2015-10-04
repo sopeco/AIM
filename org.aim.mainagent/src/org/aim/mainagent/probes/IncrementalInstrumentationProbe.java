@@ -37,7 +37,6 @@ public class IncrementalInstrumentationProbe extends AbstractEnclosingProbe {
 	 */
 	public IncrementalInstrumentationProbe(final IExtension provider) {
 		super(provider);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static final MeasurementProbeDescription MODEL_PROBE = new MeasurementProbeDescription(

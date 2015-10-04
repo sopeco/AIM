@@ -15,14 +15,14 @@
  */
 package org.aim.mainagent.instrumentor;
 
+import org.aim.aiminterface.description.restriction.Restriction;
+import org.aim.api.instrumentation.AbstractEnclosingProbe;
+
 import javassist.CannotCompileException;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
-
-import org.aim.aiminterface.description.restriction.Restriction;
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
 
 /**
  * MEthod visitor for instrumentation, used for full trace instrumentation.
@@ -31,9 +31,9 @@ import org.aim.api.instrumentation.AbstractEnclosingProbe;
  * 
  */
 public class FullTraceMethodEditor extends ExprEditor {
-	private String incrementalSnippet;
-	private String callingMethodName;
-	private Restriction instrumentationRestriction;
+	private final String incrementalSnippet;
+	private final String callingMethodName;
+	private final Restriction instrumentationRestriction;
 
 	/**
 	 * Constructor.
@@ -45,24 +45,24 @@ public class FullTraceMethodEditor extends ExprEditor {
 	 * @param instrumentationRestriction
 	 *            instrumentation restriction
 	 */
-	public FullTraceMethodEditor(String callingMethodName, String incrementalSnippet,
-			Restriction instrumentationRestriction) {
+	public FullTraceMethodEditor(final String callingMethodName, final String incrementalSnippet,
+			final Restriction instrumentationRestriction) {
 		this.callingMethodName = callingMethodName;
 		this.incrementalSnippet = incrementalSnippet;
 		this.instrumentationRestriction = instrumentationRestriction;
 	}
 
 	@Override
-	public void edit(MethodCall m) throws CannotCompileException {
+	public void edit(final MethodCall m) throws CannotCompileException {
 
 		try {
-			// ignore calls to excluded methods and directly recursive calls
+			// ignore calls to excluded methods and direct recursive calls
 			if (instrumentationRestriction.isExcluded(m.getClassName())
 					|| m.getMethod().getLongName().equals(callingMethodName)) {
 				return;
 			}
 
-			String methodName = "." + m.getMethodName()
+			final String methodName = "." + m.getMethodName()
 					+ m.getMethod().getLongName().substring(m.getMethod().getLongName().indexOf("("));
 
 			String tempSnippet = incrementalSnippet.replace(AbstractEnclosingProbe.METHOD_SIGNATURE_PLACE_HOLDER, "\""
@@ -74,7 +74,7 @@ public class FullTraceMethodEditor extends ExprEditor {
 			}
 
 			m.replace("{" + tempSnippet + " $_ = $proceed($$);}");
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			throw new RuntimeException(e);
 		}
 

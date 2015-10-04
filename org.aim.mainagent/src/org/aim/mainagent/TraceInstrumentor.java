@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
@@ -39,36 +40,28 @@ import org.aim.mainagent.probes.IncrementalInstrumentationProbe;
 import org.lpe.common.extension.ExtensionRegistry;
 
 /**
- * Instrumentor for traces.
+ * Instrumentor for traces using Java 7 enum-based singleton pattern to avoid class loader issues.
  * 
  * @author Alexander Wert
  * 
  */
-public final class TraceInstrumentor implements IInstrumentor {
+public enum TraceInstrumentor implements IInstrumentor {
+	INSTANCE;
+	
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(TraceInstrumentor.class);
-	private static TraceInstrumentor instance;
 
 	/**
 	 * 
 	 * @return singleton instance
 	 */
 	public static synchronized TraceInstrumentor getInstance() {
-		if (instance == null) {
-			instance = new TraceInstrumentor();
-		}
-		return instance;
+		return INSTANCE;
 	}
 
-	private final Map<Long, Set<String>> incrementalInstrumentationProbes;
-	private final Map<Long, Restriction> incrementalInstrumentationRestrictions;
-	private final Set<String> instrumentationFlags;
-	private volatile long idCounter = 0;
-
-	private TraceInstrumentor() {
-		incrementalInstrumentationProbes = new HashMap<>();
-		incrementalInstrumentationRestrictions = new HashMap<>();
-		instrumentationFlags = new HashSet<>();
-	}
+	private final Map<Long, Set<String>> incrementalInstrumentationProbes = new HashMap<>();
+	private final Map<Long, Restriction> incrementalInstrumentationRestrictions = new HashMap<>();
+	private final Set<String> instrumentationFlags = new HashSet<>();
+	private final AtomicLong idCounter = new AtomicLong(1);
 
 	/**
 	 * Does an incremental step in instrumentation.
@@ -87,18 +80,22 @@ public final class TraceInstrumentor implements IInstrumentor {
 				LOGGER.info("Incrementally going to instrument method: {}", methodName);
 				final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
 				final RestrictionBuilder<?> restrictionBuilder = idBuilder.newGlobalRestriction();
-				for (final String inc : incrementalInstrumentationRestrictions.get(jobID).getPackageIncludes()) {
+				final Restriction incRestriction = incrementalInstrumentationRestrictions.get(jobID);
+				if (incRestriction == null) {
+					throw new RuntimeException("Expected incremental restriction not found for ID "+jobID);
+				}
+				for (final String inc : incRestriction.getPackageIncludes()) {
 					restrictionBuilder.includePackage(inc);
 				}
 
-				for (final String exc : incrementalInstrumentationRestrictions.get(jobID).getPackageExcludes()) {
+				for (final String exc : incRestriction.getPackageExcludes()) {
 					restrictionBuilder.excludePackage(exc);
 				}
-				for (final int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierIncludes()) {
+				for (final int modifier : incRestriction.getModifierIncludes()) {
 					restrictionBuilder.includeModifier(modifier);
 				}
 
-				for (final int modifier : incrementalInstrumentationRestrictions.get(jobID).getModifierExcludes()) {
+				for (final int modifier : incRestriction.getModifierExcludes()) {
 					restrictionBuilder.excludeModifier(modifier);
 				}
 				restrictionBuilder.restrictionDone();
@@ -108,9 +105,8 @@ public final class TraceInstrumentor implements IInstrumentor {
 
 				for (final String probe : incrementalInstrumentationProbes.get(jobID)) {
 					ieBuilder.addProbe(probe);
-					ieBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE);
 				}
-				ieBuilder.entityDone();
+				ieBuilder.addProbe(IncrementalInstrumentationProbe.MODEL_PROBE).entityDone();
 				final InstrumentationDescription instDescr = idBuilder.build();
 				AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
 				instrumentationFlags.add(keyString);
@@ -119,7 +115,8 @@ public final class TraceInstrumentor implements IInstrumentor {
 			// Catch all exceptions and errors since this code is executed
 			// directly from the target application
 			LOGGER.error("Error during incremental instrumentation: {}", e);
-
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -136,7 +133,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 						getExtension(instrumentationEntity.getScopeDescription().getName()).
 						createExtensionArtifact(new Object[]{instrumentationEntity.getScopeDescription()})
 					);
-			final long scopeId = idCounter++;
+			final long scopeId = idCounter.getAndIncrement();
 			incrementalInstrumentationProbes.put(scopeId, instrumentationEntity.getProbesAsStrings());
 
 			incrementalInstrumentationRestrictions.put(scopeId, descr.getGlobalRestriction());
