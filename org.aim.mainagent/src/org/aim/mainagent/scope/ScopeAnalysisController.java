@@ -28,7 +28,6 @@ import org.aim.aiminterface.description.instrumentation.InstrumentationDescripti
 import org.aim.aiminterface.description.instrumentation.InstrumentationEntity;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.aim.api.instrumentation.IScopeAnalyzer;
 import org.aim.api.instrumentation.MethodsEnclosingScope;
 import org.aim.api.instrumentation.description.internal.FlatInstrumentationEntity;
@@ -68,6 +67,7 @@ public class ScopeAnalysisController {
 	 * @throws InstrumentationException
 	 *             if scope cannot be resolved
 	 */
+	@SuppressWarnings("unchecked")
 	public Set<FlatInstrumentationEntity> resolveScopes(final Collection<Class<?>> allLoadedClasses) throws InstrumentationException {
 		final Collection<Class<?>> filteredClasses = removeGlobalyExcludedClasses(allLoadedClasses);
 
@@ -90,22 +90,14 @@ public class ScopeAnalysisController {
 
 			for (final FlatScopeEntity fse : scopeEntities) {
 				for (final String probe : probes) {
-
-					Class<? extends AbstractEnclosingProbe> probeClass = null;
 					if (!probeClasses.containsKey(probe)) {
 						final IExtension ext = ExtensionRegistry.getSingleton().getExtension(probe);
 						if (ext == null) {
 							throw new InstrumentationException("Failed loading Probe class " + probe);
 						}
-						final AbstractEnclosingProbeExtension probeExtension = (AbstractEnclosingProbeExtension) ext;
-						probeClass = (Class<? extends AbstractEnclosingProbe>) probeExtension.getExtensionArtifactClass();
-						probeClasses.put(probe, probeClass);
-					} else {
-						probeClass = probeClasses.get(probe);
+						probeClasses.put(probe, (Class<? extends AbstractEnclosingProbe>) ext.getExtensionArtifactClass());
 					}
-					final FlatInstrumentationEntity fiEntity = new FlatInstrumentationEntity(fse, probeClass);
-
-					instrumentationEntities.add(fiEntity);
+					instrumentationEntities.add(new FlatInstrumentationEntity(fse, probeClasses.get(probe)));
 				}
 			}
 		}
@@ -156,10 +148,10 @@ public class ScopeAnalysisController {
 			Object[] args;
 			if (mScopeEntity.getScopeDescription().getParameter().size() == 0) {
 				args = new Object[]{};
-			} else if (mScopeEntity.getScopeDescription().getParameter().size() == 1) {
-				args = new Object[]{mScopeEntity.getScopeDescription().getParameter().get(0)};
+//			} else if (mScopeEntity.getScopeDescription().getParameter().size() == 1) {
+//				args = new Object[]{mScopeEntity.getScopeDescription().getParameter().get(0)};
 			} else {
-				args = new Object[]{mScopeEntity.getScopeDescription().getParameter().toArray(new String[]{})};
+				args = new Object[]{mScopeEntity.getScopeDescription()};
 			}
 			final MethodsEnclosingScope methodsEnclosingScope = ExtensionRegistry.getSingleton().getExtension(mScopeEntity.getScopeDescription().getName()).
 					createExtensionArtifact(args);

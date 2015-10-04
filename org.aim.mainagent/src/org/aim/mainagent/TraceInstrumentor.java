@@ -112,7 +112,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 				}
 				ieBuilder.entityDone();
 				final InstrumentationDescription instDescr = idBuilder.build();
-				//AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
+				AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
 				instrumentationFlags.add(keyString);
 			}
 		} catch (final Throwable e) {
@@ -134,7 +134,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 			final TraceScope tScope = new TraceScope(
 					(MethodsEnclosingScope) ExtensionRegistry.getSingleton().
 						getExtension(instrumentationEntity.getScopeDescription().getName()).
-						createExtensionArtifact(instrumentationEntity.getScopeDescription().getParameter().toArray(new String[]{}))
+						createExtensionArtifact(new Object[]{instrumentationEntity.getScopeDescription()})
 					);
 			final long scopeId = idCounter++;
 			incrementalInstrumentationProbes.put(scopeId, instrumentationEntity.getProbesAsStrings());
@@ -156,7 +156,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 	}
 
 	private InstrumentationDescription getExtendedInstrumentationDescription(final InstrumentationDescription descr,
-			final TraceScope tScope, final InstrumentationEntity eiEntity, final Long scopeId)
+			final TraceScope tScope, final InstrumentationEntity eiEntity, final long scopeId)
 			throws InstrumentationException {
 
 		final Scope initialScopes = tScope.getSubScope();
@@ -247,7 +247,7 @@ public final class TraceInstrumentor implements IInstrumentor {
 		csBuilder.entityDone();
 	}
 
-	private void buildMethodInstEntity(final InstrumentationEntity eiEntity, final Long scopeId,
+	private void buildMethodInstEntity(final InstrumentationEntity eiEntity, final long scopeId,
 			final InstrumentationDescriptionBuilder idBuilder, final MethodsEnclosingScope iScope) {
 		final MethodScope mScope = (MethodScope) iScope;
 		final InstrumentationEntityBuilder msBuilder = idBuilder.newMethodScopeEntityWithId(scopeId,

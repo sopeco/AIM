@@ -81,7 +81,7 @@ public class MethodScopeAnalyzer extends AbstractScopeAnalyzer {
 		if (LpeStringUtils.patternMatches(getMethodSignature(m, true), patternToMatch)) {
 			if (!restriction.modifierSetExcluded(m.getModifiers())
 					&& !restriction.isExcluded(m.getDeclaringClass().getName())) {
-				scopeEntities.add(new FlatScopeEntity(m.getDeclaringClass(), getMethodSignature(m, true)));
+				scopeEntities.add(new FlatScopeEntity(m.getDeclaringClass(), getMethodSignature(m, true), this.getScopeId()));
 			}
 		}
 	}

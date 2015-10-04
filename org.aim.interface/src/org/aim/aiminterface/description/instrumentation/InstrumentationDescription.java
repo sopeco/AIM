@@ -84,7 +84,7 @@ public class InstrumentationDescription {
 				throw new RuntimeException("Described scope is not loaded as scope extension!");
 			}
 
-			if (type.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
+			if (type.isAssignableFrom(scopeExtension.getExtensionArtifactClass()) || (type.getName().equals("org.aim.artifacts.scopes.TraceScope") && ie.isTraced())) {
 				sEntities.add(ie);
 			}
 		}
@@ -125,7 +125,7 @@ public class InstrumentationDescription {
 			if (scopeExtension == null) {
 				throw new RuntimeException("Described scope "+entity.getScopeDescription().getName()+" is not loaded as scope extension!");
 			}
-			if (scopeClass.isAssignableFrom(scopeExtension.getExtensionArtifactClass())) {
+			if (scopeClass.isAssignableFrom(scopeExtension.getExtensionArtifactClass()) || (scopeClass.getName().equals("org.aim.artifacts.scopes.TraceScope") && entity.isTraced())) {
 				return true;
 			}
 		}

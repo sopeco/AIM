@@ -74,7 +74,7 @@ public class MethodInstrumentor implements IInstrumentor {
 
 		LOGGER.info("Going to instrument the following methods:");
 		for (final FlatInstrumentationEntity fie : newInstrumentationStatements) {
-			LOGGER.info("{}", fie.getMethodSignature());
+			LOGGER.info("{} with Probetype {}", fie.getMethodSignature(), fie.getProbeType().getName());
 		}
 
 		injectNewInstrumentation(newInstrumentationSet, descr.getGlobalRestriction());

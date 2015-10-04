@@ -17,6 +17,7 @@ package org.aim.artifacts.scopes;
 
 import java.util.Collection;
 
+import org.aim.aiminterface.description.scope.ScopeDescription;
 import org.aim.api.instrumentation.AbstractScope;
 import org.aim.api.instrumentation.IScopeAnalyzer;
 import org.lpe.common.extension.IExtension;
@@ -32,9 +33,9 @@ public class MethodScope extends AbstractScope {
 
 	private final String[] methods;
 
-	public MethodScope(final IExtension provider, final String[] methods) {
-		super(provider, 0);
-		this.methods = methods;
+	public MethodScope(final IExtension provider, final ScopeDescription fromScopeDescription) {
+		super(provider, fromScopeDescription.getId());
+		this.methods = fromScopeDescription.getParameter().toArray(new String[]{});
 	}
 
 	/**
