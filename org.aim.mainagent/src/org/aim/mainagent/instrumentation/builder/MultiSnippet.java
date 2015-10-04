@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import java.util.Set;
  * @author Alexander Wert
  * 
  */
-public class MultiSnippet {
+class MultiSnippet {
 
 	/**
 	 * Mappings from pre-conditional method name, to snippet artifacts
@@ -71,7 +71,7 @@ public class MultiSnippet {
 	 * @param incrementalPart
 	 *            the incrementalPart to set
 	 */
-	public void setIncrementalPart(String incrementalPart) {
+	public void setIncrementalPart(final String incrementalPart) {
 		this.incrementalPart = incrementalPart;
 	}
 
@@ -82,15 +82,15 @@ public class MultiSnippet {
 	 *            method name to match
 	 * @return instrumentation before part
 	 */
-	public String getBeforePart(String methodName) {
-		for (Set<String> nameRequirements : getBeforePart().keySet()) {
-			for (String nameRequirement : nameRequirements) {
+	public String getBeforePart(final String methodName) {
+		for (final Set<String> nameRequirements : getBeforePart().keySet()) {
+			for (final String nameRequirement : nameRequirements) {
 				if (methodName.contains(nameRequirement)) {
 					return getBeforePart().get(nameRequirements);
 				}
 			}
 		}
-		String defaultValue = getBeforePart().get(Collections.EMPTY_SET);
+		final String defaultValue = getBeforePart().get(Collections.EMPTY_SET);
 		return defaultValue == null ? "" : defaultValue;
 	}
 
@@ -101,15 +101,15 @@ public class MultiSnippet {
 	 *            method name to match
 	 * @return instrumentation after part
 	 */
-	public String getAfterPart(String methodName) {
-		for (Set<String> nameRequirements : getAfterPart().keySet()) {
-			for (String nameRequirement : nameRequirements) {
+	public String getAfterPart(final String methodName) {
+		for (final Set<String> nameRequirements : getAfterPart().keySet()) {
+			for (final String nameRequirement : nameRequirements) {
 				if (methodName.contains(nameRequirement)) {
 					return getAfterPart().get(nameRequirements);
 				}
 			}
 		}
-		String defaultValue = getAfterPart().get(Collections.EMPTY_SET);
+		final String defaultValue = getAfterPart().get(Collections.EMPTY_SET);
 		return defaultValue == null ? "" : defaultValue;
 	}
 
@@ -135,7 +135,7 @@ public class MultiSnippet {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -145,7 +145,7 @@ public class MultiSnippet {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		MultiSnippet other = (MultiSnippet) obj;
+		final MultiSnippet other = (MultiSnippet) obj;
 		if (afterPart == null) {
 			if (other.afterPart != null) {
 				return false;

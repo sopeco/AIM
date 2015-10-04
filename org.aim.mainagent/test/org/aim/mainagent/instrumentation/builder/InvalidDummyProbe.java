@@ -13,39 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.probes.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
-import org.aim.artifacts.records.ResponseTimeRecord;
 import org.lpe.common.extension.IExtension;
 
-
-public class AnotherDummyProbe extends AbstractEnclosingProbe {
-	public AnotherDummyProbe(final IExtension provider) {
+public class InvalidDummyProbe extends AbstractEnclosingProbe {
+	public InvalidDummyProbe(final IExtension provider) {
 		super(provider);
 	}
 
 	@ProbeVariable
-	public int _AnotherDummyProbe_testVariable;
+	public String testVariable;
 
 	@ProbeVariable
-	public ResponseTimeRecord _AnotherDummyProbe_record;
+	private String _InvalidDummyProbe_testVariable_2;
 
 	@ProbeBeforePart
 	public void beforePart() {
-		System.out.println("BeforeControlSequence");
-		System.out.println("AnotherBeforeControlSequence");
-		_AnotherDummyProbe_record = new ResponseTimeRecord();
-		_AnotherDummyProbe_record.setOperation(__methodSignature);
+		System.out.println(testVariable);
 
 	}
 
 	@ProbeAfterPart
 	public void afterPart() {
-		System.out.println("AnotherAfterControlSequence");
-		_GenericProbe_collector.newRecord(_AnotherDummyProbe_record);
+		System.out.println(_InvalidDummyProbe_testVariable_2);
 	}
 }

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.probes.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 
-public class InvalidDummyProbeExtension extends AbstractEnclosingProbeExtension {
+public class DummyProbeExtension extends AbstractEnclosingProbeExtension {
 
-	public InvalidDummyProbeExtension() {
-		super(InvalidDummyProbe.class);
+	public DummyProbeExtension() {
+		super(DummyProbe.class);
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -54,10 +54,12 @@ import japa.parser.ast.expr.MemberValuePair;
  * @author Alexander Wert
  * 
  */
-public final class SnippetProvider {
-	private static SnippetProvider instance;
-
+enum SnippetProvider {
+	INSTANCE;
+	
 	public static final String METHOD_NAME_REQUIREMENT_KEY = "requiredMethodName";
+	private MultiSnippet genericSnippet = null;
+	private final Map<Class<? extends AbstractEnclosingProbe>, MultiSnippet> snippets;
 
 	/**
 	 * Returns singleton instance.
@@ -65,18 +67,11 @@ public final class SnippetProvider {
 	 * @return singleton
 	 */
 	public static SnippetProvider getInstance() {
-		if (instance == null) {
-			instance = new SnippetProvider();
-		}
-		return instance;
+		return INSTANCE;
 	}
-
-	private MultiSnippet genericSnippet = null;
-	private final Map<Class<? extends AbstractEnclosingProbe>, MultiSnippet> snippets;
 
 	private SnippetProvider() {
 		snippets = new HashMap<Class<? extends AbstractEnclosingProbe>, MultiSnippet>();
-
 	}
 
 	/**

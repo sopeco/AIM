@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.probes.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import junit.framework.Assert;
 
@@ -23,8 +23,8 @@ import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.artifacts.records.NanoResponseTimeRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
-import org.aim.mainagent.builder.ProbeBuilder;
-import org.aim.mainagent.builder.Snippet;
+import org.aim.mainagent.instrumentation.builder.ProbeBuilder;
+import org.aim.mainagent.instrumentation.builder.Snippet;
 
 public class ProbeBuilderTest {
 	public static final String TEST_METHOD_SIGNATURE = "testSignature(Integer,Object)";

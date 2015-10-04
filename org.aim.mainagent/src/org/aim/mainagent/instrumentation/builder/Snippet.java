@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class Snippet {
 	 * @param beforePart
 	 *            the beforePart to set
 	 */
-	public void setBeforePart(String beforePart) {
+	public void setBeforePart(final String beforePart) {
 		this.beforePart = beforePart;
 	}
 
@@ -63,7 +63,7 @@ public class Snippet {
 	 * @param afterPart
 	 *            the afterPart to set
 	 */
-	public void setAfterPart(String afterPart) {
+	public void setAfterPart(final String afterPart) {
 		this.afterPart = afterPart;
 	}
 
@@ -95,7 +95,7 @@ public class Snippet {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -105,7 +105,7 @@ public class Snippet {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Snippet other = (Snippet) obj;
+		final Snippet other = (Snippet) obj;
 		if (afterPart == null) {
 			if (other.afterPart != null) {
 				return false;
@@ -144,7 +144,7 @@ public class Snippet {
 	 * @param incrementalPart
 	 *            the incrementalPart to set
 	 */
-	public void setIncrementalPart(String incrementalPart) {
+	public void setIncrementalPart(final String incrementalPart) {
 		this.incrementalPart = incrementalPart;
 	}
 

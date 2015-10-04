@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.probes.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
@@ -23,8 +23,9 @@ import org.aim.artifacts.records.NanoResponseTimeRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
 import org.lpe.common.extension.IExtension;
 
-public class DummyProbe2 extends AbstractEnclosingProbe {
-	public DummyProbe2(final IExtension provider) {
+public class DummyProbe extends AbstractEnclosingProbe {
+
+	public DummyProbe(final IExtension provider) {
 		super(provider);
 	}
 
@@ -37,23 +38,18 @@ public class DummyProbe2 extends AbstractEnclosingProbe {
 	@ProbeVariable
 	public NanoResponseTimeRecord _DummyProbe_NanoResponseTimeRecordVariable;
 
-	@ProbeBeforePart(requiredMethodName = "methodReq")
+	@ProbeBeforePart
 	public void beforePart() {
 		System.out.println("BeforeControlSequence");
+		_DummyProbe_record = new org.aim.artifacts.records.ResponseTimeRecord();
+		_DummyProbe_NanoResponseTimeRecordVariable = new NanoResponseTimeRecord();
+		_DummyProbe_record.setOperation(__methodSignature);
+		_DummyProbe_NanoResponseTimeRecordVariable.setTimeStamp(_GenericProbe_startTime);
 	}
 
-	@ProbeBeforePart(requiredMethodName = "otherMethod")
-	public void beforePart2() {
-		System.out.println("AnotherControlSequence");
-	}
-
-	@ProbeAfterPart(requiredMethodName = "methodReq")
+	@ProbeAfterPart
 	public void afterPart() {
-		System.out.println("AfterControlSequence");
-	}
-	
-	@ProbeAfterPart(requiredMethodName = "otherMethod")
-	public void afterPart2() {
-		System.out.println("AfterSecondControlSequence");
+		System.out.println("AfetControlSequence");
+		_GenericProbe_collector.newRecord(_DummyProbe_record);
 	}
 }

@@ -100,8 +100,7 @@ public enum JInstrumentation {
 					sb.insert(0, ":");
 					loader = loader.getParent();
 				}
-				sb.deleteCharAt(sb.length()-1);
-				sb.insert(0, "SystemLoader:");
+				sb.insert(0, "SystemLoader");
 				return sb.toString();
 			}
 		}, true);

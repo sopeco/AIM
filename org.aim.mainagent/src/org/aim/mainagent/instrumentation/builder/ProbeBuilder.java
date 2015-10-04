@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aim.mainagent.builder;
+package org.aim.mainagent.instrumentation.builder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class ProbeBuilder {
 
 	private final boolean useGranularity;
 
-	private String methodSignature;
+	private final String methodSignature;
 
 	Snippet currentSnippet = new Snippet();
 	private final Set<Class<? extends AbstractEnclosingProbe>> injectedProbeTypes;
@@ -48,11 +48,11 @@ public class ProbeBuilder {
 	 * @param methodSignature
 	 *            target method to instrument
 	 */
-	public ProbeBuilder(String methodSignature, double granularity) {
+	public ProbeBuilder(final String methodSignature, final double granularity) {
 		this.methodSignature = methodSignature;
 		injectedProbeTypes = new HashSet<>();
 
-		int[] granNumDenom = LpeNumericUtils.getFractionFromDouble(granularity);
+		final int[] granNumDenom = LpeNumericUtils.getFractionFromDouble(granularity);
 		GRANULARITY_BEFORE_PART = "\nif(_GenericProbe_threadId % " + granNumDenom[1] + " < " + granNumDenom[0] + ") {";
 
 		if (granNumDenom[0] < granNumDenom[1]) {
@@ -71,15 +71,15 @@ public class ProbeBuilder {
 	 * @throws InstrumentationException
 	 *             if injection fails
 	 */
-	public ProbeBuilder inject(Class<? extends AbstractEnclosingProbe> probeType) throws InstrumentationException {
+	public ProbeBuilder inject(final Class<? extends AbstractEnclosingProbe> probeType) throws InstrumentationException {
 		if (!injectedProbeTypes.contains(probeType)) {
 
-			MultiSnippet mSnippet = SnippetProvider.getInstance().getSnippet(probeType);
-			String beforePart = mSnippet.getBeforePart(methodSignature) + currentSnippet.getBeforePart();
+			final MultiSnippet mSnippet = SnippetProvider.getInstance().getSnippet(probeType);
+			final String beforePart = mSnippet.getBeforePart(methodSignature) + currentSnippet.getBeforePart();
 			currentSnippet.setBeforePart(beforePart);
-			String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
+			final String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
 			currentSnippet.setAfterPart(afterPart);
-			String incPart = currentSnippet.getIncrementalPart() + mSnippet.getIncrementalPart();
+			final String incPart = currentSnippet.getIncrementalPart() + mSnippet.getIncrementalPart();
 			currentSnippet.setIncrementalPart(incPart);
 			currentSnippet.getVariables().putAll(mSnippet.getVariables());
 			injectedProbeTypes.add(probeType);
@@ -97,18 +97,18 @@ public class ProbeBuilder {
 	 */
 	public Snippet build() throws InstrumentationException {
 
-		MultiSnippet mSnippet = SnippetProvider.getInstance().getGenericSnippet();
-		Snippet resultSnippet = new Snippet();
+		final MultiSnippet mSnippet = SnippetProvider.getInstance().getGenericSnippet();
+		final Snippet resultSnippet = new Snippet();
 		String beforePart = mSnippet.getBeforePart(methodSignature) + currentSnippet.getBeforePart();
 		String afterPart = currentSnippet.getAfterPart() + mSnippet.getAfterPart(methodSignature);
 
 		if (useGranularity) {
-			StringBuilder initPartBuilder = new StringBuilder();
-			for (String var : mSnippet.getVariables().keySet()) {
+			final StringBuilder initPartBuilder = new StringBuilder();
+			for (final String var : mSnippet.getVariables().keySet()) {
 				initPartBuilder.append("\n");
 				initPartBuilder.append(var);
 				initPartBuilder.append("=");
-				LpeSupportedTypes lst = LpeSupportedTypes.get(mSnippet.getVariables().get(var));
+				final LpeSupportedTypes lst = LpeSupportedTypes.get(mSnippet.getVariables().get(var));
 				if (lst == null || lst == LpeSupportedTypes.String) {
 					initPartBuilder.append("null");
 				} else {
@@ -116,11 +116,11 @@ public class ProbeBuilder {
 				}
 				initPartBuilder.append(";");
 			}
-			for (String var : currentSnippet.getVariables().keySet()) {
+			for (final String var : currentSnippet.getVariables().keySet()) {
 				initPartBuilder.append("\n");
 				initPartBuilder.append(var);
 				initPartBuilder.append("=");
-				LpeSupportedTypes lst = LpeSupportedTypes.get(currentSnippet.getVariables().get(var));
+				final LpeSupportedTypes lst = LpeSupportedTypes.get(currentSnippet.getVariables().get(var));
 				if (lst == null || lst == LpeSupportedTypes.String) {
 					initPartBuilder.append("null");
 				} else {
