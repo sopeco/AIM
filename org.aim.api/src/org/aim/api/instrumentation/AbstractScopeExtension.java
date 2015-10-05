@@ -15,10 +15,6 @@
  */
 package org.aim.api.instrumentation;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
 import org.lpe.common.extension.ReflectiveAbstractExtension;
 
@@ -30,12 +26,6 @@ public abstract class AbstractScopeExtension extends ReflectiveAbstractExtension
 
 	protected AbstractScopeExtension(final Class<? extends Scope> extensionArtifactClass) {
 		super(extensionArtifactClass);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
 	}
 
 }

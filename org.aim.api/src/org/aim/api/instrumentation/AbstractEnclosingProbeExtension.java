@@ -18,7 +18,6 @@ package org.aim.api.instrumentation;
 import java.util.Collections;
 import java.util.Set;
 
-import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 import org.lpe.common.extension.ReflectiveAbstractExtension;
@@ -33,12 +32,6 @@ public abstract class AbstractEnclosingProbeExtension extends ReflectiveAbstract
 
 	protected AbstractEnclosingProbeExtension(final Class<? extends IExtensionArtifact> extensionArtifactClass) {
 		super(extensionArtifactClass);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
 	}
 
 	/**

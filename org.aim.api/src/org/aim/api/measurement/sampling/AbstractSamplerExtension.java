@@ -15,10 +15,6 @@
  */
 package org.aim.api.measurement.sampling;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 import org.lpe.common.extension.ReflectiveAbstractExtension;
@@ -32,11 +28,6 @@ public abstract class AbstractSamplerExtension extends ReflectiveAbstractExtensi
 
 	protected AbstractSamplerExtension(final Class<? extends IExtensionArtifact> extensionArtifactClass) {
 		super(extensionArtifactClass);
-	}
-
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.emptySet();
 	}
 
 }
