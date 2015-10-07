@@ -15,7 +15,7 @@
  */
 package org.overhead;
 
-import org.aim.api.instrumentation.entities.OverheadRecord;
+import org.aim.aiminterface.entities.results.OverheadRecord;
 
 /**
  * Target class on which overhead is measured.

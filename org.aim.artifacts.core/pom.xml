@@ -14,12 +14,17 @@
 	<name>AIM Core Artifacts</name>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.jms</groupId>
 			<artifactId>javax.jms-api</artifactId>
 			<version>2.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -29,6 +34,17 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.aim</groupId>
+			<artifactId>org.aim.interface</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<scope>test</scope>
+			<version>1.7.12</version>
+		</dependency>
 	</dependencies>
 	
 	<build>

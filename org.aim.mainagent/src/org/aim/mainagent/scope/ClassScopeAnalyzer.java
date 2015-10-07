@@ -20,10 +20,9 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.api.instrumentation.AbstractScopeAnalyzer;
 import org.aim.api.instrumentation.description.internal.FlatScopeEntity;
-import org.aim.description.restrictions.Restriction;
-import org.aim.mainagent.utils.Utils;
 import org.lpe.common.util.LpeStringUtils;
 
 /**
@@ -43,18 +42,18 @@ public class ClassScopeAnalyzer extends AbstractScopeAnalyzer {
 	 * @param classNames
 	 *            a set of classes to instrument
 	 */
-	public ClassScopeAnalyzer(Set<String> classNames) {
+	public ClassScopeAnalyzer(final Set<String> classNames) {
 		this.classNames = classNames;
 	}
 
 	@Override
-	public void visitClass(Class<?> clazz, Set<FlatScopeEntity> scopeEntities) {
+	public void visitClass(final Class<?> clazz, final Set<FlatScopeEntity> scopeEntities) {
 		if (restriction.isExcluded(clazz.getName())) {
 			return;
 		}
 
 		boolean found = false;
-		for (String cName : classNames) {
+		for (final String cName : classNames) {
 			if (LpeStringUtils.patternMatches(clazz.getName(), cName)) {
 				found = true;
 				break;
@@ -65,28 +64,28 @@ public class ClassScopeAnalyzer extends AbstractScopeAnalyzer {
 			return;
 		}
 
-		Set<Method> methods = new HashSet<>();
+		final Set<Method> methods = new HashSet<>();
 		if (!restriction.hasModifierRestrictions() || !restriction.modifierSetExcluded(Modifier.PUBLIC)) {
-			for (Method m : clazz.getMethods()) {
+			for (final Method m : clazz.getMethods()) {
 				if (!restriction.isExcluded(m.getDeclaringClass().getName())) {
 					methods.add(m);
 				}
 
 			}
 		}
-		for (Method m : clazz.getDeclaredMethods()) {
+		for (final Method m : clazz.getDeclaredMethods()) {
 			if (!restriction.modifierSetExcluded(m.getModifiers())) {
 				methods.add(m);
 			}
 		}
 
-		for (Method method : methods) {
-			scopeEntities.add(new FlatScopeEntity(method.getDeclaringClass(), Utils.getMethodSignature(method, true)));
+		for (final Method method : methods) {
+			scopeEntities.add(new FlatScopeEntity(method.getDeclaringClass(), getMethodSignature(method, true)));
 		}
 	}
 
 	@Override
-	public void setRestriction(Restriction restriction) {
+	public void setRestriction(final Restriction restriction) {
 		this.restriction = restriction;
 
 	}

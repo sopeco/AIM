@@ -15,23 +15,19 @@
  */
 package org.aim.api.measurement.sampling;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.IExtensionArtifact;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
  * Abstract extension provider for sampler extensions.
  * @author Alexander Wert
  *
  */
-public abstract class AbstractSamplerExtension implements IExtension<AbstractSampler> {
+public abstract class AbstractSamplerExtension extends ReflectiveAbstractExtension implements IExtension {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
+	protected AbstractSamplerExtension(final Class<? extends IExtensionArtifact> extensionArtifactClass) {
+		super(extensionArtifactClass);
 	}
 
 }

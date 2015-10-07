@@ -35,7 +35,7 @@ public abstract class AbstractResourceSampler extends AbstractSampler {
 	 * Constructor.
 	 * @param provider extension provider
 	 */
-	public AbstractResourceSampler(IExtension<?> provider) {
+	public AbstractResourceSampler(final IExtension provider) {
 		super(provider);
 	}
 
@@ -50,7 +50,7 @@ public abstract class AbstractResourceSampler extends AbstractSampler {
 	 * @param sigar
 	 *            the sigar to set
 	 */
-	public void setSigar(Sigar sigar) {
+	public void setSigar(final Sigar sigar) {
 		this.sigar = sigar;
 	}
 }

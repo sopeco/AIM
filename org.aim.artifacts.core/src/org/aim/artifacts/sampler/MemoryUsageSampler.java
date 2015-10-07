@@ -40,7 +40,7 @@ public class MemoryUsageSampler extends AbstractResourceSampler {
 	 * @param provider
 	 *            extension provider
 	 */
-	public MemoryUsageSampler(IExtension<?> provider) {
+	public MemoryUsageSampler(final IExtension provider) {
 		super(provider);
 	}
 
@@ -55,16 +55,16 @@ public class MemoryUsageSampler extends AbstractResourceSampler {
 	public void sample() {
 		Mem memory;
 		try {
-			long timestamp = System.currentTimeMillis();
+			final long timestamp = System.currentTimeMillis();
 			memory = getSigar().getMem();
-			long used = memory.getActualUsed();
-			long free = memory.getActualFree();
+			final long used = memory.getActualUsed();
+			final long free = memory.getActualFree();
 
-			double memoryUsage = (double) used / (used + free);
-			MemoryRecord record = new MemoryRecord(timestamp, memoryUsage);
+			final double memoryUsage = (double) used / (used + free);
+			final MemoryRecord record = new MemoryRecord(timestamp, memoryUsage);
 
 			getDataCollector().newRecord(record);
-		} catch (SigarException se) {
+		} catch (final SigarException se) {
 			LOGGER.warn("SigarException occured in Memory Recorder: {}", se.getMessage());
 		}
 	}

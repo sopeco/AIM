@@ -17,9 +17,10 @@ package org.aim.artifacts.probes;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.AbstractEnclosingProbeExtension;
-import org.aim.description.scopes.MethodsEnclosingScope;
+import org.aim.api.instrumentation.MethodsEnclosingScope;
+import org.aim.api.instrumentation.Scope;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for the {@link StackTraceProbe}.
@@ -29,19 +30,13 @@ import org.aim.description.scopes.MethodsEnclosingScope;
  */
 public class StackTraceProbeExtension extends AbstractEnclosingProbeExtension {
 
-	@Override
-	public AbstractEnclosingProbe createExtensionArtifact() {
-		return new StackTraceProbe(this);
+	public StackTraceProbeExtension() {
+		super(StackTraceProbe.class);
 	}
 
 	@Override
-	public Class<? extends AbstractEnclosingProbe> getProbeClass() {
-		return StackTraceProbe.class;
-	}
-
-	@Override
-	public Set<Class<?>> getScopeDependencies() {
-		Set<Class<?>> supportedScopes = new HashSet<>();
+	public Set<Class<? extends Scope>> getScopeDependencies() {
+		final Set<Class<? extends Scope>> supportedScopes = new HashSet<>();
 		supportedScopes.add(MethodsEnclosingScope.class);
 		return supportedScopes;
 	}

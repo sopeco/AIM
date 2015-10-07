@@ -18,11 +18,10 @@ package org.aim.mainagent;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
 
-import junit.framework.Assert;
-
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
@@ -30,9 +29,8 @@ import org.aim.artifacts.probes.NanoResponsetimeProbe;
 import org.aim.artifacts.probes.ResponsetimeProbe;
 import org.aim.artifacts.records.NanoResponseTimeRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
-import org.aim.description.InstrumentationDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -48,23 +46,26 @@ import org.test.sut.ClassF;
 import org.test.sut.ClassG;
 import org.test.sut.ClassH;
 import org.test.sut.ClassI;
+import org.test.sut.ClassK;
+
+import junit.framework.Assert;
 
 public class MethodInstrumentationTest {
 
 	public static void enableMeasurement() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		dataSource.enable();
 	}
 
 	public static void disableMeasurement() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		dataSource.disable();
 	}
 
 	public static MeasurementData getData() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		return dataSource.read();
 	}
@@ -72,18 +73,19 @@ public class MethodInstrumentationTest {
 	@BeforeClass
 	public static void prepareCollector() {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		ClassA a = new ClassA();
-		ClassB b = new ClassB();
-		ClassC c = new ClassC();
-		ClassD d = new ClassD();
-		ClassE e = new ClassE();
-		ClassF f = new ClassF();
-		ClassG g = new ClassG();
-		AbstractDataSource dataSource = CollectorFactory.createDataSource(MemoryDataSource.class.getName(), null);
+		final ClassA a = new ClassA();
+		final ClassB b = new ClassB();
+		final ClassC c = new ClassC();
+		final ClassD d = new ClassD();
+		final ClassE e = new ClassE();
+		final ClassF f = new ClassF();
+		final ClassG g = new ClassG();
+		final ClassK k = new ClassK();
+		final AbstractDataSource dataSource = CollectorFactory.createDataSource(MemoryDataSource.class.getName(), null);
 		AbstractDataSource.setDefaultDataSource(dataSource);
 		
-		Properties globalProperties = new Properties();
-		String currentDir = System.getProperty("user.dir");
+		final Properties globalProperties = new Properties();
+		final String currentDir = System.getProperty("user.dir");
 		globalProperties.setProperty(ExtensionRegistry.APP_ROOT_DIR_PROPERTY_KEY, currentDir);
 		globalProperties.setProperty(ExtensionRegistry.PLUGINS_FOLDER_PROPERTY_KEY, "plugins");
 		GlobalConfiguration.initialize(globalProperties);
@@ -98,8 +100,8 @@ public class MethodInstrumentationTest {
 	@Test
 	public void testMethodScopeInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()",
 						ClassA.class.getName() + ".methodA2(java.lang.Integer)",
 						ClassA.class.getName() + ".methodA3(java.lang.Integer)")
@@ -108,14 +110,14 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(3, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
@@ -123,70 +125,70 @@ public class MethodInstrumentationTest {
 	public void testMethodScopeInstrumentationWithByteArrayParameter() throws InstrumentationException,
 			MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newMethodScopeEntity(ClassH.class.getName() + "*")
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.newMethodScopeEntity(ClassH.class.getName() + "*")
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassH h = new ClassH();
+		final ClassH h = new ClassH();
 		h.test(null);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(1, data.getRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
 
 	}
 
 	@Test
 	public void testConstructorScopeInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newConstructorScopeEntity(ClassA.class.getName())
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.newConstructorScopeEntity(ClassA.class.getName())
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().newConstructorScopeEntity(ClassC.class.getName())
 				.addProbe(NanoResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
-		ClassC c = new ClassC();
+		final ClassA a = new ClassA();
+		final ClassC c = new ClassC();
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(1, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(1, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(NanoResponseTimeRecord.class).size());
 	}
 
 	@Test
 	public void testAPIScopeInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newAPIScopeEntity(TestAPIScope.class.getName())
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.newAPIScopeEntity(TestAPIScope.class.getName())
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassC c = new ClassC();
+		final ClassC c = new ClassC();
 		c.methodC1();
 		c.ifMethodA();
 		c.ifMethodB();
-		ClassD d = new ClassD();
+		final ClassD d = new ClassD();
 		d.ifMethodA();
 		d.ifMethodB();
-		ClassE e = new ClassE();
+		final ClassE e = new ClassE();
 		e.ifMethodA();
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(4, data.getRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(4, data.selectRecords(ResponseTimeRecord.class).size());
 	}
 
 	@Test
 	public void testFullTraceScopeInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
-				.setMethodSubScope(ClassF.class.getName() + ".methodF1()").addProbe(ResponsetimeProbe.MODEL_PROBE)
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
+				.newMethodScopeEntity(ClassF.class.getName() + ".methodF1()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
 				.entityDone().build();
 		
 		ClassF f = new ClassF();
@@ -202,7 +204,7 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(6, data.getRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(6, data.selectRecords(ResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -221,9 +223,9 @@ public class MethodInstrumentationTest {
 	@Test
 	public void testFullTraceScopeWithStaticMethodsInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
-				.setMethodSubScope(ClassI.class.getName() + ".methodI1()").addProbe(ResponsetimeProbe.MODEL_PROBE)
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.
+				newMethodScopeEntity(ClassI.class.getName() + ".methodI1()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
 				.entityDone().build();
 
 		
@@ -240,7 +242,7 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(2, data.getRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(2, data.selectRecords(ResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -256,15 +258,15 @@ public class MethodInstrumentationTest {
 	public void testIntersectingFullTraceInstrumentationAtOnce() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
 
-		ClassF f = new ClassF();
-		ClassG g = new ClassG();
+		final ClassF f = new ClassF();
+		final ClassG g = new ClassG();
 		g.methodG1();
 		f.methodF1();
 
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
-				.setMethodSubScope(ClassG.class.getName() + ".methodG1()").addProbe(NanoResponsetimeProbe.MODEL_PROBE)
-				.entityDone().newTraceScopeEntity().setMethodSubScope(ClassF.class.getName() + ".methodF1()")
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
+				.newMethodScopeEntity(ClassG.class.getName() + ".methodG1()").enableTrace().addProbe(NanoResponsetimeProbe.MODEL_PROBE)
+				.entityDone().newMethodScopeEntity(ClassF.class.getName() + ".methodF1()").enableTrace()
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
@@ -277,8 +279,8 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(9, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(7, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(9, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(7, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -295,14 +297,14 @@ public class MethodInstrumentationTest {
 			MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
 		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newTraceScopeEntity()
-				.setMethodSubScope(ClassF.class.getName() + ".methodF1()").addProbe(ResponsetimeProbe.MODEL_PROBE)
+		InstrumentationDescription descr = idBuilder.
+				newMethodScopeEntity(ClassF.class.getName() + ".methodF1()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
 				.entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 
-		ClassF f = new ClassF();
-		ClassG g = new ClassG();
+		final ClassF f = new ClassF();
+		final ClassG g = new ClassG();
 		g.methodG1();
 		f.methodF1();
 
@@ -312,9 +314,9 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(9, data.getRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(9, data.selectRecords(ResponseTimeRecord.class).size());
 		idBuilder = new InstrumentationDescriptionBuilder();
-		descr = idBuilder.newTraceScopeEntity().setMethodSubScope(ClassG.class.getName() + ".methodG1()")
+		descr = idBuilder.newMethodScopeEntity(ClassG.class.getName() + ".methodG1()").enableTrace()
 				.addProbe(NanoResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
@@ -327,8 +329,8 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(9, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(7, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(9, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(7, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -355,10 +357,10 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(1, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 		idBuilder = new InstrumentationDescriptionBuilder();
-		descr = idBuilder.newTraceScopeEntity().setMethodSubScope(ClassF.class.getName() + ".methodF1()")
+		descr = idBuilder.newMethodScopeEntity(ClassF.class.getName() + ".methodF1()").enableTrace()
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
@@ -373,15 +375,15 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(6, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(1, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(6, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(NanoResponseTimeRecord.class).size());
 	}
 
 	@Test
 	public void testUndoInstrumentation() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()",
 						ClassA.class.getName() + ".methodA2(java.lang.Integer)",
 						ClassA.class.getName() + ".methodA3(java.lang.Integer)")
@@ -396,8 +398,8 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(3, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -413,8 +415,8 @@ public class MethodInstrumentationTest {
 	@Test
 	public void testGlobalExclusions() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newGlobalRestriction()
 				.excludePackage(ClassA.class.getName() + "")
 				.restrictionDone()
@@ -429,25 +431,25 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
-		ClassB b = new ClassB();
+		final ClassB b = new ClassB();
 		b.methodB1();
 		b.methodB2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(3, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
 	@Test
 	public void testGlobalInclusions() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newGlobalRestriction()
 				.includePackage(ClassA.class.getName() + "")
 				.restrictionDone()
@@ -462,25 +464,25 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
-		ClassB b = new ClassB();
+		final ClassB b = new ClassB();
 		b.methodB1();
 		b.methodB2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(3, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
 	@Test
 	public void testGlobalModifierInclusion() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newGlobalRestriction()
 				.includeModifier(Modifier.PRIVATE)
 				.restrictionDone()
@@ -495,25 +497,25 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
-		ClassB b = new ClassB();
+		final ClassB b = new ClassB();
 		b.methodB1();
 		b.methodB2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(2, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(2, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(2, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(2, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
 	@Test
 	public void testLocalExclusions() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()",
 						ClassA.class.getName() + ".methodA2(java.lang.Integer)",
 						ClassA.class.getName() + ".methodA3(java.lang.Integer)",
@@ -538,25 +540,25 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
-		ClassB b = new ClassB();
+		final ClassB b = new ClassB();
 		b.methodB1();
 		b.methodB2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(6, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(6, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
 	@Test
 	public void testLocalInclusions() throws InstrumentationException, MeasurementException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
 				.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()",
 						ClassA.class.getName() + ".methodA2(java.lang.Integer)",
 						ClassA.class.getName() + ".methodA3(java.lang.Integer)",
@@ -581,17 +583,17 @@ public class MethodInstrumentationTest {
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
-		ClassA a = new ClassA();
+		final ClassA a = new ClassA();
 		a.methodA1();
 		a.methodA2(1);
-		ClassB b = new ClassB();
+		final ClassB b = new ClassB();
 		b.methodB1();
 		b.methodB2(1);
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(3, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(6, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(6, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 	}
 
@@ -635,8 +637,8 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(4, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(2, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(4, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(2, data.selectRecords(NanoResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
@@ -676,8 +678,36 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(1, data.getRecords(ResponseTimeRecord.class).size());
-		Assert.assertEquals(2, data.getRecords(NanoResponseTimeRecord.class).size());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(2, data.selectRecords(NanoResponseTimeRecord.class).size());
+	}
+	
+	@Test
+	public void testReturnMethodInstrumentation() throws InstrumentationException, MeasurementException {
+		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder
+				.newMethodScopeEntity(ClassK.class.getName() + ".returnMethod(boolean)")
+				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().build();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		enableMeasurement();
+		final ClassK k = new ClassK();
+		k.returnMethod(false);
+		disableMeasurement();
+		MeasurementData data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		enableMeasurement();
+		k.returnMethod(true);
+		disableMeasurement();
+		data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 	}
 
 }

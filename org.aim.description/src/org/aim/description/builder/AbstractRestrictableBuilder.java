@@ -15,7 +15,7 @@
  */
 package org.aim.description.builder;
 
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.restriction.Restriction;
 
 /**
  * Common interface of builders building restrictable elements.

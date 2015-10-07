@@ -16,6 +16,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils.web</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.glassfish.grizzly</groupId>
 			<artifactId>grizzly-http-servlet</artifactId>
 			<version>${grizzly.version}</version>
@@ -62,6 +68,17 @@
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.aim</groupId>
+			<artifactId>org.aim.description</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

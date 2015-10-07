@@ -30,4 +30,7 @@ public final class InstrumentationConstants {
 	public static final String JAVASSIST_PACKAGE = "javassist.*";
 	public static final String LPE_COMMON_PACKAGE = "org.lpe.common.*";
 	public static final String AIM_PACKAGE = "org.aim.*";
+	public static final String[] ALL_SYSTEM_PACKAGES = new String[]{
+			JAVA_PACKAGE, JAVAX_PACKAGE, JAVASSIST_PACKAGE, LPE_COMMON_PACKAGE, AIM_PACKAGE
+	};
 }

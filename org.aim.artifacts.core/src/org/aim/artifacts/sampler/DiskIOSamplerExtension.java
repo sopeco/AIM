@@ -15,7 +15,6 @@
  */
 package org.aim.artifacts.sampler;
 
-import org.aim.api.measurement.sampling.AbstractSampler;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
 
 /**
@@ -26,14 +25,8 @@ import org.aim.api.measurement.sampling.AbstractSamplerExtension;
  */
 public class DiskIOSamplerExtension extends AbstractSamplerExtension {
 
-	@Override
-	public String getName() {
-		return DiskIOSampler.class.getName();
+	public DiskIOSamplerExtension() {
+		super(DiskIOSampler.class);
 	}
-
-	@Override
-	public AbstractSampler createExtensionArtifact() {
-		return new DiskIOSampler(this);
-	}
-
+	
 }

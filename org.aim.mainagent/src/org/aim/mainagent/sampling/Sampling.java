@@ -19,7 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.MeasurementException;
+import org.aim.aiminterface.description.sampling.SamplingDescription;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.aim.api.measurement.sampling.AbstractResourceSampler;
@@ -27,7 +28,6 @@ import org.aim.api.measurement.sampling.AbstractSampler;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
 import org.aim.api.measurement.sampling.ResourceSamplerFactory;
 import org.aim.api.measurement.sampling.SamplingExecuter;
-import org.aim.description.sampling.SamplingDescription;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.lpe.common.extension.ExtensionRegistry;

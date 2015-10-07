@@ -16,11 +16,12 @@
 package org.aim.api.measurement.dataset;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 
 /**
  * Collection for wrapped datasets.
@@ -59,9 +60,9 @@ public class DatasetCollection {
 	 * @return a list of datasets matching the passed type
 	 * 
 	 */
-	public <T extends AbstractRecord> List<Dataset> getDataSets(Class<T> type) {
-		List<Dataset> result = new ArrayList<Dataset>();
-		for (Dataset ds : dataSets) {
+	public <T extends AbstractRecord> List<Dataset> getDataSets(final Class<T> type) {
+		final List<Dataset> result = new ArrayList<Dataset>();
+		for (final Dataset ds : dataSets) {
 			if (ds.getRecordType().equals(type)) {
 				result.add(ds);
 			}
@@ -80,13 +81,13 @@ public class DatasetCollection {
 	 *         for that type
 	 * 
 	 */
-	public <T extends AbstractRecord> Dataset getDataSet(Class<T> type) {
-		for (Dataset ds : dataSets) {
+	public <T extends AbstractRecord> Dataset getDataSet(final Class<T> type) {
+		for (final Dataset ds : dataSets) {
 			if (ds.getRecordType().equals(type)) {
 				return ds;
 			}
 		}
-		return null;
+		return new Dataset(Collections.<DatasetRow> emptyList());
 	}
 
 	/**
@@ -95,8 +96,8 @@ public class DatasetCollection {
 	 *         in this measurement data collection
 	 */
 	public Set<Class<? extends AbstractRecord>> getDifferentRecordTypes() {
-		Set<Class<? extends AbstractRecord>> recordClasses = new HashSet<Class<? extends AbstractRecord>>();
-		for (Dataset ds : dataSets) {
+		final Set<Class<? extends AbstractRecord>> recordClasses = new HashSet<Class<? extends AbstractRecord>>();
+		for (final Dataset ds : dataSets) {
 			recordClasses.add(ds.getRecordType());
 		}
 		return recordClasses;
@@ -108,7 +109,7 @@ public class DatasetCollection {
 	 */
 	public int size() {
 		int size = 0;
-		for (Dataset dataset : dataSets) {
+		for (final Dataset dataset : dataSets) {
 			size += dataset.size();
 		}
 		return size;
@@ -119,8 +120,8 @@ public class DatasetCollection {
 	 * @return all record found in this collection
 	 */
 	public List<AbstractRecord> getRecords() {
-		List<AbstractRecord> records = new ArrayList<>();
-		for (Dataset dataset : dataSets) {
+		final List<AbstractRecord> records = new ArrayList<>();
+		for (final Dataset dataset : dataSets) {
 			records.addAll(dataset.getRecords());
 		}
 		return records;
@@ -131,8 +132,8 @@ public class DatasetCollection {
 	 * @return all rows found in all the datasets of this collection
 	 */
 	public List<DatasetRow> getRows() {
-		List<DatasetRow> rows = new ArrayList<>();
-		for (Dataset dataset : dataSets) {
+		final List<DatasetRow> rows = new ArrayList<>();
+		for (final Dataset dataset : dataSets) {
 			rows.addAll(dataset.getRows());
 		}
 		return rows;

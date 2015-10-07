@@ -21,13 +21,13 @@ import java.net.HttpURLConnection;
 
 import javax.ws.rs.core.MediaType;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
-import org.aim.description.InstrumentationDescription;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
-import org.lpe.common.util.web.LpeWebUtils;
+import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 
@@ -47,10 +47,10 @@ public class ResourceMonitoringClient {
 	private static final String GET_DATA = "getResult";
 	private static final String CURRENT_TIME = "currentTime";
 
-	private String url;
-	private String host;
-	private String port;
-	private WebResource webResource;
+	private final String url;
+	private final String host;
+	private final String port;
+	private final WebResource webResource;
 
 	/**
 	 * 
@@ -59,11 +59,11 @@ public class ResourceMonitoringClient {
 	 * @param port
 	 *            port where to reach service
 	 */
-	public ResourceMonitoringClient(String host, String port) {
+	public ResourceMonitoringClient(final String host, final String port) {
 		this.host = host;
 		this.port = port;
 		url = "http://" + host + ":" + port;
-		webResource = LpeWebUtils.getWebClient().resource(url);
+		webResource = LpeHTTPUtils.getWebClient().resource(url);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ResourceMonitoringClient {
 	 *            instrumentation description containing the sampling
 	 *            configuration
 	 */
-	public void enableMonitoring(InstrumentationDescription instDescription) {
+	public void enableMonitoring(final InstrumentationDescription instDescription) {
 		webResource.path(REST).path(ENABLE).type(MediaType.APPLICATION_JSON).post(instDescription);
 		LOGGER.debug("Resource monitoring enabled!");
 	}
@@ -97,11 +97,11 @@ public class ResourceMonitoringClient {
 
 		HttpURLConnection connection = null;
 		try {
-			connection = LpeWebUtils.get(url + "/" + REST + "/" + GET_DATA);
-			StreamReader reader = new StreamReader();
+			connection = LpeHTTPUtils.get(url + "/" + REST + "/" + GET_DATA);
+			final StreamReader reader = new StreamReader();
 			reader.setSource(connection.getInputStream());
 			return reader.read();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		} finally {
 			if (connection != null) {
@@ -118,15 +118,15 @@ public class ResourceMonitoringClient {
 	 * @throws MeasurementException
 	 *             thrown if data cannot be retrieved
 	 */
-	public void pipeToOutputStream(OutputStream oStream) throws MeasurementException {
+	public void pipeToOutputStream(final OutputStream oStream) throws MeasurementException {
 
 		HttpURLConnection connection = null;
 		try {
-			connection = LpeWebUtils.get(url + "/" + REST + "/" + GET_DATA);
-			StreamReader reader = new StreamReader();
+			connection = LpeHTTPUtils.get(url + "/" + REST + "/" + GET_DATA);
+			final StreamReader reader = new StreamReader();
 			reader.setSource(connection.getInputStream());
 			reader.pipeToOutputStream(oStream);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		} finally {
 			if (connection != null) {
@@ -161,9 +161,9 @@ public class ResourceMonitoringClient {
 	 *            server port
 	 * @return true, if connection could be established
 	 */
-	public static boolean testConnection(String host, String port) {
-		String path = REST + "/" + TEST_CONNECTION;
-		return LpeWebUtils.testConnection(host, port, path);
+	public static boolean testConnection(final String host, final String port) {
+		final String path = REST + "/" + TEST_CONNECTION;
+		return LpeHTTPUtils.testConnection(host, port, path);
 	}
 
 }

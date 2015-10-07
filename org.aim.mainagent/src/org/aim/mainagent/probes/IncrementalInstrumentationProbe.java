@@ -15,11 +15,10 @@
  */
 package org.aim.mainagent.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeIncrementalInstrumentation;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.mainagent.TraceInstrumentor;
+import org.aim.mainagent.instrumentor.TraceInstrumentor;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -36,12 +35,11 @@ public class IncrementalInstrumentationProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider
 	 */
-	public IncrementalInstrumentationProbe(IExtension<?> provider) {
+	public IncrementalInstrumentationProbe(final IExtension provider) {
 		super(provider);
-		// TODO Auto-generated constructor stub
 	}
 
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
+	public static final MeasurementProbeDescription MODEL_PROBE = new MeasurementProbeDescription(
 			IncrementalInstrumentationProbe.class.getName());
 
 	public String __clazz = "__clazz";

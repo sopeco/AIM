@@ -15,8 +15,8 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for JDBC scope.
@@ -26,14 +26,10 @@ import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
  */
 public class JDBCScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return JDBCScope.class.getName();
+	public JDBCScopeExtension() {
+		super(JDBCScope.class);
 	}
 
-	@Override
-	public AbstractInstAPIScope createExtensionArtifact() {
-		return new JDBCScope(this);
-	}
+
 
 }

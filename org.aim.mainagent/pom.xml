@@ -14,7 +14,7 @@
 	<name>AIM Main Agent (Java-Agent)</name>
 
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
@@ -37,6 +37,12 @@
 			<groupId>org.aim</groupId>
 			<artifactId>org.aim.api</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -44,10 +50,44 @@
 			<artifactId>org.aim.artifacts.core</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.aim</groupId>
+			<artifactId>org.aim.description</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lpe.common</groupId>
+			<artifactId>org.lpe.common.utils.numeric</artifactId>
+			<version>1.0.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!-- run tests after packaging the agent to use it as -javaagent parameter -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>unittests</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<skip>false</skip>
+							<includes>
+								<include>**/**/**/*Test.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -64,18 +104,12 @@
 							<outputFile>${project.build.directory}/${project.build.finalName}-agent.jar</outputFile>
 							<artifactSet>
 								<excludes>
-									<exclude>junit:junit</exclude>
-									<exclude>jmock:*</exclude>
 									<exclude>org.apache.maven:lib:tests</exclude>
 									<exclude>log4j:log4j:jar:</exclude>
 								</excludes>
 							</artifactSet>
-							
+
 							<relocations>
-								<!--  <relocation>
-									<pattern>javax.servlet</pattern>
-									<shadedPattern>org.aim.agentlibs.javax.servlet</shadedPattern>
-								</relocation>  -->
 								<relocation>
 									<pattern>org.glassfish</pattern>
 									<shadedPattern>org.aim.agentlibs.org.glassfish</shadedPattern>
@@ -87,6 +121,14 @@
 								<relocation>
 									<pattern>japa</pattern>
 									<shadedPattern>org.aim.agentlibs.japa</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.apache</pattern>
+									<shadedPattern>org.aim.agentlibs.org.apache</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>com.strobel</pattern>
+									<shadedPattern>org.aim.agentlibs.com.strobel</shadedPattern>
 								</relocation>
 							</relocations>
 
@@ -118,6 +160,7 @@
 										<exclude>META-INF/*.DSA</exclude>
 										<exclude>META-INF/*.RSA</exclude>
 										<exclude>*.xsd</exclude>
+										<exclude>mainagent-example.conf</exclude>
 										<exclude>*.cat</exclude>
 										<exclude>javax/servlet/**</exclude>
 									</excludes>
@@ -127,12 +170,6 @@
 									<includes>
 										<include>**</include>
 									</includes>
-								</filter>
-								<filter>
-									<artifact>com.sun.jersey:*</artifact>
-									<excludes>
-										<exclude>**</exclude>
-									</excludes>
 								</filter>
 							</filters>
 						</configuration>
@@ -149,9 +186,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.14</version>
-				<!-- <configuration> <argLine> Has to be in ONE LINE (no word wrap)!!! 
-					-javaagent:test/org/lpe/common/instrumentation/adaptive/agent/testingAgent.jar 
-					</argLine> <useSystemClassloader>true</useSystemClassloader> </configuration> -->
+				<configuration>
+					<argLine>-javaagent:${project.build.directory}/${project.build.finalName}-agent.jar</argLine>
+					<useSystemClassloader>false</useSystemClassloader>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

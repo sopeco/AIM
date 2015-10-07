@@ -16,14 +16,14 @@
 package org.aim.api.instrumentation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.description.scopes.Scope;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.lpe.common.extension.IExtension;
 import org.lpe.common.extension.IExtensionArtifact;
 
@@ -34,11 +34,11 @@ import org.lpe.common.extension.IExtensionArtifact;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstAPIScope extends MethodsEnclosingScope implements IExtensionArtifact, Scope {
+public abstract class AbstractInstAPIScope extends MethodsEnclosingScope implements IExtensionArtifact {
 	/**
 	 * Extension provider.
 	 */
-	private final IExtension<?> provider;
+	private final IExtension provider;
 
 	/**
 	 * Constructor.
@@ -46,8 +46,8 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 	 * @param provider
 	 *            extension provider.
 	 */
-	public AbstractInstAPIScope(IExtension<?> provider) {
-		super(0L);
+	public AbstractInstAPIScope(final IExtension provider) {
+		super(provider,0L);
 		this.provider = provider;
 		init();
 	}
@@ -55,7 +55,8 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 	/**
 	 * @return returns the provider of this extension.
 	 */
-	public IExtension<?> getProvider() {
+	@Override
+	public IExtension getProvider() {
 		return this.provider;
 	}
 
@@ -75,7 +76,7 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 	 * @param methodName
 	 *            method name
 	 */
-	protected void addMethod(String containerName, String methodName) {
+	protected void addMethod(final String containerName, final String methodName) {
 		if (!getMethodsToMatch().containsKey(containerName)) {
 			getMethodsToMatch().put(containerName, new ArrayList<String>());
 		}
@@ -98,7 +99,7 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 	 * @param annotationName
 	 *            full qualified name of the annotation to match
 	 */
-	protected void addMethodAnnotationToMatch(String annotationName) {
+	protected void addMethodAnnotationToMatch(final String annotationName) {
 		getMethodAnnotationsToMatch().add(annotationName);
 	}
 
@@ -111,5 +112,12 @@ public abstract class AbstractInstAPIScope extends MethodsEnclosingScope impleme
 		}
 		return methodAnnotationsToMatch;
 	}
+
+	@Override
+	public IScopeAnalyzer getScopeAnalyzer(final Collection<Class<?>> allLoadedClasses) throws InstrumentationException {
+		return new APIScopeAnalyzer(this, allLoadedClasses);
+	}
+	
+	
 
 }

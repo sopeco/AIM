@@ -17,8 +17,8 @@ package org.aim.api.measurement.collector;
 
 import java.io.OutputStream;
 
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.MeasurementException;
 
 /**
  * The interface {@link IDataReader} is the counterpart to the

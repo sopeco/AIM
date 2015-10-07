@@ -15,13 +15,12 @@
  */
 package org.aim.artifacts.events.probes;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.events.AbstractEventProbe;
 import org.aim.api.events.IMonitorEventProbe;
 import org.aim.api.instrumentation.GenericProbe;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.artifacts.records.EventTimeStampRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.SynchronizedScope;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -34,23 +33,17 @@ import org.lpe.common.extension.IExtension;
 public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMonitorEventProbe {
 
 	/**
-	 * Default Constructor.
-	 */
-	public MonitorWaitingTimeProbe() {
-		super(null);
-	}
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param provider
 	 *            extension provider.
 	 */
-	public MonitorWaitingTimeProbe(IExtension<?> provider) {
+	public MonitorWaitingTimeProbe(final IExtension provider) {
 		super(provider);
 	}
 
-	public static final MeasurementProbe<SynchronizedScope> MODEL_PROBE = new MeasurementProbe<>(MonitorWaitingTimeProbe.class.getName());
+	public static final MeasurementProbeDescription MODEL_PROBE 
+		= new MeasurementProbeDescription(MonitorWaitingTimeProbe.class.getName());
 
 	private Object monitor;
 	private long eventTimeStamp;
@@ -59,8 +52,8 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 
 	@Override
 	public void proceed() {
-		EventTimeStampRecord record = new EventTimeStampRecord();
-		StringBuilder locationBuilder = new StringBuilder();
+		final EventTimeStampRecord record = new EventTimeStampRecord();
+		final StringBuilder locationBuilder = new StringBuilder();
 		locationBuilder.append(monitor == null ? "null" : monitor.getClass().getName());
 		if (monitor instanceof Class<?>) {
 			locationBuilder.append("<");
@@ -76,12 +69,12 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 		record.setCallId(GenericProbe.getNewCallID());
 		record.setTimeStamp(System.currentTimeMillis());
 
-		AbstractDataSource dataSource = org.aim.api.measurement.collector.AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = org.aim.api.measurement.collector.AbstractDataSource.getDefaultDataSource();
 		dataSource.newRecord(record);
 	}
 
 	@Override
-	public void setThread(Thread thread) {
+	public void setThread(final Thread thread) {
 		if (thread == null) {
 			this.threadId = -1;
 		} else {
@@ -90,17 +83,17 @@ public class MonitorWaitingTimeProbe extends AbstractEventProbe implements IMoni
 	}
 
 	@Override
-	public void setMonitor(Object monitor) {
+	public void setMonitor(final Object monitor) {
 		this.monitor = monitor;
 	}
 
 	@Override
-	public void setEventType(String type) {
+	public void setEventType(final String type) {
 		this.eventType = type;
 	}
 
 	@Override
-	public void setEventTimeStamp(long eventTimeStamp) {
+	public void setEventTimeStamp(final long eventTimeStamp) {
 		this.eventTimeStamp = eventTimeStamp;
 	}
 

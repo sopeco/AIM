@@ -17,7 +17,7 @@ package org.aim.mainagent.agent;
 
 import java.lang.instrument.Instrumentation;
 
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 
 public class TestingAgent {
 	/**

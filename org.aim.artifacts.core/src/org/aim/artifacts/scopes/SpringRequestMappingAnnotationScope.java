@@ -32,7 +32,7 @@ public class SpringRequestMappingAnnotationScope extends AbstractInstAPIScope {
 	 * @param provider
 	 *            extension provider
 	 */
-	public SpringRequestMappingAnnotationScope(IExtension<?> provider) {
+	public SpringRequestMappingAnnotationScope(final IExtension provider) {
 		super(provider);
 	}
 

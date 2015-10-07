@@ -15,7 +15,7 @@
  */
 package org.aim.api.measurement.sampling;
 
-import org.aim.api.exceptions.MeasurementException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.IDataCollector;
 import org.hyperic.sigar.Sigar;
 import org.lpe.common.extension.ExtensionRegistry;

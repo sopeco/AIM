@@ -40,18 +40,18 @@ public class GarbageCollectionSampler extends AbstractSampler {
 	 * @param provider
 	 *            extension provider
 	 */
-	public GarbageCollectionSampler(IExtension<?> provider) {
+	public GarbageCollectionSampler(final IExtension provider) {
 		super(provider);
 	}
 
 	@Override
 	public void sample() {
-		GCSamplingStatsRecord record = new GCSamplingStatsRecord();
+		final GCSamplingStatsRecord record = new GCSamplingStatsRecord();
 		record.setTimeStamp(System.currentTimeMillis());
-		for (GarbageCollectorMXBean mxBean : ManagementFactory.getGarbageCollectorMXBeans()) {
+		for (final GarbageCollectorMXBean mxBean : ManagementFactory.getGarbageCollectorMXBeans()) {
 
 			boolean found = false;
-			for (String newGenName : NEW_GEN_GC_NAMES) {
+			for (final String newGenName : NEW_GEN_GC_NAMES) {
 				if (mxBean.getName().equals(newGenName)) {
 					found = true;
 					break;
@@ -65,7 +65,7 @@ public class GarbageCollectionSampler extends AbstractSampler {
 			}
 
 			found = false;
-			for (String oldGenName : OLD_GEN_GC_NAMES) {
+			for (final String oldGenName : OLD_GEN_GC_NAMES) {
 				if (mxBean.getName().equals(oldGenName)) {
 					found = true;
 					break;

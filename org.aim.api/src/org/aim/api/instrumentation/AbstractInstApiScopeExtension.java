@@ -15,11 +15,8 @@
  */
 package org.aim.api.instrumentation;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.lpe.common.config.ConfigParameterDescription;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
  * Abstract extension provider for api scopes.
@@ -27,12 +24,10 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractInstApiScopeExtension implements IExtension<AbstractInstAPIScope> {
+public abstract class AbstractInstApiScopeExtension extends ReflectiveAbstractExtension implements IExtension {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
+	protected AbstractInstApiScopeExtension(final Class<? extends AbstractInstAPIScope> extensionArtifactClass) {
+		super(extensionArtifactClass);
 	}
 
 }

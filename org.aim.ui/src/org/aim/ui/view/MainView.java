@@ -20,7 +20,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,7 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import org.aim.description.restrictions.Restriction;
+import org.aim.aiminterface.description.restriction.Restriction;
 import org.aim.ui.Main;
 import org.aim.ui.bci.InstrumentationEntityWizard;
 import org.aim.ui.bci.RestrictionPanel;
@@ -352,20 +354,23 @@ public final class MainView extends JFrame implements ConnectionStateListener, A
 	 * @return global restrictions
 	 */
 	public Restriction getGlobalRestriction() {
-		final Restriction restriction = new Restriction();
+		final Set<String> includedPackages = new HashSet<>();
+		final Set<String> excludedPackages = new HashSet<>();
+		final Set<Integer> includedModifier = new HashSet<>();
+		final Set<Integer> excludedModifier = new HashSet<>();
 		for (final int mod : panelGlobalRestrictions.getExcludedModifiers()) {
-			restriction.addModifierExclude(mod);
+			excludedModifier.add(mod);
 		}
 		for (final int mod : panelGlobalRestrictions.getIncludedModifiers()) {
-			restriction.addModifierInclude(mod);
+			includedModifier.add(mod);
 		}
 		for (final String pge : panelGlobalRestrictions.getExcludedPackages()) {
-			restriction.addPackageExclude(pge);
+			excludedPackages.add(pge);
 		}
 		for (final String pge : panelGlobalRestrictions.getIncludedPackages()) {
-			restriction.addPackageInclude(pge);
+			includedPackages.add(pge);
 		}
-		return restriction;
+		return new Restriction(includedPackages, excludedPackages, includedModifier, excludedModifier, 1.0d);
 	}
 
 	/**

@@ -15,10 +15,7 @@
  */
 package org.aim.description.extension;
 
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MemoryScope;
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.description.scopes.SynchronizedScope;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 
 /**
  * Utility Class wrapping commonly used Measurement Probes..
@@ -28,13 +25,10 @@ import org.aim.description.scopes.SynchronizedScope;
  */
 public final class CommonlyUsedProbes {
 
-	public static final MeasurementProbe<MethodsEnclosingScope> RESPONSE_TIME_PROBE = new MeasurementProbe<>(
-			"ResponseTimeProbe");
-	public static final MeasurementProbe<MethodsEnclosingScope> TRACING_PROBE = new MeasurementProbe<>("TracingProbe");
-	public static final MeasurementProbe<MemoryScope> MEMORY_FOOTPRINT_PROBE = new MeasurementProbe<>(
-			"MemoryFoortprintProbe");
-	public static final MeasurementProbe<SynchronizedScope> WAITING_TIME_PROBE = new MeasurementProbe<>(
-			"WaitingTimeProbe");
+	public static final MeasurementProbeDescription RESPONSE_TIME_PROBE = new MeasurementProbeDescription("ResponseTimeProbe");
+	public static final MeasurementProbeDescription TRACING_PROBE = new MeasurementProbeDescription("TracingProbe");
+	public static final MeasurementProbeDescription MEMORY_FOOTPRINT_PROBE = new MeasurementProbeDescription("MemoryFootprintProbe");
+	public static final MeasurementProbeDescription WAITING_TIME_PROBE = new MeasurementProbeDescription("WaitingTimeProbe");
 
 	private CommonlyUsedProbes() {
 		// should not be instantiated

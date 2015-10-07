@@ -18,8 +18,10 @@ package org.aim.api.events;
 import java.util.Collections;
 import java.util.Set;
 
-import org.lpe.common.config.ConfigParameterDescription;
+import org.aim.api.instrumentation.Scope;
 import org.lpe.common.extension.IExtension;
+import org.lpe.common.extension.IExtensionArtifact;
+import org.lpe.common.extension.ReflectiveAbstractExtension;
 
 /**
  * Abstract class for all event probe extensions.
@@ -27,29 +29,18 @@ import org.lpe.common.extension.IExtension;
  * @author Alexander Wert
  * 
  */
-public abstract class AbstractEventProbeExtension implements IExtension<AbstractEventProbe> {
-	@Override
-	public String getName() {
-		return getProbeClass().getName();
+public abstract class AbstractEventProbeExtension extends ReflectiveAbstractExtension implements IExtension {
+	
+	protected AbstractEventProbeExtension(final Class<? extends IExtensionArtifact> extensionArtifactClass) {
+		super(extensionArtifactClass);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<ConfigParameterDescription> getConfigParameters() {
-		return Collections.EMPTY_SET;
-	}
-
-	/**
-	 * Returns the class of the probe.
-	 * 
-	 * @return class of the probe
-	 */
-	public abstract Class<? extends AbstractEventProbe> getProbeClass();
 
 	/**
 	 * Returns the type of the scope this probe is applicable to.
 	 * 
 	 * @return class of the scope
 	 */
-	public abstract Set<Class<?>> getScopeDependencies();
+	public Set<Class<? extends Scope>> getScopeDependencies() {
+		return Collections.emptySet();
+	}
 }

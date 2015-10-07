@@ -15,8 +15,8 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for entry point scope..
@@ -26,14 +26,9 @@ import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
  */
 public class EntryPointScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return EntryPointScope.class.getName();
+	public EntryPointScopeExtension() {
+		super(EntryPointScope.class);
 	}
 
-	@Override
-	public AbstractInstAPIScope createExtensionArtifact() {
-		return new EntryPointScope(this);
-	}
 
 }

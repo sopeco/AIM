@@ -22,10 +22,9 @@ import java.lang.reflect.Modifier;
 
 import javax.ws.rs.core.MediaType;
 
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
-import org.aim.description.scopes.Scope;
 import org.aim.description.servlet.TestIDMServlet;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -34,14 +33,14 @@ import org.glassfish.grizzly.http.server.Response;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.lpe.common.util.web.LpeWebUtils;
+import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
 
 public class IDMJsonTest {
 
-	private static final MeasurementProbe<MethodsEnclosingScope> ME_PROBE = new MeasurementProbe<>("MEProbe");
-	private static final MeasurementProbe<Scope> ALL_PROBE = new MeasurementProbe<>("AllProbe");
+	private static final MeasurementProbeDescription METHOD_ENCLOSING_PROBE = new MeasurementProbeDescription("MEProbe");
+	private static final MeasurementProbeDescription ALL_PROBE = new MeasurementProbeDescription("AllProbe");
 
 	private static final String PORT = "8123";
 
@@ -54,12 +53,12 @@ public class IDMJsonTest {
 	 */
 	@BeforeClass
 	public static void startServer() throws IOException {
-		HttpServer server = HttpServer.createSimpleServer("", Integer.parseInt(PORT));
+		final HttpServer server = HttpServer.createSimpleServer("", Integer.parseInt(PORT));
 		final TestIDMServlet servlet = new TestIDMServlet();
 		server.getServerConfiguration().addHttpHandler(new HttpHandler() {
 
 			@Override
-			public void service(Request req, Response resp) throws Exception {
+			public void service(final Request req, final Response resp) throws Exception {
 				servlet.doService(req, resp);
 
 			}
@@ -69,18 +68,18 @@ public class IDMJsonTest {
 
 	@Before
 	public void getWebResource() {
-		webResource = LpeWebUtils.getWebClient().resource("http://localhost:" + PORT);
+		webResource = LpeHTTPUtils.getWebClient().resource("http://localhost:" + PORT);
 	}
 
 	@Test
 	public void testEmptyDescription() {
-		InstrumentationDescription description = new InstrumentationDescription();
+		final InstrumentationDescription description = new InstrumentationDescriptionBuilder().build();
 		assertEquals(description, sendAndReceiveDescription(description));
 	}
 
 	@Test
 	public void testSamplingDescription() {
-		InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
 		idb.newSampling("CPU", 100);
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newSampling("", 0);
@@ -91,23 +90,21 @@ public class IDMJsonTest {
 
 	@Test
 	public void testInstrumentationEntities() {
-		InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
 		idb.newMethodScopeEntity("foo.*").entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
-		idb.newMethodScopeEntity("foo.*").addProbe(ME_PROBE).entityDone();
+		idb.newMethodScopeEntity("foo.*").addProbe(METHOD_ENCLOSING_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 	}
 
 	@Test
 	public void testScopes() {
-		InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
 		idb.newAllocationScopeEntity("classes.*").addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newAPIScopeEntity("My").addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newConstructorScopeEntity("classes.*").addProbe(ALL_PROBE).entityDone();
-		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
-		idb.newCustomScopeEntity("MyScope").addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newMemoryScopeEntity().addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
@@ -115,13 +112,13 @@ public class IDMJsonTest {
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newSynchronizedScopeEntity().addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
-		idb.newTraceScopeEntity().setMethodSubScope("foo.*").addProbe(ALL_PROBE).entityDone();
+		idb.newMethodScopeEntity("foo.*").enableTrace().addProbe(ALL_PROBE).entityDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 	}
 
 	@Test
 	public void testRestrictions() {
-		InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescriptionBuilder idb = new InstrumentationDescriptionBuilder();
 		idb.newGlobalRestriction().restrictionDone();
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 		idb.newGlobalRestriction().excludePackage("foo.*").restrictionDone();
@@ -134,7 +131,7 @@ public class IDMJsonTest {
 		assertEquals(idb.build(), sendAndReceiveDescription(idb.build()));
 	}
 
-	private InstrumentationDescription sendAndReceiveDescription(InstrumentationDescription description) {
+	private InstrumentationDescription sendAndReceiveDescription(final InstrumentationDescription description) {
 		return webResource.path("testDescription").accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
 				.post(InstrumentationDescription.class, description);
 	}

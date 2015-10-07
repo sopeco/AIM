@@ -17,8 +17,8 @@ package org.aim.mainagent.probes;
 
 import junit.framework.Assert;
 
+import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.measurement.MeasurementData;
 import org.aim.artifacts.probes.ThreadTracingProbe;
 import org.aim.artifacts.records.ThreadTracingRecord;
 
@@ -38,10 +38,10 @@ public class ThreadTracingProbeTest extends ProbeTest {
 	@Override
 	protected void checkPostCall(MeasurementData mData) {
 		Assert.assertFalse(mData.getRecords().isEmpty());
-		Assert.assertEquals(Thread.currentThread().getId(), mData.getRecords(ThreadTracingRecord.class).get(0)
+		Assert.assertEquals(Thread.currentThread().getId(), mData.selectRecords(ThreadTracingRecord.class).get(0)
 				.getThreadId());
-		Assert.assertTrue(mData.getRecords(ThreadTracingRecord.class).get(0).getExitNanoTime() >= mData
-				.getRecords(ThreadTracingRecord.class).get(0).getEnterNanoTime());
+		Assert.assertTrue(mData.selectRecords(ThreadTracingRecord.class).get(0).getExitNanoTime() >= mData
+				.selectRecords(ThreadTracingRecord.class).get(0).getEnterNanoTime());
 
 	}
 

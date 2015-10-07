@@ -15,8 +15,8 @@
  */
 package org.aim.artifacts.scopes;
 
-import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 /**
  * Extension provider for the {@link org.springframework.web.bind.annotation.RequestMapping} annotation.
@@ -26,14 +26,9 @@ import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
  */
 public class SpringRequestMappingAnnotationScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return SpringRequestMappingAnnotationScope.class.getName();
+	public SpringRequestMappingAnnotationScopeExtension() {
+		super(SpringRequestMappingAnnotationScope.class);
 	}
 
-	@Override
-	public AbstractInstAPIScope createExtensionArtifact() {
-		return new SpringRequestMappingAnnotationScope(this);
-	}
 
 }

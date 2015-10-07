@@ -22,7 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.api.measurement.utils.RecordCSVReader;
 import org.aim.api.measurement.utils.RecordCSVWriter;
 import org.junit.Assert;

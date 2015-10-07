@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.aim.api.measurement.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.artifacts.records.ResponseTimeRecord;
 import org.aim.artifacts.records.ThreadTracingRecord;
 

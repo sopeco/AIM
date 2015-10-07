@@ -45,7 +45,7 @@ public abstract class AbstractEnclosingProbe extends AbstractExtensionArtifact {
 	 * @param provider
 	 *            extension provider
 	 */
-	public AbstractEnclosingProbe(IExtension<?> provider) {
+	public AbstractEnclosingProbe(final IExtension provider) {
 		super(provider);
 	}
 

@@ -17,8 +17,8 @@ package org.aim.mainagent.probes;
 
 import junit.framework.Assert;
 
+import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
-import org.aim.api.measurement.MeasurementData;
 import org.aim.artifacts.probes.MemoryFootprintProbe;
 import org.aim.artifacts.records.MemoryFootprintRecord;
 
@@ -38,9 +38,9 @@ public class MemoryfootprintProbeTest extends ProbeTest {
 	@Override
 	protected void checkPostCall(MeasurementData mData) {
 		Assert.assertFalse(mData.getRecords().isEmpty());
-		Assert.assertTrue(mData.getRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedBefore() > 0);
-		Assert.assertTrue(mData.getRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedAfter() >= mData
-				.getRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedBefore());
+		Assert.assertTrue(mData.selectRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedBefore() > 0);
+		Assert.assertTrue(mData.selectRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedAfter() >= mData
+				.selectRecords(MemoryFootprintRecord.class).get(0).getEdenSpaceUsedBefore());
 	}
 
 	@Override

@@ -18,10 +18,10 @@ package org.overhead;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.instrumentation.entities.OverheadData;
-import org.aim.api.instrumentation.entities.OverheadRecord;
-import org.aim.description.InstrumentationDescription;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.results.OverheadData;
+import org.aim.aiminterface.entities.results.OverheadRecord;
+import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
 import org.aim.mainagent.AdaptiveInstrumentationFacade;
 
@@ -49,13 +49,13 @@ public final class OverheadEstimator {
 	 * @throws InstrumentationException
 	 *             if instrumentation cannot be done
 	 */
-	public static List<OverheadRecord> measureOverhead(String probeTypeName) throws InstrumentationException {
+	public static List<OverheadRecord> measureOverhead(final String probeTypeName) throws InstrumentationException {
 
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
 		idBuilder.newMethodScopeEntity(OverheadTargetClass.class.getName() + ".called()").addProbe(probeTypeName)
 				.entityDone();
 
-		List<OverheadRecord> records = new ArrayList<>();
+		final List<OverheadRecord> records = new ArrayList<>();
 
 		for (int i = 0; i < REPETITIONS; i++) {
 			records.add(runExperiment(idBuilder.build()));
@@ -73,13 +73,13 @@ public final class OverheadEstimator {
 	 * @throws InstrumentationException
 	 *             if instrumentation fails
 	 */
-	public static OverheadRecord runExperiment(InstrumentationDescription instDescr) throws InstrumentationException {
-		List<OverheadRecord> records = new ArrayList<>();
+	public static OverheadRecord runExperiment(final InstrumentationDescription instDescr) throws InstrumentationException {
+		final List<OverheadRecord> records = new ArrayList<>();
 		AdaptiveInstrumentationFacade.getInstance().instrument(instDescr);
 
-		OverheadTargetClass target = new OverheadTargetClass();
+		final OverheadTargetClass target = new OverheadTargetClass();
 		for (int i = 0; i < NUM_CALLS; i++) {
-			OverheadRecord rec = target.caller();
+			final OverheadRecord rec = target.caller();
 			if (i > NUM_CALLS_FOR_WARM_UP) {
 				records.add(rec);
 			}
@@ -88,12 +88,12 @@ public final class OverheadEstimator {
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 
-		OverheadRecord record = new OverheadRecord();
-		OverheadData data = new OverheadData();
+		final OverheadRecord record = new OverheadRecord();
+		final OverheadData data = new OverheadData();
 		data.setoRecords(records);
-		record.setOverallNanoTimeSpan((long) data.getMeanOverall());
-		record.setBeforeNanoTimeSpan((long) data.getMeanBefore());
-		record.setAfterNanoTimeSpan((long) data.getMeanAfter());
+		record.setOverallNanoTimeSpan((long) data.computeMeanOverall());
+		record.setBeforeNanoTimeSpan((long) data.computeMeanBefore());
+		record.setAfterNanoTimeSpan((long) data.computeMeanAfter());
 		return record;
 	}
 

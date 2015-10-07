@@ -17,14 +17,13 @@ package org.aim.artifacts.probes;
 
 import java.sql.PreparedStatement;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.probes.utils.SQLPreparedStatementCache;
 import org.aim.artifacts.records.SQLQueryRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.MethodsEnclosingScope;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -34,7 +33,7 @@ import org.lpe.common.extension.IExtension;
  * 
  */
 public class SQLQueryProbe extends AbstractEnclosingProbe {
-	public static final MeasurementProbe<MethodsEnclosingScope> MODEL_PROBE = new MeasurementProbe<>(
+	public static final MeasurementProbeDescription MODEL_PROBE = new MeasurementProbeDescription(
 			SQLQueryProbe.class.getName());
 
 	/**
@@ -43,7 +42,7 @@ public class SQLQueryProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public SQLQueryProbe(IExtension<?> provider) {
+	public SQLQueryProbe(final IExtension provider) {
 		super(provider);
 	}
 

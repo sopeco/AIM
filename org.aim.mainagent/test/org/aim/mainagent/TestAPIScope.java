@@ -20,7 +20,7 @@ import org.lpe.common.extension.IExtension;
 
 public class TestAPIScope extends AbstractInstAPIScope {
 
-	public TestAPIScope(IExtension<?> provider) {
+	public TestAPIScope(final IExtension provider) {
 		super(provider);
 	}
 

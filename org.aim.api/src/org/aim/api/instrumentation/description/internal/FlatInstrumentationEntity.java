@@ -25,7 +25,7 @@ import org.aim.api.instrumentation.AbstractEnclosingProbe;
  */
 public class FlatInstrumentationEntity extends FlatScopeEntity {
 
-	private Class<? extends AbstractEnclosingProbe> probeType;
+	private final Class<? extends AbstractEnclosingProbe> probeType;
 
 	/**
 	 * Constructor.
@@ -35,8 +35,8 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 	 * @param probeType
 	 *            probe type to add
 	 */
-	public FlatInstrumentationEntity(FlatScopeEntity scopeEntity, Class<? extends AbstractEnclosingProbe> probeType) {
-		this(scopeEntity.getClazz(), scopeEntity.getMethodSignature(), probeType);
+	public FlatInstrumentationEntity(final FlatScopeEntity scopeEntity, final Class<? extends AbstractEnclosingProbe> probeType) {
+		this(scopeEntity.getClazz(), scopeEntity.getMethodSignature(), scopeEntity.getScopeId(), probeType);
 	}
 
 	/**
@@ -52,9 +52,9 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 	 *            qualified class name of the corresponding probe
 	 *            implementation)
 	 */
-	public FlatInstrumentationEntity(Class<?> clazz, String methodSignature,
-			Class<? extends AbstractEnclosingProbe> probeType) {
-		super(clazz, methodSignature);
+	public FlatInstrumentationEntity(final Class<?> clazz, final String methodSignature, final long scopeId,
+			final Class<? extends AbstractEnclosingProbe> probeType) {
+		super(clazz, methodSignature, scopeId);
 		this.probeType = probeType;
 	}
 
@@ -63,14 +63,6 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 	 */
 	public Class<? extends AbstractEnclosingProbe> getProbeType() {
 		return probeType;
-	}
-
-	/**
-	 * @param probeType
-	 *            the probeType to set
-	 */
-	public void setProbeType(Class<? extends AbstractEnclosingProbe> probeType) {
-		this.probeType = probeType;
 	}
 
 	/*
@@ -92,7 +84,7 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -102,7 +94,7 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		FlatInstrumentationEntity other = (FlatInstrumentationEntity) obj;
+		final FlatInstrumentationEntity other = (FlatInstrumentationEntity) obj;
 		if (probeType == null) {
 			if (other.probeType != null) {
 				return false;
@@ -111,6 +103,12 @@ public class FlatInstrumentationEntity extends FlatScopeEntity {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "FlatInstrumentationEntity [probeType=" + probeType + ", getClazz()=" + getClazz()
+				+ ", getMethodSignature()=" + getMethodSignature() + ", getScopeId()=" + getScopeId() + "]";
 	}
 
 }

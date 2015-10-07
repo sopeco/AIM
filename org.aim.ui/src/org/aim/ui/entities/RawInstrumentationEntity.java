@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * 
  * Abstract representation of an
- * {@link org.aim.description.InstrumentationEntity}.
+ * {@link org.aim.aiminterface.description.instrumentation.InstrumentationEntity}.
  * 
  * @author Marius Oehler
  *

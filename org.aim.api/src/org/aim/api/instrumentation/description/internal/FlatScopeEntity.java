@@ -22,9 +22,9 @@ package org.aim.api.instrumentation.description.internal;
  * 
  */
 public class FlatScopeEntity {
-	private Long scopeId;
-	private Class<?> clazz;
-	private String methodSignature;
+	private final long scopeId;
+	private final Class<?> clazz;
+	private final String methodSignature;
 
 	/**
 	 * Constructor.
@@ -35,10 +35,15 @@ public class FlatScopeEntity {
 	 *            Signature of the method to instrument. This signature must
 	 *            contain the fully qualified name of the declaring class!
 	 */
-	public FlatScopeEntity(Class<?> clazz, String methodSignature) {
+	public FlatScopeEntity(final Class<?> clazz, final String methodSignature, final long id) {
 		super();
 		this.clazz = clazz;
 		this.methodSignature = methodSignature;
+		this.scopeId = id;
+	}
+
+	public FlatScopeEntity(final Class<?> clazz, final String methodSignature) {
+		this(clazz,methodSignature,0L);
 	}
 
 	/**
@@ -49,74 +54,10 @@ public class FlatScopeEntity {
 	}
 
 	/**
-	 * @param clazz
-	 *            the clazz to set
-	 */
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
-	}
-
-	/**
 	 * @return the methodSignature
 	 */
 	public String getMethodSignature() {
 		return methodSignature;
-	}
-
-	/**
-	 * @param methodSignature
-	 *            the methodSignature to set
-	 */
-	public void setMethodSignature(String methodSignature) {
-		this.methodSignature = methodSignature;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
-		result = prime * result + ((methodSignature == null) ? 0 : methodSignature.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		FlatScopeEntity other = (FlatScopeEntity) obj;
-		if (clazz == null) {
-			if (other.clazz != null) {
-				return false;
-			}
-		} else if (!clazz.equals(other.clazz)) {
-			return false;
-		}
-		if (methodSignature == null) {
-			if (other.methodSignature != null) {
-				return false;
-			}
-		} else if (!methodSignature.equals(other.methodSignature)) {
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -126,12 +67,52 @@ public class FlatScopeEntity {
 		return scopeId;
 	}
 
-	/**
-	 * @param scopeId
-	 *            the scopeId to set
-	 */
-	public void setScopeId(Long scopeId) {
-		this.scopeId = scopeId;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((clazz == null) ? 0 : clazz.getName().hashCode());
+		result = prime * result + ((methodSignature == null) ? 0 : methodSignature.hashCode());
+		result = prime * result + (int) (scopeId ^ (scopeId >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final FlatScopeEntity other = (FlatScopeEntity) obj;
+		if (clazz == null) {
+			if (other.clazz != null) {
+				return false;
+			}
+		} else if (!clazz.getName().equals(other.clazz.getName()) && !(clazz.getClassLoader() == other.clazz.getClassLoader())) {
+			return false;
+		}
+		if (methodSignature == null) {
+			if (other.methodSignature != null) {
+				return false;
+			}
+		} else if (!methodSignature.equals(other.methodSignature)) {
+			return false;
+		}
+		if (scopeId != other.scopeId) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "FlatScopeEntity [scopeId=" + scopeId + ", clazz=" + clazz + ", methodSignature=" + methodSignature
+				+ "]";
 	}
 
 }

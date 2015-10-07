@@ -1,5 +1,4 @@
-/**
- * Copyright 2014 SAP AG
+/** Copyright 2014 SAP AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +19,17 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Properties;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.exceptions.MeasurementException;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.collector.AbstractDataSource;
 import org.aim.api.measurement.collector.CollectorFactory;
 import org.aim.artifacts.measurement.collector.MemoryDataSource;
 import org.aim.artifacts.probes.ResponsetimeProbe;
 import org.aim.artifacts.records.ResponseTimeRecord;
-import org.aim.description.InstrumentationDescription;
 import org.aim.description.builder.InstrumentationDescriptionBuilder;
-import org.aim.mainagent.instrumentor.JInstrumentation;
+import org.aim.mainagent.instrumentation.JInstrumentation;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -43,19 +42,19 @@ import org.test.sut.ThreadA;
 public class GranularityTest {
 
 	public static void enableMeasurement() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		dataSource.enable();
 	}
 
 	public static void disableMeasurement() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		dataSource.disable();
 	}
 
 	public static MeasurementData getData() throws MeasurementException {
-		AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
+		final AbstractDataSource dataSource = AbstractDataSource.getDefaultDataSource();
 
 		return dataSource.read();
 	}
@@ -63,12 +62,12 @@ public class GranularityTest {
 	@BeforeClass
 	public static void prepareCollector() {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		ClassA a = new ClassA();
-		AbstractDataSource dataSource = CollectorFactory.createDataSource(MemoryDataSource.class.getName(), null);
+		final ClassA a = new ClassA();
+		final AbstractDataSource dataSource = CollectorFactory.createDataSource(MemoryDataSource.class.getName(), null);
 		AbstractDataSource.setDefaultDataSource(dataSource);
 
-		Properties globalProperties = new Properties();
-		String currentDir = System.getProperty("user.dir");
+		final Properties globalProperties = new Properties();
+		final String currentDir = System.getProperty("user.dir");
 		globalProperties.setProperty(ExtensionRegistry.APP_ROOT_DIR_PROPERTY_KEY, currentDir);
 		globalProperties.setProperty(ExtensionRegistry.PLUGINS_FOLDER_PROPERTY_KEY, "plugins");
 		GlobalConfiguration.initialize(globalProperties);
@@ -83,28 +82,28 @@ public class GranularityTest {
 	@Test
 	public void testGranularity() throws InstrumentationException, MeasurementException, InterruptedException {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
-		InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
-		InstrumentationDescription descr = idBuilder.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()")
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.newMethodScopeEntity(ClassA.class.getName() + ".methodA1()")
 				.addProbe(ResponsetimeProbe.MODEL_PROBE).entityDone().newGlobalRestriction().setGranularity(0.5)
 				.restrictionDone().build();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		enableMeasurement();
 
-		Thread[] threads = { new ThreadA(1), new ThreadA(2), new ThreadA(3), new ThreadA(4) };
+		final Thread[] threads = { new ThreadA(1), new ThreadA(2), new ThreadA(3), new ThreadA(4) };
 
-		for (Thread t : threads) {
+		for (final Thread t : threads) {
 			t.start();
 		}
 
-		for (Thread t : threads) {
+		for (final Thread t : threads) {
 			t.join();
 		}
 
 		disableMeasurement();
-		MeasurementData data = getData();
+		final MeasurementData data = getData();
 		assertFalse(data.getRecords().isEmpty());
-		assertEquals(2, data.getRecords(ResponseTimeRecord.class).size());
+		assertEquals(2, data.selectRecords(ResponseTimeRecord.class).size());
 	}
 
 }

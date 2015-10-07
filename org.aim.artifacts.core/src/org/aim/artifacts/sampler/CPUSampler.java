@@ -38,7 +38,7 @@ public class CPUSampler extends AbstractResourceSampler {
 	 * @param provider
 	 *            extension provider
 	 */
-	public CPUSampler(IExtension<?> provider) {
+	public CPUSampler(final IExtension provider) {
 		super(provider);
 	}
 
@@ -53,8 +53,8 @@ public class CPUSampler extends AbstractResourceSampler {
 	public void sample() {
 		try {
 
-			CpuPerc cpu = getSigar().getCpuPerc();
-			long timestamp = System.currentTimeMillis();
+			final CpuPerc cpu = getSigar().getCpuPerc();
+			final long timestamp = System.currentTimeMillis();
 			double utilization = cpu.getCombined();
 			CPUUtilizationRecord record = null;
 			if (!Double.isNaN(utilization) && !Double.isInfinite(utilization)) {
@@ -63,7 +63,7 @@ public class CPUSampler extends AbstractResourceSampler {
 			}
 
 			int i = 0;
-			for (CpuPerc cpuPerc : getSigar().getCpuPercList()) {
+			for (final CpuPerc cpuPerc : getSigar().getCpuPercList()) {
 				utilization = cpuPerc.getCombined();
 				if (!Double.isNaN(utilization) && !Double.isInfinite(utilization)) {
 					record = new CPUUtilizationRecord(timestamp, CPUUtilizationRecord.RES_CPU_PREFIX + i, utilization);
@@ -72,7 +72,7 @@ public class CPUSampler extends AbstractResourceSampler {
 				i++;
 			}
 
-		} catch (SigarException se) {
+		} catch (final SigarException se) {
 			LOGGER.warn("SigarException occured in CPU Recorder: {}", se.getMessage());
 		}
 

@@ -15,20 +15,14 @@
  */
 package org.aim.mainagent;
 
-import org.aim.api.instrumentation.AbstractInstAPIScope;
 import org.aim.api.instrumentation.AbstractInstApiScopeExtension;
+import org.lpe.common.extension.IExtensionArtifact;
 
 public class TestAPIScopeExtension extends AbstractInstApiScopeExtension {
 
-	@Override
-	public String getName() {
-		return TestAPIScope.class.getName();
-	}
-
-	@Override
-	public AbstractInstAPIScope createExtensionArtifact() {
-		// TODO Auto-generated method stub
-		return new TestAPIScope(this);
+	public TestAPIScopeExtension() {
+		super(TestAPIScope.class);
+		// TODO Auto-generated constructor stub
 	}
 
 }

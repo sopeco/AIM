@@ -16,7 +16,7 @@
 package org.test.sut;
 
 public class ClassH {
-	public void test(byte[] x) {
-System.out.println("HALLO");
+	public void test(final byte[] x) {
+		System.out.println("HALLO");
 	}
 }

@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.aim.api.measurement.AbstractRecord;
-import org.aim.api.measurement.MeasurementData;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.api.measurement.dataset.DatasetCollection;
 import org.aim.api.measurement.dataset.DatasetCollectionBuilder;
 import org.aim.api.measurement.dataset.Parameter;

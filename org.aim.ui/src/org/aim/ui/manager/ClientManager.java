@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aim.api.exceptions.InstrumentationException;
-import org.aim.api.exceptions.MeasurementException;
+import org.aim.aiminterface.IAdaptiveInstrumentation;
+import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.exceptions.InstrumentationException;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.Parameter;
 import org.aim.api.measurement.utils.RecordCSVWriter;
-import org.aim.artifacts.instrumentation.InstrumentationClient;
-import org.aim.description.InstrumentationDescription;
+import org.aim.artifacts.client.JMXAdaptiveInstrumentationClient;
+import org.aim.mainagent.JsonAdaptiveInstrumentationClient;
 import org.aim.ui.Main;
 import org.aim.ui.interfaces.ConnectionStateListener;
 import org.aim.ui.view.MainView;
@@ -50,8 +52,8 @@ public final class ClientManager {
 		return instance;
 	}
 
-	private InstrumentationClient client;
-	private Collection<ConnectionStateListener> csListener;
+	private IAdaptiveInstrumentation client;
+	private final Collection<ConnectionStateListener> csListener;
 
 	private ClientManager() {
 		csListener = new ArrayList<ConnectionStateListener>();
@@ -74,7 +76,7 @@ public final class ClientManager {
 	 * @param listener
 	 *            - listener to register
 	 */
-	public void addConnectionStateListener(ConnectionStateListener listener) {
+	public void addConnectionStateListener(final ConnectionStateListener listener) {
 		csListener.add(listener);
 	}
 
@@ -102,15 +104,29 @@ public final class ClientManager {
 		} else {
 			LOGGER.debug("Connecting to {}:{}", host, port);
 
-			if (!InstrumentationClient.testConnection(host, port)) {
-				MainView.instance().addLogMessage("Can't establish connection to " + host + ":" + port + "");
+			if (!JsonAdaptiveInstrumentationClient.testConnection(host, port)) {
+				MainView.instance().addLogMessage("Can't establish Json connection to " + host + ":" + port + "");
 				LOGGER.debug("Can't establish connection to {}:{}", host, port);
 
 				MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
+				if (!JMXAdaptiveInstrumentationClient.testConnection(host, port)) {
+					MainView.instance().addLogMessage("Can't establish JMX connection to " + host + ":" + port + "");
+					LOGGER.debug("Can't establish connection to {}:{}", host, port);
+
+					MainView.instance().setClientSettingsState(ClientSettingsState.DEFAULT);
+				} else {
+					MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
+					LOGGER.debug("Client connected to {}:{}", host, port);
+					client = new JMXAdaptiveInstrumentationClient(host, port);
+
+					MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTED);
+
+					connected();				
+				}
 			} else {
 				MainView.instance().addLogMessage("Connection establish to " + host + ":" + port + "");
 				LOGGER.debug("Client connected to {}:{}", host, port);
-				client = new InstrumentationClient(host, port);
+				client = new JsonAdaptiveInstrumentationClient(host, port);
 
 				MainView.instance().setClientSettingsState(ClientSettingsState.CONNECTED);
 
@@ -120,7 +136,7 @@ public final class ClientManager {
 	}
 
 	private void connected() {
-		for (ConnectionStateListener l : csListener) {
+		for (final ConnectionStateListener l : csListener) {
 			l.onConnection();
 		}
 	}
@@ -139,7 +155,7 @@ public final class ClientManager {
 	}
 
 	private void disconnected() {
-		for (ConnectionStateListener l : csListener) {
+		for (final ConnectionStateListener l : csListener) {
 			l.onDisconnection();
 		}
 	}
@@ -154,21 +170,21 @@ public final class ClientManager {
 
 		try {
 			final PipedOutputStream outPipe = new PipedOutputStream();
-			PipedInputStream inPipe = new PipedInputStream(outPipe);
+			final PipedInputStream inPipe = new PipedInputStream(outPipe);
 
 			Main.getThreadPool().execute(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						client.pipeToOutputStream(outPipe);
-					} catch (MeasurementException e) {
+					} catch (final MeasurementException e) {
 						e.printStackTrace();
 					}
 				}
 			});
 			RecordCSVWriter.getInstance().pipeDataToDatasetFiles(inPipe, targetDirectory.getAbsolutePath(),
 					new HashSet<Parameter>());
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -209,7 +225,7 @@ public final class ClientManager {
 	 * @return probes supported by the connected agent
 	 */
 	public List<String> getProbes() {
-		List<String> probes = new ArrayList<String>(client.getSupportedExtensions().getProbeExtensions());
+		final List<String> probes = new ArrayList<String>(client.getSupportedExtensions().getProbeExtensionsMapping().keySet());
 		return probes;
 	}
 
@@ -220,7 +236,7 @@ public final class ClientManager {
 	 * @return probes supported by the connected agent
 	 */
 	public Map<String, Set<String>> getProbeMapping() {
-		Map<String, Set<String>> probeExtensionsMapping = client.getSupportedExtensions().getProbeExtensionsMapping();
+		final Map<String, Set<String>> probeExtensionsMapping = client.getSupportedExtensions().getProbeExtensionsMapping();
 		return probeExtensionsMapping;
 	}
 
@@ -241,7 +257,7 @@ public final class ClientManager {
 	 * @return scopes supported by the connected agent
 	 */
 	public List<String> getScopes() {
-		List<String> scopeExtensions = new ArrayList<String>();
+		final List<String> scopeExtensions = new ArrayList<String>();
 		scopeExtensions.addAll(client.getSupportedExtensions().getApiScopeExtensions());
 		scopeExtensions.addAll(client.getSupportedExtensions().getCustomScopeExtensions());
 		return scopeExtensions;
@@ -254,10 +270,10 @@ public final class ClientManager {
 	 * @param instrumentationDescription
 	 *            - description to instrument
 	 */
-	public void instrument(InstrumentationDescription instrumentationDescription) {
+	public void instrument(final InstrumentationDescription instrumentationDescription) {
 		try {
 			client.instrument(instrumentationDescription);
-		} catch (InstrumentationException e) {
+		} catch (final InstrumentationException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -277,7 +293,7 @@ public final class ClientManager {
 	 * @param listener
 	 *            - listener to remove
 	 */
-	public void removeConnectionStateListener(ConnectionStateListener listener) {
+	public void removeConnectionStateListener(final ConnectionStateListener listener) {
 		csListener.remove(listener);
 	}
 
@@ -287,7 +303,7 @@ public final class ClientManager {
 	public void startMonitoring() {
 		try {
 			client.enableMonitoring();
-		} catch (MeasurementException e) {
+		} catch (final MeasurementException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -298,7 +314,7 @@ public final class ClientManager {
 	public void stopMonitoring() {
 		try {
 			client.disableMonitoring();
-		} catch (MeasurementException e) {
+		} catch (final MeasurementException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -309,7 +325,7 @@ public final class ClientManager {
 	public void uninstrument() {
 		try {
 			client.uninstrument();
-		} catch (InstrumentationException e) {
+		} catch (final InstrumentationException e) {
 			throw new RuntimeException(e);
 		}
 	}

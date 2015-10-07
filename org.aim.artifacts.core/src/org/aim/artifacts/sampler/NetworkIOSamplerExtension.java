@@ -15,7 +15,6 @@
  */
 package org.aim.artifacts.sampler;
 
-import org.aim.api.measurement.sampling.AbstractSampler;
 import org.aim.api.measurement.sampling.AbstractSamplerExtension;
 
 /**
@@ -26,14 +25,9 @@ import org.aim.api.measurement.sampling.AbstractSamplerExtension;
  */
 public class NetworkIOSamplerExtension extends AbstractSamplerExtension {
 
-	@Override
-	public String getName() {
-		return NetworkIOSampler.class.getName();
+	public NetworkIOSamplerExtension() {
+		super(NetworkIOSampler.class);
 	}
 
-	@Override
-	public AbstractSampler createExtensionArtifact() {
-		return new NetworkIOSampler(this);
-	}
 
 }

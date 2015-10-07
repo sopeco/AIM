@@ -20,13 +20,12 @@ import java.lang.instrument.Instrumentation;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.aim.aiminterface.description.measurementprobe.MeasurementProbeDescription;
 import org.aim.api.instrumentation.AbstractEnclosingProbe;
 import org.aim.api.instrumentation.ProbeAfterPart;
 import org.aim.api.instrumentation.ProbeBeforePart;
 import org.aim.api.instrumentation.ProbeVariable;
 import org.aim.artifacts.records.JmsMessageSizeRecord;
-import org.aim.description.probes.MeasurementProbe;
-import org.aim.description.scopes.APIScope;
 import org.lpe.common.extension.IExtension;
 
 /**
@@ -36,7 +35,7 @@ import org.lpe.common.extension.IExtension;
  * 
  */
 public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
-	public static final MeasurementProbe<APIScope> MODEL_PROBE = new MeasurementProbe<>(
+	public static final MeasurementProbeDescription MODEL_PROBE = new MeasurementProbeDescription(
 			JmsMessageSizeProbe.class.getName());
 
 	/**
@@ -45,7 +44,7 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 	 * @param provider
 	 *            extension provider.
 	 */
-	public JmsMessageSizeProbe(IExtension<?> provider) {
+	public JmsMessageSizeProbe(final IExtension provider) {
 		super(provider);
 	}
 
@@ -86,7 +85,7 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 				_GenericProbe_collector.newRecord(_JmsMessageSizeProbe_record);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			_JmsMessageSizeProbe_record = null;
 		}
 	}
@@ -113,7 +112,7 @@ public class JmsMessageSizeProbe extends AbstractEnclosingProbe {
 				_GenericProbe_collector.newRecord(_JmsMessageSizeProbe_record);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			_JmsMessageSizeProbe_record = null;
 		}
 	}

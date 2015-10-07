@@ -46,7 +46,7 @@ public class DiskIOSampler extends AbstractResourceSampler {
 	 * @param provider
 	 *            extension provider
 	 */
-	public DiskIOSampler(IExtension<?> provider) {
+	public DiskIOSampler(final IExtension provider) {
 		super(provider);
 		previousReads = getDiskReads();
 		previousWrites = getDiskWrites();
@@ -58,8 +58,8 @@ public class DiskIOSampler extends AbstractResourceSampler {
 	 */
 	@Override
 	public void sample() {
-		long timestamp = System.currentTimeMillis();
-		DiskRecord record = new DiskRecord(timestamp, getDiskReads(), getDiskWrites());
+		final long timestamp = System.currentTimeMillis();
+		final DiskRecord record = new DiskRecord(timestamp, getDiskReads(), getDiskWrites());
 		getDataCollector().newRecord(record);
 	}
 
@@ -71,12 +71,12 @@ public class DiskIOSampler extends AbstractResourceSampler {
 	 * @return all reads made on all disks
 	 */
 	private long getDiskReads() {
-		long currentReads = getDiskActions(READS);
+		final long currentReads = getDiskActions(READS);
 		if (currentReads == -1) {
 			return -1;
 		}
 
-		long difference = currentReads - previousReads;
+		final long difference = currentReads - previousReads;
 		previousReads = currentReads;
 		return difference;
 	}
@@ -89,22 +89,22 @@ public class DiskIOSampler extends AbstractResourceSampler {
 	 * @return all writes made on all disks
 	 */
 	private long getDiskWrites() {
-		long currentWrites = getDiskActions(WRITES);
+		final long currentWrites = getDiskActions(WRITES);
 		if (currentWrites == -1) {
 			return -1;
 		}
 
-		long difference = currentWrites - previousWrites;
+		final long difference = currentWrites - previousWrites;
 		previousWrites = currentWrites;
 		return difference;
 	}
 
-	private long getDiskActions(String action) {
+	private long getDiskActions(final String action) {
 		try {
 			long actions = 0;
-			for (FileSystem fileSystem : getSigar().getFileSystemList()) {
+			for (final FileSystem fileSystem : getSigar().getFileSystemList()) {
 				if (fileSystem.getType() == FileSystem.TYPE_LOCAL_DISK) {
-					DiskUsage usage = getSigar().getDiskUsage(fileSystem.getDirName());
+					final DiskUsage usage = getSigar().getDiskUsage(fileSystem.getDirName());
 
 					if (READS.equals(action)) {
 						actions += usage.getReads();
@@ -118,7 +118,7 @@ public class DiskIOSampler extends AbstractResourceSampler {
 			}
 
 			return actions;
-		} catch (SigarException se) {
+		} catch (final SigarException se) {
 			LOGGER.warn("SigarException occured in Disk Recorder: {}", se.getMessage());
 		}
 
