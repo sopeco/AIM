@@ -119,19 +119,23 @@ public final class InstrumentationAgent {
 			}
 
 			if (!inst.isRedefineClassesSupported()) {
+				getLogger().error("Redefining classes not supported, InstrumentationAgent cannot work properly!");
 				throw new IllegalStateException(
 						"Redefining classes not supported, InstrumentationAgent cannot work properly!");
 			}
 
+			getLogger().debug("Loading agent configuration file and native libraries");
 			initializeGlobalConfig();
 			LpeSystemUtils.loadNativeLibraries();
 			JInstrumentation.getInstance().setjInstrumentation(inst);
+			getLogger().debug("Initialize data collector");
 			initDataCollector();
-			// startServer();
 			
+			getLogger().debug("Registering MXBean for AIM agent");
 			final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 			final ObjectName name = new ObjectName("org.aim:type=AdaptiveInstrumentationFacade");
 			mbs.registerMBean(AdaptiveInstrumentationFacade.getInstance(), name);
+			getLogger().info("AIM instrumentation agent successfully initialized. MXBean waiting for commands");
 		} catch (final Exception e) {
 			e.printStackTrace();
 			getLogger().error("Agent ERROR: {}", e);
