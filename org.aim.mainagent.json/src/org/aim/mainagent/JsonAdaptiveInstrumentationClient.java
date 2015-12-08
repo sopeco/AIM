@@ -15,6 +15,7 @@
  */
 package org.aim.mainagent;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -30,6 +31,10 @@ import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.artifacts.measurement.collector.StreamReader;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.lpe.common.util.web.LpeHTTPUtils;
 
 import com.sun.jersey.api.client.WebResource;
@@ -162,22 +167,43 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
 
-		HttpURLConnection connection = null;
 		try {
-			connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
-			final StreamReader reader = new StreamReader();
-			reader.setSource(connection.getInputStream());
-			return reader.read();
+			return getReaderFromDataStream().read();
 		} catch (final IOException e) {
 			throw new MeasurementException(e);
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
-			}
-
 		}
+		
 	}
 
+	private StreamReader getReaderFromDataStream() throws IOException, JsonParseException, JsonMappingException {
+		final HttpURLConnection connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
+
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final JsonNode node = objectMapper.readValue(connection.getInputStream(), JsonNode.class);
+		connection.disconnect();
+				    
+		final StreamReader reader = new StreamReader();
+		reader.setSource(new ByteArrayInputStream(node.get("data").getBinaryValue()));
+		return reader;
+	}
+
+	/**
+	 * 
+	 * @param oStream
+	 *            output stream where to pipe the input to
+	 * @throws MeasurementException
+	 *             thrown if data cannot be retrieved
+	 */
+	@Override
+	public void pipeToOutputStream(final OutputStream oStream)
+			throws MeasurementException {
+		try {
+			getReaderFromDataStream().pipeToOutputStream(oStream);
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.aim.artifacts.instrumentation.IAdaptiveInstrumentation#measureProbeOverhead(java.lang.Class)
 	 */
@@ -188,31 +214,6 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 				.accept(MediaType.APPLICATION_JSON)
 				.type(MediaType.APPLICATION_JSON)
 				.post(OverheadData.class, probeClassName);
-	}
-
-	/**
-	 * 
-	 * @param oStream
-	 *            output stream where to pipe the input to
-	 * @throws MeasurementException
-	 *             thrown if data cannot be retrieved
-	 */
-	public void pipeToOutputStream(final OutputStream oStream)
-			throws MeasurementException {
-		HttpURLConnection connection = null;
-		try {
-			connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
-			final StreamReader reader = new StreamReader();
-			reader.setSource(connection.getInputStream());
-			reader.pipeToOutputStream(oStream);
-		} catch (final IOException e) {
-			throw new MeasurementException(e);
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
-			}
-
-		}
 	}
 
 	/* (non-Javadoc)
