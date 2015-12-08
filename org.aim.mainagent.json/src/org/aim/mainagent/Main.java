@@ -17,6 +17,14 @@ import org.aim.mainagent.service.MeasureOverheadServlet;
 import org.aim.mainagent.service.MeasurementStateServlet;
 import org.aim.mainagent.service.TestConnectionServlet;
 import org.aim.mainagent.service.UninstrumentServlet;
+import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.glassfish.grizzly.http.server.HttpServer;
 
 public class Main {
@@ -31,13 +39,52 @@ public class Main {
 
 	public static final String PATH_PREFIX = JsonAdaptiveInstrumentationClient.PATH_PREFIX;
 	private static String port = "8888";
+	private static String jmxport = "9010";
 	public static final String URL_PATH_INSTRUMENTATION = JsonAdaptiveInstrumentationClient.URL_PATH_INSTRUMENTATION;
 	public static final String URL_PATH_MEASUREMENT = JsonAdaptiveInstrumentationClient.URL_PATH_MEASUREMENT;
 
 
 	public static void main(final String[] args) throws InterruptedException {
+		parseCommandLine(args,createOptions());
 		startServer();
 		Thread.sleep(10000000);
+	}
+
+	private static void parseCommandLine(final String[] args, final Options options) {
+		final CommandLineParser parser = new DefaultParser();
+		try {
+			final CommandLine cmd = parser.parse( options, args);
+			if (cmd.hasOption("h")) {
+				final HelpFormatter formatter = new HelpFormatter();
+				formatter.printHelp( "json adapter", options );
+				System.exit(-1);
+			}
+			port = cmd.getOptionValue("port", "8888");
+			jmxport = cmd.getOptionValue("jmxport","9010");
+			AdaptiveFacadeProvider.jmxPort = jmxport;
+		} catch (final ParseException e) {
+			final HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp( "json adapter", options );
+			System.exit(-1);
+		}		
+	}
+
+	private static Options createOptions() {
+		final Options options = new Options();
+		options.addOption( Option.builder("port")
+				.desc ( "Port where the Json adapter listens" )
+                .hasArg()
+                .type(Integer.class)
+                .argName("PORT")
+                .build() );
+		options.addOption( Option.builder("jmxport")
+				.desc ( "Port where the jmx server is listening" )
+                .hasArg()
+                .type(Integer.class)
+                .argName("PORT")
+                .build() );
+		options.addOption( Option.builder("h").longOpt("help").build() );
+		return options;
 	}
 
 	private static void startServer() {

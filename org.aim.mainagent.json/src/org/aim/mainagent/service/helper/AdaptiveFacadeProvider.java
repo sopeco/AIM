@@ -11,11 +11,12 @@ import org.aim.mainagent.AdaptiveInstrumentationFacadeMXBean;
 
 public class AdaptiveFacadeProvider {
 	private static AdaptiveInstrumentationFacadeMXBean proxy;
+	public static String jmxPort = "9010";
 
 	static {
 		JMXServiceURL url;
 		try {
-			url =  new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:9010/jmxrmi");
+			url =  new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+ jmxPort + "/jmxrmi");
 			final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
 			final MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 			final ObjectName mbeanName = new ObjectName("org.aim:type=AdaptiveInstrumentationFacade");
