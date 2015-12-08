@@ -17,6 +17,7 @@ package org.aim.api.measurement.dataset;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,26 +51,26 @@ public class DatasetCollectionBuilder {
 	 * @param inputParameters
 	 *            additional input parameters to add
 	 */
-	public void addRecord(AbstractRecord record, Set<Parameter> inputParameters) {
-		List<String> names = record.getNonMetricParameterNames();
+	public void addRecord(final AbstractRecord record, final Set<Parameter> inputParameters) {
+		final List<String> names = record.getNonMetricParameterNames();
 
-		for (Parameter par : inputParameters) {
+		for (final Parameter par : inputParameters) {
 			names.add(par.getName());
 		}
 
-		Set<String> parNames = new HashSet<>();
+		final Set<String> parNames = new HashSet<>();
 		parNames.addAll(names);
 
-		int recordStructureHash = parNames.hashCode() + record.getClass().hashCode();
+		final int recordStructureHash = parNames.hashCode() + record.getClass().hashCode();
 
-		for (DatasetBuilder dsb : dsBuilder) {
+		for (final DatasetBuilder dsb : dsBuilder) {
 			if (dsb.getRecordStructureHash() == recordStructureHash) {
 				dsb.addRecord(record, inputParameters);
 				return;
 			}
 		}
 
-		DatasetBuilder newBuilder = new DatasetBuilder(record.getClass());
+		final DatasetBuilder newBuilder = new DatasetBuilder(record.getClass());
 		newBuilder.addRecord(record, inputParameters);
 		dsBuilder.add(newBuilder);
 
@@ -80,14 +81,14 @@ public class DatasetCollectionBuilder {
 	 * @param dataSet
 	 *            dataset to add
 	 */
-	public void addDataSet(Dataset dataSet) {
-		for (DatasetBuilder dsb : dsBuilder) {
+	public void addDataSet(final Dataset dataSet) {
+		for (final DatasetBuilder dsb : dsBuilder) {
 			if (dsb.getRecordStructureHash() == dataSet.getRecordStructureHash()) {
 				dsb.addRow(dataSet.getRows());
 				return;
 			}
 		}
-		DatasetBuilder newBuilder = new DatasetBuilder(dataSet.getRecordType());
+		final DatasetBuilder newBuilder = new DatasetBuilder(dataSet.getRecordType());
 		newBuilder.addRow(dataSet.getRows());
 		dsBuilder.add(newBuilder);
 	}
@@ -98,7 +99,7 @@ public class DatasetCollectionBuilder {
 	 * @param dataSet
 	 *            dataset to add
 	 */
-	protected void addDataSetWithoutChecks(Dataset dataSet) {
+	protected void addDataSetWithoutChecks(final Dataset dataSet) {
 		datasets.add(dataSet);
 	}
 
@@ -107,8 +108,8 @@ public class DatasetCollectionBuilder {
 	 * @param dsCollection
 	 *            datasets to add
 	 */
-	public void addDataSets(Collection<Dataset> dsCollection) {
-		for (Dataset wds : dsCollection) {
+	public void addDataSets(final Collection<Dataset> dsCollection) {
+		for (final Dataset wds : dsCollection) {
 			addDataSet(wds);
 		}
 	}
@@ -118,8 +119,8 @@ public class DatasetCollectionBuilder {
 	 * @param dsCollection
 	 *            wrapped measurement data to add
 	 */
-	public void addDataSets(DatasetCollection dsCollection) {
-		for (Dataset wds : dsCollection.getDataSets()) {
+	public void addDataSets(final DatasetCollection dsCollection) {
+		for (final Dataset wds : dsCollection.getDataSets()) {
 			addDataSet(wds);
 		}
 	}
@@ -131,15 +132,15 @@ public class DatasetCollectionBuilder {
 	 *         available to build the collection from
 	 */
 	public DatasetCollection build() {
-		for (DatasetBuilder dsb : dsBuilder) {
-			Dataset dataset = dsb.build();
+		for (final DatasetBuilder dsb : dsBuilder) {
+			final Dataset dataset = dsb.build();
 			if (dataset != null) {
 				datasets.add(dataset);
 			}
 		}
 
 		if (datasets.isEmpty()) {
-			return null;
+			return new DatasetCollection(Collections.<Dataset> emptyList());
 		} else {
 			return new DatasetCollection(datasets);
 		}
