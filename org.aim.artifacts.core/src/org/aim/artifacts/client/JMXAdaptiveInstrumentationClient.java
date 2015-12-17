@@ -15,7 +15,6 @@
  */
 package org.aim.artifacts.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -35,10 +34,11 @@ import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
-import org.aim.artifacts.measurement.collector.StreamReader;
+import org.aim.api.measurement.utils.MeasurementDataUtils;
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.AdaptiveInstrumentationFacadeMXBean;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Service client for instrumentation.
@@ -147,10 +147,17 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 	 */
 	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
-		final byte[] data = bean.getMeasurementData();
-		final StreamReader reader = new StreamReader();
-		reader.setSource(new ByteArrayInputStream(data));
-	    return reader.read();
+		final String jsondata = bean.getMeasurementData();
+//		final StreamReader reader = new StreamReader();
+//		reader.setSource(new ByteArrayInputStream(data));
+//	    return reader.read();
+		final ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			return mapper.readValue(jsondata, MeasurementData.class);
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -172,10 +179,7 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 	@Override
 	public void pipeToOutputStream(final OutputStream oStream)
 			throws MeasurementException {
-		final byte[] data = bean.getMeasurementData();
-		final StreamReader reader = new StreamReader();
-		reader.setSource(new ByteArrayInputStream(data));
-		reader.pipeToOutputStream(oStream);
+		MeasurementDataUtils.pipeToOutputStream(getMeasurementData(), oStream);
 	}
 
 	/* (non-Javadoc)

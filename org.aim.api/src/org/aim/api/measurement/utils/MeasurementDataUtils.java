@@ -15,6 +15,10 @@
  */
 package org.aim.api.measurement.utils;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,6 +28,7 @@ import java.util.TreeSet;
 
 import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
+import org.aim.aiminterface.exceptions.MeasurementException;
 import org.aim.api.measurement.dataset.DatasetCollection;
 import org.aim.api.measurement.dataset.DatasetCollectionBuilder;
 import org.aim.api.measurement.dataset.Parameter;
@@ -61,10 +66,10 @@ public final class MeasurementDataUtils {
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
-			public int compare(AbstractRecord record1, AbstractRecord record2) {
-				for (String parName : parameterNames) {
-					Comparable value1 = (Comparable) record1.getValue(parName);
-					Comparable value2 = (Comparable) record2.getValue(parName);
+			public int compare(final AbstractRecord record1, final AbstractRecord record2) {
+				for (final String parName : parameterNames) {
+					final Comparable value1 = (Comparable) record1.getValue(parName);
+					final Comparable value2 = (Comparable) record2.getValue(parName);
 					int compareValue = 0;
 					if (value1 == null && value2 != null) {
 						compareValue = -1;
@@ -102,10 +107,10 @@ public final class MeasurementDataUtils {
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
-			public int compare(AbstractRecord record1, AbstractRecord record2) {
-				for (String parName : parameterNames) {
-					Comparable value1 = (Comparable) record1.getValue(parName);
-					Comparable value2 = (Comparable) record2.getValue(parName);
+			public int compare(final AbstractRecord record1, final AbstractRecord record2) {
+				for (final String parName : parameterNames) {
+					final Comparable value1 = (Comparable) record1.getValue(parName);
+					final Comparable value2 = (Comparable) record2.getValue(parName);
 					int compareValue = 0;
 					if (value1 == null && value2 != null) {
 						compareValue = -1;
@@ -134,7 +139,7 @@ public final class MeasurementDataUtils {
 	 * @return a {@link DatasetCollection} or null if a collection could not be
 	 *         built
 	 */
-	public static DatasetCollection convertToDatasetCollection(MeasurementData data, Collection<Parameter> parameters) {
+	public static DatasetCollection convertToDatasetCollection(final MeasurementData data, final Collection<Parameter> parameters) {
 		Set<Parameter> parameterSet;
 		if (parameters instanceof Set) {
 			parameterSet = (Set<Parameter>) parameters;
@@ -142,11 +147,28 @@ public final class MeasurementDataUtils {
 			parameterSet = new TreeSet<>();
 			parameterSet.addAll(parameters);
 		}
-		DatasetCollectionBuilder dscBuilder = new DatasetCollectionBuilder();
-		for (AbstractRecord record : data.getRecords()) {
+		final DatasetCollectionBuilder dscBuilder = new DatasetCollectionBuilder();
+		for (final AbstractRecord record : data.getRecords()) {
 			dscBuilder.addRecord(record, parameterSet);
 		}
 		return dscBuilder.build();
+	}
+	
+	private static final int BUFFER_SIZE = 1024;
+	
+	public static void pipeToOutputStream(final MeasurementData data, final OutputStream oStream) throws MeasurementException {
+		try (
+				final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(oStream), BUFFER_SIZE);
+		)
+		{
+			for (final AbstractRecord rec : data.getRecords()) {
+				writer.write(rec.toString());
+				writer.newLine();
+			}
+
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}
 	}
 
 }

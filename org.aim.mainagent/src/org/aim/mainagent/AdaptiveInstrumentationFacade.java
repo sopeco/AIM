@@ -15,7 +15,6 @@
  */
 package org.aim.mainagent;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.InstrumentationEntity;
 import org.aim.aiminterface.entities.results.OverheadData;
@@ -54,6 +54,7 @@ import org.aim.mainagent.instrumentor.MethodInstrumentor;
 import org.aim.mainagent.instrumentor.TraceInstrumentor;
 import org.aim.mainagent.probes.IncrementalProbeExtension;
 import org.aim.mainagent.sampling.Sampling;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.lpe.common.extension.ExtensionRegistry;
 import org.lpe.common.extension.IExtension;
 import org.overhead.OverheadEstimator;
@@ -231,10 +232,16 @@ public enum AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFaca
 	}
 
 	@Override
-	public byte[] getMeasurementData() throws MeasurementException {
-		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		AbstractDataSource.getDefaultDataSource().pipeToOutputStream(outputStream);
-		return outputStream.toByteArray();
+	public String getMeasurementData() throws MeasurementException {
+		// final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		final MeasurementData data = AbstractDataSource.getDefaultDataSource().read();
+		final ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(data); 
+		} catch (final Exception e) {
+			LOGGER.error("Failed to generate Json sfinal sation from measurements",e);
+			throw new RuntimeException("Failed to generate Json from measurements");
+		}
 	}
 
 	@Override

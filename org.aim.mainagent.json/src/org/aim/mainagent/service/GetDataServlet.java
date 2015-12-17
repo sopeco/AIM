@@ -15,13 +15,13 @@
  */
 package org.aim.mainagent.service;
 
+import java.io.BufferedWriter;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
 import org.aim.mainagent.service.helper.AdaptiveFacadeProvider;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
@@ -36,26 +36,27 @@ import org.lpe.common.util.web.Service;
 public class GetDataServlet implements Service {
 	private static final AIMLogger LOGGER = AIMLoggerFactory.getLogger(EnableMeasurementServlet.class);
 
-	private final JsonFactory factory = new JsonFactory();
-
 	@Override
 	public void doService(final Request req, final Response resp) throws Exception {
 		LOGGER.info("Requested data transfer ...");
 
-		final byte[] data = AdaptiveFacadeProvider.getAdaptiveInstrumentation().getMeasurementData();
-		// System.out.println("Sending byte array of size " + data.length + " via Json to client.");
+		final String data = AdaptiveFacadeProvider.getAdaptiveInstrumentation().getMeasurementData();
 		
 		final OutputStream oStream = resp.getOutputStream();
 		resp.setContentType("text/plain");
 		resp.setStatus(HttpStatus.OK_200);
 
-		
-		final JsonGenerator jGenerator = factory.createJsonGenerator(oStream);
-		jGenerator.writeStartObject();
-		jGenerator.writeBinaryField("data", data);
-		jGenerator.writeEndObject();
-		jGenerator.close();
-		
+
+		try(
+				final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(oStream))
+		)
+		{
+			writer.write(data);
+		} catch (final Exception e) {
+			LOGGER.error("Failed to stream Json for measurements", e);
+			return;
+		}
+
 		LOGGER.info("Data transfer finished!");
 
 	}

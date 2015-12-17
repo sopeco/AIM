@@ -68,7 +68,7 @@ public interface AdaptiveInstrumentationFacadeMXBean {
 	 * @throws MeasurementException
 	 *             thrown if data cannot be retrieved
 	 */
-	byte[] getMeasurementData() throws MeasurementException;
+	String getMeasurementData() throws MeasurementException;
 
 	long getCurrentTime();
 

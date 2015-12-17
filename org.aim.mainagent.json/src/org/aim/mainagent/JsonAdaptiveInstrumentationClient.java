@@ -15,7 +15,6 @@
  */
 package org.aim.mainagent;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -30,10 +29,7 @@ import org.aim.aiminterface.entities.results.OverheadData;
 import org.aim.aiminterface.entities.results.SupportedExtensions;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
-import org.aim.artifacts.measurement.collector.StreamReader;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.aim.api.measurement.utils.MeasurementDataUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.lpe.common.util.web.LpeHTTPUtils;
 
@@ -166,25 +162,15 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 	 */
 	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
+		final ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
-			return getReaderFromDataStream().read();
+			final HttpURLConnection connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
+			return objectMapper.readValue(connection.getInputStream(), MeasurementData.class);
 		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		}
 		
-	}
-
-	private StreamReader getReaderFromDataStream() throws IOException, JsonParseException, JsonMappingException {
-		final HttpURLConnection connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
-
-		final ObjectMapper objectMapper = new ObjectMapper();
-		final JsonNode node = objectMapper.readValue(connection.getInputStream(), JsonNode.class);
-		connection.disconnect();
-				    
-		final StreamReader reader = new StreamReader();
-		reader.setSource(new ByteArrayInputStream(node.get("data").getBinaryValue()));
-		return reader;
 	}
 
 	/**
@@ -197,11 +183,7 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 	@Override
 	public void pipeToOutputStream(final OutputStream oStream)
 			throws MeasurementException {
-		try {
-			getReaderFromDataStream().pipeToOutputStream(oStream);
-		} catch (final IOException e) {
-			throw new MeasurementException(e);
-		}
+		MeasurementDataUtils.pipeToOutputStream(getMeasurementData(), oStream);
 	}
 	
 	/* (non-Javadoc)
@@ -246,4 +228,5 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 		final String path = TEST_CONNECTION;
 		return LpeHTTPUtils.testConnection(host, port, path);
 	}
+
 }
