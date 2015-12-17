@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
+import org.aim.logging.AIMLoggingConfig;
 import org.aim.mainagent.service.CurrentTimeServlet;
 import org.aim.mainagent.service.DisableMeasurementServlet;
 import org.aim.mainagent.service.EnableMeasurementServlet;
@@ -40,6 +41,7 @@ public class Main {
 	public static final String PATH_PREFIX = JsonAdaptiveInstrumentationClient.PATH_PREFIX;
 	private static String port = "8888";
 	private static String jmxport = "9010";
+	private static String jmxhost = "localhost";
 	public static final String URL_PATH_INSTRUMENTATION = JsonAdaptiveInstrumentationClient.URL_PATH_INSTRUMENTATION;
 	public static final String URL_PATH_MEASUREMENT = JsonAdaptiveInstrumentationClient.URL_PATH_MEASUREMENT;
 
@@ -61,7 +63,12 @@ public class Main {
 			}
 			port = cmd.getOptionValue("port", "8888");
 			jmxport = cmd.getOptionValue("jmxport","9010");
+			jmxhost  = cmd.getOptionValue("jmxhost","localhost");
 			AdaptiveFacadeProvider.jmxPort = jmxport;
+			AdaptiveFacadeProvider.jmxHost = jmxhost;
+			final AIMLoggingConfig loggerConfig = new AIMLoggingConfig();
+			loggerConfig.setLoggingLevel(Integer.parseInt(cmd.getOptionValue("loglevel", "3")));
+			AIMLoggerFactory.initialize(loggerConfig);
 		} catch (final ParseException e) {
 			final HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( "json adapter", options );
@@ -82,6 +89,17 @@ public class Main {
                 .hasArg()
                 .type(Integer.class)
                 .argName("PORT")
+                .build() );
+		options.addOption( Option.builder("loglevel")
+				.desc ( "The loglevel to use (0=Debug ... 3=Error (default))" )
+                .hasArg()
+                .type(Integer.class)
+                .argName("LOGLEVEL")
+                .build() );
+		options.addOption( Option.builder("jmxhost")
+				.desc ( "Host where the jmx server is listening" )
+                .hasArg()
+                .argName("SERVER")
                 .build() );
 		options.addOption( Option.builder("h").longOpt("help").build() );
 		return options;
