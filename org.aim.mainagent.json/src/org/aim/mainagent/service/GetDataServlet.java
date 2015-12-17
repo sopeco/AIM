@@ -18,6 +18,7 @@ package org.aim.mainagent.service;
 import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 import org.aim.logging.AIMLogger;
 import org.aim.logging.AIMLoggerFactory;
@@ -40,7 +41,7 @@ public class GetDataServlet implements Service {
 	public void doService(final Request req, final Response resp) throws Exception {
 		LOGGER.info("Requested data transfer ...");
 
-		final String data = AdaptiveFacadeProvider.getAdaptiveInstrumentation().getMeasurementData();
+		final List<String> data = AdaptiveFacadeProvider.getAdaptiveInstrumentation().getMeasurementData();
 		
 		final OutputStream oStream = resp.getOutputStream();
 		resp.setContentType("text/plain");
@@ -51,7 +52,10 @@ public class GetDataServlet implements Service {
 				final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(oStream))
 		)
 		{
-			writer.write(data);
+			for (final String currentRecord : data) {
+				writer.write(currentRecord);
+				writer.newLine();
+			}
 		} catch (final Exception e) {
 			LOGGER.error("Failed to stream Json for measurements", e);
 			return;

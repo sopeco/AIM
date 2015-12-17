@@ -17,6 +17,8 @@ package org.aim.artifacts.client;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
@@ -28,6 +30,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.aim.aiminterface.IAdaptiveInstrumentation;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.OverheadData;
@@ -147,14 +150,18 @@ public class JMXAdaptiveInstrumentationClient implements IAdaptiveInstrumentatio
 	 */
 	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
-		final String jsondata = bean.getMeasurementData();
+		final List<String> jsondata = bean.getMeasurementData();
 //		final StreamReader reader = new StreamReader();
 //		reader.setSource(new ByteArrayInputStream(data));
 //	    return reader.read();
 		final ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			return mapper.readValue(jsondata, MeasurementData.class);
+			final LinkedList<AbstractRecord> records = new LinkedList<AbstractRecord>();
+			for (final String jsonRecord : jsondata) {
+				records.add(mapper.readValue(jsonRecord, AbstractRecord.class));
+			}
+			return new MeasurementData(records);
 		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		}		

@@ -1,5 +1,7 @@
 package org.aim.mainagent;
 
+import java.util.List;
+
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.OverheadData;
@@ -68,7 +70,7 @@ public interface AdaptiveInstrumentationFacadeMXBean {
 	 * @throws MeasurementException
 	 *             thrown if data cannot be retrieved
 	 */
-	String getMeasurementData() throws MeasurementException;
+	List<String> getMeasurementData() throws MeasurementException;
 
 	long getCurrentTime();
 

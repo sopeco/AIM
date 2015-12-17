@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.InstrumentationEntity;
@@ -232,12 +233,16 @@ public enum AdaptiveInstrumentationFacade implements AdaptiveInstrumentationFaca
 	}
 
 	@Override
-	public String getMeasurementData() throws MeasurementException {
+	public List<String> getMeasurementData() throws MeasurementException {
 		// final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		final MeasurementData data = AbstractDataSource.getDefaultDataSource().read();
 		final ObjectMapper mapper = new ObjectMapper();
+		final LinkedList<String> result = new LinkedList<String>();
 		try {
-			return mapper.writeValueAsString(data); 
+			for (final AbstractRecord record : data.getRecords()) {
+				result.add(mapper.writeValueAsString(record));
+			}
+			return result; 
 		} catch (final Exception e) {
 			LOGGER.error("Failed to generate Json sfinal sation from measurements",e);
 			throw new RuntimeException("Failed to generate Json from measurements");

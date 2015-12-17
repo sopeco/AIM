@@ -15,14 +15,19 @@
  */
 package org.aim.mainagent;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
 import org.aim.aiminterface.IAdaptiveInstrumentation;
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.entities.results.FlatInstrumentationState;
 import org.aim.aiminterface.entities.results.OverheadData;
@@ -162,17 +167,42 @@ public class JsonAdaptiveInstrumentationClient implements IAdaptiveInstrumentati
 	 */
 	@Override
 	public MeasurementData getMeasurementData() throws MeasurementException {
-		final ObjectMapper objectMapper = new ObjectMapper();
-
+		HttpURLConnection connection;
 		try {
-			final HttpURLConnection connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
-			return objectMapper.readValue(connection.getInputStream(), MeasurementData.class);
+			connection = LpeHTTPUtils.get(baseUrl + "/" + GET_DATA);
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}
+
+		try (
+				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
+		)
+		{
+			String line;
+			final LinkedList<String> lines = new LinkedList<String>();
+			while ((line = reader.readLine()) != null) {
+				lines.add(line);
+			}
+			return getMeasurementData(lines);
 		} catch (final IOException e) {
 			throw new MeasurementException(e);
 		}
 		
 	}
 
+	private MeasurementData getMeasurementData(final List<String> jsondata) throws MeasurementException {
+		final ObjectMapper mapper = new ObjectMapper();
+		try {
+			final LinkedList<AbstractRecord> records = new LinkedList<AbstractRecord>();
+			for (final String jsonRecord : jsondata) {
+				records.add(mapper.readValue(jsonRecord, AbstractRecord.class));
+			}
+			return new MeasurementData(records);
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}		
+	}
+	
 	/**
 	 * 
 	 * @param oStream

@@ -15,10 +15,14 @@
  */
 package org.aim.mainagent;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import org.aim.aiminterface.description.instrumentation.InstrumentationDescription;
+import org.aim.aiminterface.entities.measurements.AbstractRecord;
 import org.aim.aiminterface.entities.measurements.MeasurementData;
 import org.aim.aiminterface.exceptions.InstrumentationException;
 import org.aim.aiminterface.exceptions.MeasurementException;
@@ -178,10 +182,23 @@ public class MethodInstrumentationTest {
 		final ClassA a = new ClassA();
 		final ClassC c = new ClassC();
 		disableMeasurement();
-		final MeasurementData data = new ObjectMapper().readValue(AdaptiveInstrumentationFacade.getInstance().getMeasurementData(),MeasurementData.class);
+		final MeasurementData data = getMeasurementData(AdaptiveInstrumentationFacade.getInstance().getMeasurementData());
 		Assert.assertFalse(data.getRecords().isEmpty());
 		Assert.assertEquals(1, data.selectRecords(ResponseTimeRecord.class).size());
 		Assert.assertEquals(1, data.selectRecords(NanoResponseTimeRecord.class).size());
+	}
+	
+	private MeasurementData getMeasurementData(final List<String> jsondata) throws MeasurementException {
+		final ObjectMapper mapper = new ObjectMapper();
+		try {
+			final LinkedList<AbstractRecord> records = new LinkedList<AbstractRecord>();
+			for (final String jsonRecord : jsondata) {
+				records.add(mapper.readValue(jsonRecord, AbstractRecord.class));
+			}
+			return new MeasurementData(records);
+		} catch (final IOException e) {
+			throw new MeasurementException(e);
+		}		
 	}
 
 	@Test
