@@ -49,7 +49,10 @@ public class Main {
 	public static void main(final String[] args) throws InterruptedException {
 		parseCommandLine(args,createOptions());
 		startServer();
-		Thread.sleep(10000000);
+		while (true) {
+			getLogger().info("Json instrumentation adapter still running...");
+			Thread.sleep(1l * 1000 * 60 * 5);
+		}
 	}
 
 	private static void parseCommandLine(final String[] args, final Options options) {
