@@ -21,6 +21,10 @@ public class ClassI {
 	}
 	public static void methodI2(){
 		System.out.println("methodI2");
+		z();
+	}
+	public static void z(){
+		System.out.println("Z!");
 		ClassJ.staticMethodJ1();
 	}
 }

@@ -279,7 +279,7 @@ public class MethodInstrumentationTest {
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
-		Assert.assertEquals(2, data.selectRecords(ResponseTimeRecord.class).size());
+		Assert.assertEquals(3, data.selectRecords(ResponseTimeRecord.class).size());
 
 		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
 

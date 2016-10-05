@@ -53,7 +53,6 @@ public class IncrementalInstrumentationProbe extends AbstractEnclosingProbe {
 	 */
 	@ProbeIncrementalInstrumentation
 	public void incrementalInstrumentation() {
-		System.out.println("xxxxxxxxxxxxxxxxx:" + __clazz.getClass().getName());
 		TraceInstrumentor.getInstance().instrumentIncrementally(__clazz.getClass().getName() + __methodSignature,
 				__instDescription);
 	}
