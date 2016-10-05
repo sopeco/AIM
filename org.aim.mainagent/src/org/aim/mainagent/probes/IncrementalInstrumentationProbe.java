@@ -42,7 +42,7 @@ public class IncrementalInstrumentationProbe extends AbstractEnclosingProbe {
 	public static final MeasurementProbeDescription MODEL_PROBE = new MeasurementProbeDescription(
 			IncrementalInstrumentationProbe.class.getName());
 
-	public String __clazz = CLAZZ;
+	public String __clazz = "__clazz";
 	public static final String CLAZZ = "__clazz";
 	public static final String INST_DESCRIPTION = "__instDescription";
 	public Long __instDescription = 0L;
@@ -53,8 +53,8 @@ public class IncrementalInstrumentationProbe extends AbstractEnclosingProbe {
 	 */
 	@ProbeIncrementalInstrumentation
 	public void incrementalInstrumentation() {
-
-		TraceInstrumentor.getInstance().instrumentIncrementally(__clazz + __methodSignature,
+		System.out.println("xxxxxxxxxxxxxxxxx:" + __clazz.getClass().getName());
+		TraceInstrumentor.getInstance().instrumentIncrementally(__clazz.getClass().getName() + __methodSignature,
 				__instDescription);
 	}
 

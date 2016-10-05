@@ -20,6 +20,7 @@ public class ClassI {
 		ClassJ.staticMethodJ1();
 	}
 	public static void methodI2(){
+		System.out.println("methodI2");
 		ClassJ.staticMethodJ1();
 	}
 }

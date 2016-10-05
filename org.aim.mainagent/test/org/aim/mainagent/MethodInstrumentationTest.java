@@ -267,20 +267,15 @@ public class MethodInstrumentationTest {
 		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
 		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
 		final InstrumentationDescription descr = idBuilder.
-				newMethodScopeEntity(ClassI.class.getName() + ".methodI1()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
+				newMethodScopeEntity(ClassI.class.getName() + ".methodI2()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
 				.entityDone().build();
-
-		
-
-		ClassI i = new ClassI();
 
 		ClassI.methodI2();
 
 		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
 		
 		enableMeasurement();
-		i = new ClassI();
-		i.methodI1();
+		ClassI.methodI2();
 		disableMeasurement();
 		MeasurementData data = getData();
 		Assert.assertFalse(data.getRecords().isEmpty());
@@ -290,7 +285,7 @@ public class MethodInstrumentationTest {
 
 		
 		enableMeasurement();
-		i.methodI1();
+		ClassI.methodI2();
 		disableMeasurement();
 		data = getData();
 		Assert.assertTrue(data.getRecords().isEmpty());
