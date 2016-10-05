@@ -19,4 +19,7 @@ public class ClassI {
 	public void methodI1(){
 		ClassJ.staticMethodJ1();
 	}
+	public static void methodI2(){
+		ClassJ.staticMethodJ1();
+	}
 }

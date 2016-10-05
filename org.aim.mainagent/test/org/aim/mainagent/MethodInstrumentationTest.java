@@ -191,7 +191,7 @@ public class MethodInstrumentationTest {
 	private MeasurementData getMeasurementData(final List<String> jsondata) throws MeasurementException {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {
-			final LinkedList<AbstractRecord> records = new LinkedList<AbstractRecord>();
+			final LinkedList<AbstractRecord> records = new LinkedList<>();
 			for (final String jsonRecord : jsondata) {
 				records.add(mapper.readValue(jsonRecord, AbstractRecord.class));
 			}
@@ -261,6 +261,41 @@ public class MethodInstrumentationTest {
 		data = getData();
 		Assert.assertTrue(data.getRecords().isEmpty());
 	}
+	
+	@Test
+	public void testFullTraceScopeWithStaticMethodsInstrumentation2() throws InstrumentationException, MeasurementException {
+		Assume.assumeNotNull(System.getProperties().get(JInstrumentation.J_INSTRUMENTATION_KEY));
+		final InstrumentationDescriptionBuilder idBuilder = new InstrumentationDescriptionBuilder();
+		final InstrumentationDescription descr = idBuilder.
+				newMethodScopeEntity(ClassI.class.getName() + ".methodI1()").enableTrace().addProbe(ResponsetimeProbe.MODEL_PROBE)
+				.entityDone().build();
+
+		
+
+		ClassI i = new ClassI();
+
+		ClassI.methodI2();
+
+		AdaptiveInstrumentationFacade.getInstance().instrument(descr);
+		
+		enableMeasurement();
+		i = new ClassI();
+		i.methodI1();
+		disableMeasurement();
+		MeasurementData data = getData();
+		Assert.assertFalse(data.getRecords().isEmpty());
+		Assert.assertEquals(2, data.selectRecords(ResponseTimeRecord.class).size());
+
+		AdaptiveInstrumentationFacade.getInstance().undoInstrumentation();
+
+		
+		enableMeasurement();
+		i.methodI1();
+		disableMeasurement();
+		data = getData();
+		Assert.assertTrue(data.getRecords().isEmpty());
+	}
+
 	
 	@Test
 	public void testFullTraceScopeWithStaticMethodsInstrumentation() throws InstrumentationException, MeasurementException {
